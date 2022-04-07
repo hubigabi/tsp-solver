@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Tsp {
+public class TspGenerator {
 
     public final static double MAX_X = 100;
     public final static double MAX_Y = 100;
@@ -49,4 +49,18 @@ public class Tsp {
         return bd.doubleValue();
     }
 
+    public static double[][] toTravellingCostMatrix(List<City> cities) {
+        int citiesNumber = cities.size();
+        double[][] travellingCostMatrix = new double[citiesNumber][citiesNumber];
+
+        for (int i = 0; i < citiesNumber; i++) {
+            double[] row = new double[citiesNumber];
+            for (int j = 0; j < citiesNumber; j++) {
+                row[j] = cities.get(i).getOptimalRoads().get(j).getCost();
+            }
+            travellingCostMatrix[i] = row;
+        }
+
+        return travellingCostMatrix;
+    }
 }
