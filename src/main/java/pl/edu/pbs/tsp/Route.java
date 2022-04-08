@@ -8,7 +8,7 @@ import java.util.List;
 public class Route {
 
     public double calculationTime;
-    public double totalDistance;
+    public double totalCost;
     public List<Integer> citiesOrder;
 
 }

@@ -5,7 +5,7 @@ import pl.edu.pbs.tsp.Route;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.List;;
+import java.util.List;
 
 public class NearestNeighbourAlgorithm implements Algorithm {
 
@@ -33,16 +33,16 @@ public class NearestNeighbourAlgorithm implements Algorithm {
         totalCost += lastCityRow[0];
 
         Instant finish = Instant.now();
-        long timeElapsed = Duration.between(start, finish).toMillis();
+        long timeElapsed = Duration.between(start, finish).toSeconds();
 
         Route route = new Route();
-        route.setTotalDistance(totalCost);
+        route.setTotalCost(totalCost);
         route.setCitiesOrder(citiesVisited);
         route.setCalculationTime(timeElapsed);
         return route;
     }
 
-    public static int indexOfMinCostForUnvisitedCities(double[] array, List<Integer> citiesVisited) {
+    private static int indexOfMinCostForUnvisitedCities(double[] array, List<Integer> citiesVisited) {
         if (array.length == 0) {
             return -1;
         }

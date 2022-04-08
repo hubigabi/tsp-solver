@@ -7,6 +7,7 @@ import org.springframework.context.event.EventListener;
 import pl.edu.pbs.tsp.City;
 import pl.edu.pbs.tsp.Route;
 import pl.edu.pbs.tsp.TspGenerator;
+import pl.edu.pbs.tsp.algorithm.NaiveApproach;
 import pl.edu.pbs.tsp.algorithm.NearestNeighbourAlgorithm;
 
 import java.util.List;
@@ -21,9 +22,15 @@ public class TspSolverApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void doSomethingAfterStartup() {
         System.out.println("Start");
-        List<City> cities = TspGenerator.generateCities(5);
+        List<City> cities = TspGenerator.generateCities(10);
         double[][] travellingCostMatrix = TspGenerator.toTravellingCostMatrix(cities);
+
         Route route = new NearestNeighbourAlgorithm().solve(travellingCostMatrix);
+        System.out.println(route);
+
+        Route route2 = new NaiveApproach().solve(travellingCostMatrix);
+        System.out.println(route2);
+
         System.out.println("End");
     }
 
