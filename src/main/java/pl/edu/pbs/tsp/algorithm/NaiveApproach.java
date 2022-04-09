@@ -12,13 +12,15 @@ import java.util.stream.IntStream;
 
 public class NaiveApproach implements Algorithm {
 
-    public double[][] costMatrix;
-    public double totalCost = Double.MAX_VALUE;
-    public List<Integer> citiesOrder = new ArrayList<>();
+    private double[][] costMatrix;
+    private double minCost = Double.MAX_VALUE;
+    private List<Integer> bestRoute = new ArrayList<>();
 
     @Override
     public Route solve(double[][] costMatrix) {
         this.costMatrix = costMatrix;
+        minCost = Double.MAX_VALUE;
+        bestRoute = new ArrayList<>();
         Instant start = Instant.now();
 
         int[] cities = IntStream.range(1, costMatrix.length).toArray();
@@ -28,8 +30,8 @@ public class NaiveApproach implements Algorithm {
         long timeElapsed = Duration.between(start, finish).toSeconds();
 
         Route route = new Route();
-        route.setTotalCost(totalCost);
-        route.setCitiesOrder(citiesOrder);
+        route.setTotalCost(minCost);
+        route.setCitiesOrder(bestRoute);
         route.setCalculationTime(timeElapsed);
         return route;
     }
@@ -64,11 +66,11 @@ public class NaiveApproach implements Algorithm {
         }
         costPermutation += costMatrix[cites[cites.length - 1]][0];
 
-        if (costPermutation < totalCost) {
-            totalCost = costPermutation;
-            citiesOrder = Arrays.stream(cites).boxed().collect(Collectors.toList());
-            citiesOrder.add(0, 0);
-            citiesOrder.add(0);
+        if (costPermutation < minCost) {
+            minCost = costPermutation;
+            bestRoute = Arrays.stream(cites).boxed().collect(Collectors.toList());
+            bestRoute.add(0, 0);
+            bestRoute.add(0);
         }
     }
 

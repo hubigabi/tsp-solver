@@ -9,7 +9,9 @@ import pl.edu.pbs.tsp.Route;
 import pl.edu.pbs.tsp.TspGenerator;
 import pl.edu.pbs.tsp.algorithm.NaiveApproach;
 import pl.edu.pbs.tsp.algorithm.NearestNeighbourAlgorithm;
+import pl.edu.pbs.tsp.algorithm.SimulatedAnnealing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
@@ -22,14 +24,27 @@ public class TspSolverApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void doSomethingAfterStartup() {
         System.out.println("Start");
-        List<City> cities = TspGenerator.generateCities(10);
+        List<City> cities = TspGenerator.generateCities(100);
         double[][] travellingCostMatrix = TspGenerator.toTravellingCostMatrix(cities);
 
-        Route route = new NearestNeighbourAlgorithm().solve(travellingCostMatrix);
-        System.out.println(route);
+        Route nearestNeighbourAlgorithmRoute = new NearestNeighbourAlgorithm().solve(travellingCostMatrix);
+        System.out.println(nearestNeighbourAlgorithmRoute);
 
-        Route route2 = new NaiveApproach().solve(travellingCostMatrix);
-        System.out.println(route2);
+//        Route naiveApproachRoute = new NaiveApproach().solve(travellingCostMatrix);
+//        System.out.println(naiveApproachRoute);
+
+        List<Route> simulatedAnnealingRoutes = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Route route = new SimulatedAnnealing(100.0, 0.1, 0.99, 1000).solve(travellingCostMatrix);
+            simulatedAnnealingRoutes.add(route);
+            System.out.println(route);
+        }
+        simulatedAnnealingRoutes.stream().map(Route::getTotalCost)
+                .min(Double::compareTo)
+                .ifPresent(min -> System.out.println("Min: " + min));
+        simulatedAnnealingRoutes.stream().mapToDouble(Route::getTotalCost)
+                .average()
+                .ifPresent(avg -> System.out.println("Average: " + avg));
 
         System.out.println("End");
     }
