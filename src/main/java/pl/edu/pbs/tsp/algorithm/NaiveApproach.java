@@ -2,37 +2,30 @@ package pl.edu.pbs.tsp.algorithm;
 
 import pl.edu.pbs.tsp.Route;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class NaiveApproach implements Algorithm {
+public class NaiveApproach extends Algorithm {
 
     private double[][] costMatrix;
     private double minCost = Double.MAX_VALUE;
     private List<Integer> bestRoute = new ArrayList<>();
 
     @Override
-    public Route solve(double[][] costMatrix) {
+    protected Route solve(double[][] costMatrix) {
         this.costMatrix = costMatrix;
         minCost = Double.MAX_VALUE;
         bestRoute = new ArrayList<>();
-        Instant start = Instant.now();
 
         int[] cities = IntStream.range(1, costMatrix.length).toArray();
         permutation(cities, cities.length);
 
-        Instant finish = Instant.now();
-        long timeElapsed = Duration.between(start, finish).toSeconds();
-
         Route route = new Route();
         route.setTotalCost(minCost);
         route.setCitiesOrder(bestRoute);
-        route.setCalculationTime(timeElapsed);
         return route;
     }
 

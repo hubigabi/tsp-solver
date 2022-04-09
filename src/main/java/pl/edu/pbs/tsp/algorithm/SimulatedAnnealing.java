@@ -2,16 +2,12 @@ package pl.edu.pbs.tsp.algorithm;
 
 import pl.edu.pbs.tsp.Route;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-public class SimulatedAnnealing implements Algorithm {
+public class SimulatedAnnealing extends Algorithm {
 
     private double temperature;
     private final double maxTemperature;
@@ -32,8 +28,7 @@ public class SimulatedAnnealing implements Algorithm {
     }
 
     @Override
-    public Route solve(double[][] costMatrix) {
-        Instant start = Instant.now();
+    protected Route solve(double[][] costMatrix) {
         this.costMatrix = costMatrix;
         bestRoute = generateRandomRoute(costMatrix.length);
         minCost = calculateCost(bestRoute);
@@ -47,10 +42,10 @@ public class SimulatedAnnealing implements Algorithm {
             temperature *= coolingRate;
         }
 
-        Instant finish = Instant.now();
-        long timeElapsed = Duration.between(start, finish).toSeconds();
-
-        return new Route(timeElapsed, minCost, bestRoute);
+        Route route = new Route();
+        route.setTotalCost(minCost);
+        route.setCitiesOrder(bestRoute);
+        return route;
     }
 
     private void adjustRoute(List<Integer> route) {
@@ -80,14 +75,6 @@ public class SimulatedAnnealing implements Algorithm {
             cost += costMatrix[route.get(i)][route.get(i + 1)];
         }
         return cost;
-    }
-
-    private List<Integer> generateRandomRoute(int n) {
-        List<Integer> route = IntStream.range(1, n).boxed().collect(Collectors.toList());
-        Collections.shuffle(route);
-        route.add(0, 0);
-        route.add(0);
-        return route;
     }
 
 }

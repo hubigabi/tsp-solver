@@ -2,17 +2,13 @@ package pl.edu.pbs.tsp.algorithm;
 
 import pl.edu.pbs.tsp.Route;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NearestNeighbourAlgorithm implements Algorithm {
+public class NearestNeighbourAlgorithm extends Algorithm {
 
     @Override
-    public Route solve(double[][] costMatrix) {
-        Instant start = Instant.now();
-
+    protected Route solve(double[][] costMatrix) {
         double totalCost = 0;
         int lastVisitedCity = 0;
         List<Integer> citiesVisited = new ArrayList<>();
@@ -32,13 +28,9 @@ public class NearestNeighbourAlgorithm implements Algorithm {
         citiesVisited.add(0);
         totalCost += lastCityRow[0];
 
-        Instant finish = Instant.now();
-        long timeElapsed = Duration.between(start, finish).toSeconds();
-
         Route route = new Route();
         route.setTotalCost(totalCost);
         route.setCitiesOrder(citiesVisited);
-        route.setCalculationTime(timeElapsed);
         return route;
     }
 
@@ -58,6 +50,5 @@ public class NearestNeighbourAlgorithm implements Algorithm {
         }
         return index;
     }
-
 
 }
