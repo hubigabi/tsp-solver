@@ -7,6 +7,7 @@ import org.springframework.context.event.EventListener;
 import pl.edu.pbs.tsp.City;
 import pl.edu.pbs.tsp.Route;
 import pl.edu.pbs.tsp.TspGenerator;
+import pl.edu.pbs.tsp.algorithm.ga.GeneticAlgorithm;
 import pl.edu.pbs.tsp.algorithm.NearestNeighbourAlgorithm;
 import pl.edu.pbs.tsp.algorithm.SimulatedAnnealing;
 
@@ -23,7 +24,7 @@ public class TspSolverApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void compareAlgorithms() {
         System.out.println("Starting...");
-        List<City> cities = TspGenerator.generateCities(100);
+        List<City> cities = TspGenerator.generateCities(50);
         double[][] travellingCostMatrix = TspGenerator.toTravellingCostMatrix(cities);
 
         Route nearestNeighbourAlgorithmRoute = new NearestNeighbourAlgorithm().getRoute(travellingCostMatrix);
@@ -42,6 +43,19 @@ public class TspSolverApplication {
                 .min(Double::compareTo)
                 .ifPresent(min -> System.out.println("Min: " + min));
         simulatedAnnealingRoutes.stream().mapToDouble(Route::getTotalCost)
+                .average()
+                .ifPresent(avg -> System.out.println("Average: " + avg));
+
+        List<Route> geneticAlgorithmRoutes = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Route route = new GeneticAlgorithm(100, 10, 10000, 0.02, 10).getRoute(travellingCostMatrix);
+            geneticAlgorithmRoutes.add(route);
+            System.out.println(route);
+        }
+        geneticAlgorithmRoutes.stream().map(Route::getTotalCost)
+                .min(Double::compareTo)
+                .ifPresent(min -> System.out.println("Min: " + min));
+        geneticAlgorithmRoutes.stream().mapToDouble(Route::getTotalCost)
                 .average()
                 .ifPresent(avg -> System.out.println("Average: " + avg));
 

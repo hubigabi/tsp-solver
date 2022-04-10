@@ -31,7 +31,7 @@ public class SimulatedAnnealing extends Algorithm {
     protected Route solve(double[][] costMatrix) {
         this.costMatrix = costMatrix;
         bestRoute = generateRandomRoute(costMatrix.length);
-        minCost = calculateCost(bestRoute);
+        minCost = calculateCost(bestRoute, costMatrix);
 
         while (temperature > minTemperature) {
             for (int i = 0; i < epochsNumber; i++) {
@@ -62,19 +62,11 @@ public class SimulatedAnnealing extends Algorithm {
     }
 
     private void checkRoute(List<Integer> route) {
-        double currentCost = calculateCost(route);
+        double currentCost = calculateCost(route, costMatrix);
         if (currentCost <= minCost || Math.exp((minCost - currentCost) / temperature) >= ThreadLocalRandom.current().nextDouble()) {
             minCost = currentCost;
             bestRoute = route;
         }
-    }
-
-    private double calculateCost(List<Integer> route) {
-        double cost = 0;
-        for (int i = 0; i < route.size() - 1; i++) {
-            cost += costMatrix[route.get(i)][route.get(i + 1)];
-        }
-        return cost;
     }
 
 }

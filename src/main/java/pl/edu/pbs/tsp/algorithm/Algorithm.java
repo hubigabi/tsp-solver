@@ -30,4 +30,19 @@ public abstract class Algorithm {
         return route;
     }
 
+    protected void validateRoute(List<Integer> route) {
+        List<Integer> sequentialNumbers = IntStream.range(1, route.size() - 1).boxed().collect(Collectors.toList());
+        if (route.get(0) != 0 || route.get(route.size() - 1) != 0 || !route.containsAll(sequentialNumbers)) {
+            throw new RuntimeException("Route is not valid");
+        }
+    }
+
+    protected double calculateCost(List<Integer> route, double[][] costMatrix) {
+        double cost = 0;
+        for (int i = 0; i < route.size() - 1; i++) {
+            cost += costMatrix[route.get(i)][route.get(i + 1)];
+        }
+        return cost;
+    }
+
 }
