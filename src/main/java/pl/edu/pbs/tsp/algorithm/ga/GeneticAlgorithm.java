@@ -16,18 +16,20 @@ public class GeneticAlgorithm extends Algorithm {
     private List<List<Integer>> population;
     private int epochs;
     private double mutationRate;
+    private SelectionType selectionType;
     private int tournamentSize;
 
     private double[][] costMatrix;
     private double minCost = Double.MAX_VALUE;
     private List<Integer> bestRoute = new ArrayList<>();
 
-    public GeneticAlgorithm(int populationSize, int eliteSize, int epochs, double mutationRate, int tournamentSize) {
+    public GeneticAlgorithm(int populationSize, int eliteSize, int epochs, double mutationRate, SelectionType selectionType, int tournamentSize) {
         this.populationSize = populationSize;
         this.eliteSize = eliteSize;
         this.epochs = epochs;
         this.mutationRate = mutationRate;
         this.population = new ArrayList<>(populationSize);
+        this.selectionType = selectionType;
         this.tournamentSize = tournamentSize;
     }
 
@@ -66,7 +68,7 @@ public class GeneticAlgorithm extends Algorithm {
     private List<Individual> mapToIndividuals(List<List<Integer>> population) {
         return population.stream().map(citiesOrder -> {
                     double cost = calculateCost(citiesOrder, costMatrix);
-                    return new Individual(citiesOrder, cost);
+                    return new Individual(citiesOrder, cost, 1 / cost);
                 })
                 .collect(Collectors.toList());
     }
@@ -74,17 +76,39 @@ public class GeneticAlgorithm extends Algorithm {
     private List<List<Integer>> selectPopulation(List<Individual> individuals) {
         List<List<Integer>> selectedPopulation = new ArrayList<>(eliteSize);
         for (int i = 0; i < eliteSize; i++) {
-            List<Individual> tournament = new ArrayList<>(tournamentSize);
-            for (int j = 0; j < tournamentSize; j++) {
-                int randomIndex = ThreadLocalRandom.current().nextInt(0, individuals.size());
-                tournament.add(individuals.get(randomIndex));
+            if (selectionType == SelectionType.ROULETTE) {
+                selectedPopulation.add(selectByRoulette(individuals));
+            } else if (selectionType == SelectionType.TOURNAMENT) {
+                selectedPopulation.add(selectByTournament(individuals));
             }
-            tournament.stream()
-                    .min(Comparator.comparingDouble(Individual::getTotalCost))
-                    .ifPresent(individual -> selectedPopulation.add(individual.getCitiesOrder()));
         }
 
         return selectedPopulation;
+    }
+
+    private List<Integer> selectByRoulette(List<Individual> individuals) {
+        double totalFitness = individuals.stream().mapToDouble(Individual::getFitness).sum();
+        double p = ThreadLocalRandom.current().nextDouble(totalFitness);
+        double cumulativeProbability = 0.0;
+        for (Individual individual : individuals) {
+            cumulativeProbability += individual.getFitness();
+            if (p <= cumulativeProbability) {
+                return individual.citiesOrder;
+            }
+        }
+        throw new IllegalStateException();
+    }
+
+    private List<Integer> selectByTournament(List<Individual> individuals) {
+        List<Individual> tournament = new ArrayList<>(tournamentSize);
+        for (int j = 0; j < tournamentSize; j++) {
+            int randomIndex = ThreadLocalRandom.current().nextInt(0, individuals.size());
+            tournament.add(individuals.get(randomIndex));
+        }
+
+        return tournament.stream()
+                .min(Comparator.comparingDouble(Individual::getTotalCost))
+                .orElseThrow().getCitiesOrder();
     }
 
     private List<List<Integer>> getNextPopulation(List<List<Integer>> selectedPopulation) {

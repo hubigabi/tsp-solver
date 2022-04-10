@@ -12,4 +12,9 @@ public class Individual {
     public List<Integer> citiesOrder;
     public double totalCost;
 
+    /**
+     * 1 / {@link Individual#totalCost}
+     */
+    public double fitness;
+
 }
