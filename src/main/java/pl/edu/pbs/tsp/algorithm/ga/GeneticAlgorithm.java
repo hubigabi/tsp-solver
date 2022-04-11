@@ -12,9 +12,18 @@ import java.util.stream.Collectors;
 public class GeneticAlgorithm extends Algorithm {
 
     private int populationSize;
-    private int eliteSize;
+
+    /**
+     * number of selected individuals for crossover
+     */
+    private int selectionSize;
     private List<List<Integer>> population;
     private int epochs;
+
+    /**
+     * number of the best individuals from the current generation to carry over to the next
+     */
+    private int elitismSize;
     private double mutationRate;
     private SelectionType selectionType;
     private int tournamentSize;
@@ -23,14 +32,15 @@ public class GeneticAlgorithm extends Algorithm {
     private double minCost = Double.MAX_VALUE;
     private List<Integer> bestRoute = new ArrayList<>();
 
-    public GeneticAlgorithm(int populationSize, int eliteSize, int epochs, double mutationRate, SelectionType selectionType, int tournamentSize) {
+    public GeneticAlgorithm(int populationSize, int selectionSize, int elitismSize, int epochs, double mutationRate, SelectionType selectionType, int tournamentSize) {
         this.populationSize = populationSize;
-        this.eliteSize = eliteSize;
+        this.selectionSize = selectionSize;
+        this.elitismSize = elitismSize;
         this.epochs = epochs;
         this.mutationRate = mutationRate;
-        this.population = new ArrayList<>(populationSize);
         this.selectionType = selectionType;
         this.tournamentSize = tournamentSize;
+        this.population = new ArrayList<>(populationSize);
     }
 
     @Override
@@ -44,7 +54,8 @@ public class GeneticAlgorithm extends Algorithm {
             List<Individual> individuals = mapToIndividuals(population);
             checkRouteCost(individuals);
             List<List<Integer>> selectedPopulation = selectPopulation(individuals);
-            population = getNextPopulation(selectedPopulation);
+            List<Individual> elitism = elitism(individuals, elitismSize);
+            population = getNextPopulation(selectedPopulation, elitism);
             mutate(population);
         }
 
@@ -52,6 +63,13 @@ public class GeneticAlgorithm extends Algorithm {
         route.setTotalCost(minCost);
         route.setCitiesOrder(bestRoute);
         return route;
+    }
+
+    private List<Individual> elitism(List<Individual> individuals, int elitismSize) {
+        return individuals.stream()
+                .sorted(Comparator.comparingDouble(Individual::getTotalCost))
+                .limit(elitismSize)
+                .collect(Collectors.toList());
     }
 
     private void checkRouteCost(List<Individual> individuals) {
@@ -74,8 +92,8 @@ public class GeneticAlgorithm extends Algorithm {
     }
 
     private List<List<Integer>> selectPopulation(List<Individual> individuals) {
-        List<List<Integer>> selectedPopulation = new ArrayList<>(eliteSize);
-        for (int i = 0; i < eliteSize; i++) {
+        List<List<Integer>> selectedPopulation = new ArrayList<>(selectionSize);
+        for (int i = 0; i < selectionSize; i++) {
             if (selectionType == SelectionType.ROULETTE) {
                 selectedPopulation.add(selectByRoulette(individuals));
             } else if (selectionType == SelectionType.TOURNAMENT) {
@@ -111,10 +129,11 @@ public class GeneticAlgorithm extends Algorithm {
                 .orElseThrow().getCitiesOrder();
     }
 
-    private List<List<Integer>> getNextPopulation(List<List<Integer>> selectedPopulation) {
+    private List<List<Integer>> getNextPopulation(List<List<Integer>> selectedPopulation, List<Individual> elitism) {
         List<List<Integer>> nextPopulation = new ArrayList<>(populationSize);
+        nextPopulation.addAll(elitism.stream().map(Individual::getCitiesOrder).collect(Collectors.toList()));
         int selectedPopulationSize = selectedPopulation.size();
-        for (int i = 0; i < populationSize; i++) {
+        for (int i = 0; i < populationSize - elitism.size(); i++) {
             int parent1Index = ThreadLocalRandom.current().nextInt(0, selectedPopulationSize);
             int parent2Index = ThreadLocalRandom.current().nextInt(0, selectedPopulationSize);
 

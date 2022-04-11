@@ -48,8 +48,8 @@ public class TspSolverApplication {
                 .ifPresent(avg -> System.out.println("Average: " + avg));
 
         List<Route> geneticAlgorithmRoutes = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            Route route = new GeneticAlgorithm(100, 10, 10000, 0.02, SelectionType.TOURNAMENT, 10).getRoute(travellingCostMatrix);
+        for (int i = 0; i < 5; i++) {
+            Route route = new GeneticAlgorithm(100, 20, 20, 10000, 0.02, SelectionType.TOURNAMENT, 10).getRoute(travellingCostMatrix);
             geneticAlgorithmRoutes.add(route);
             System.out.println(route);
         }
