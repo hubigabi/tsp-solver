@@ -157,6 +157,7 @@ public class GeneticAlgorithm extends Algorithm {
         }
     }
 
+    //    http://www.permutationcity.co.uk/projects/mutants/tsp.html
     private void insertCityBeforeOther(List<Integer> route, int i, int j) {
         int city = route.get(j);
         route.remove(j);
