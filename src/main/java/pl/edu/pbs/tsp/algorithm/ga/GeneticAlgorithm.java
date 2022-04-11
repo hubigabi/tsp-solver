@@ -144,7 +144,11 @@ public class GeneticAlgorithm extends Algorithm {
     }
 
     private List<Integer> crossover(List<Integer> parent1, List<Integer> parent2) {
-//        Ordered crossover
+        return pmxCrossover(parent1, parent2);
+//        return orderedCrossover(parent1, parent2);
+    }
+
+    private List<Integer> orderedCrossover(List<Integer> parent1, List<Integer> parent2) {
         int index1 = ThreadLocalRandom.current().nextInt(1, parent1.size() - 1);
         int index2 = ThreadLocalRandom.current().nextInt(1, parent1.size() - 1);
 
@@ -161,6 +165,22 @@ public class GeneticAlgorithm extends Algorithm {
         child.addAll(childPart2.subList(0, min));
         child.addAll(childPart1);
         child.addAll(childPart2.subList(min, childPart2.size()));
+        return child;
+    }
+
+    private List<Integer> pmxCrossover(List<Integer> parent1, List<Integer> parent2) {
+        int index = ThreadLocalRandom.current().nextInt(1, parent1.size() - 1);
+
+        List<Integer> childPart1 = parent1.subList(0, index);
+        List<Integer> childPart2 = new ArrayList<>(parent2);
+        for (int i = 0; i < childPart1.size(); i++) {
+            int j = childPart2.indexOf(childPart1.get(i));
+            swapCities(childPart2, i, j);
+        }
+
+        ArrayList<Integer> child = new ArrayList<>(parent1.size());
+        child.addAll(childPart1);
+        child.addAll(childPart2.subList(index, childPart2.size()));
         return child;
     }
 
