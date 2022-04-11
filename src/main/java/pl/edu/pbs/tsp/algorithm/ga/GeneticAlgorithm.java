@@ -150,13 +150,24 @@ public class GeneticAlgorithm extends Algorithm {
             for (int i = 1; i < route.size() - 1; i++) {
                 if (mutationRate > ThreadLocalRandom.current().nextDouble()) {
                     int j = ThreadLocalRandom.current().nextInt(1, route.size() - 1);
-                    int city1 = route.get(i);
-                    int city2 = route.get(j);
-                    route.set(i, city2);
-                    route.set(j, city1);
+//                    swapCities(route, i, j);
+                    insertCityBeforeOther(route, i, j);
                 }
             }
         }
+    }
+
+    private void insertCityBeforeOther(List<Integer> route, int i, int j) {
+        int city = route.get(j);
+        route.remove(j);
+        route.add(i, city);
+    }
+
+    private void swapCities(List<Integer> route, int i, int j) {
+        int city1 = route.get(i);
+        int city2 = route.get(j);
+        route.set(i, city2);
+        route.set(j, city1);
     }
 
     private List<List<Integer>> generatePopulation(int populationSize, int citiesNumber) {
