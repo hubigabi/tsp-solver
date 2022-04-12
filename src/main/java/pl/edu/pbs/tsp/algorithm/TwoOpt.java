@@ -31,10 +31,11 @@ public class TwoOpt extends Algorithm {
             for (int i = 1; i < costMatrix.length - 1; i++) {
                 for (int j = i + 1; j < costMatrix.length; j++) {
                     List<Integer> newRoute = twoOptSwap(bestRoute, i, j);
-                    double newCost = calculateCost(newRoute, costMatrix);
-                    if (newCost < newMinCost) {
+                    double deltaCost = costMatrix[newRoute.get(i - 1)][newRoute.get(i)] + costMatrix[newRoute.get(j)][newRoute.get(j + 1)]
+                            - costMatrix[bestRoute.get(i - 1)][bestRoute.get(i)] - costMatrix[bestRoute.get(j)][bestRoute.get(j + 1)];
+                    if (deltaCost < 0 && minCost + deltaCost < newMinCost) {
                         newBestRoute = new ArrayList<>(newRoute);
-                        newMinCost = newCost;
+                        newMinCost = minCost + deltaCost;
                     }
                 }
             }

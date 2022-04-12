@@ -26,14 +26,14 @@ public class TspSolverApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void compareAlgorithms() {
         System.out.println("Starting...");
-        List<City> cities = TspGenerator.generateCities(200);
+        List<City> cities = TspGenerator.generateCities(100);
         double[][] travellingCostMatrix = TspGenerator.toTravellingCostMatrix(cities);
 
         Route nearestNeighbourAlgorithmRoute = new NearestNeighbourAlgorithm().getRoute(travellingCostMatrix);
         System.out.println(nearestNeighbourAlgorithmRoute);
         System.out.println("2-opt improvement " + new TwoOpt(nearestNeighbourAlgorithmRoute.getCitiesOrder()).getRoute(travellingCostMatrix));
 
-//        Route naiveApproachRoute = new NaiveApproach().solve(travellingCostMatrix);
+//        Route naiveApproachRoute = new Nai3veApproach().solve(travellingCostMatrix);
 //        System.out.println(naiveApproachRoute);
 
         List<Route> simulatedAnnealingRoutes = new ArrayList<>();
