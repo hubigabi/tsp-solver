@@ -8,9 +8,9 @@ import pl.edu.pbs.tsp.City;
 import pl.edu.pbs.tsp.Route;
 import pl.edu.pbs.tsp.TspGenerator;
 import pl.edu.pbs.tsp.algorithm.TwoOpt;
-import pl.edu.pbs.tsp.algorithm.ga.GeneticAlgorithm;
 import pl.edu.pbs.tsp.algorithm.NearestNeighbourAlgorithm;
 import pl.edu.pbs.tsp.algorithm.SimulatedAnnealing;
+import pl.edu.pbs.tsp.algorithm.ga.GeneticAlgorithm;
 import pl.edu.pbs.tsp.algorithm.ga.SelectionType;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class TspSolverApplication {
         System.out.println(nearestNeighbourAlgorithmRoute);
         System.out.println("2-opt improvement " + new TwoOpt(nearestNeighbourAlgorithmRoute.getCitiesOrder()).getRoute(travellingCostMatrix));
 
-//        Route naiveApproachRoute = new Nai3veApproach().solve(travellingCostMatrix);
+//        Route naiveApproachRoute = new NaiveApproach().solve(travellingCostMatrix);
 //        System.out.println(naiveApproachRoute);
 
         List<Route> simulatedAnnealingRoutes = new ArrayList<>();
@@ -52,7 +52,7 @@ public class TspSolverApplication {
 
         List<Route> geneticAlgorithmRoutes = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            Route route = new GeneticAlgorithm(100, 20, 20, 10000, 0.02, SelectionType.TOURNAMENT, 10).getRoute(travellingCostMatrix);
+            Route route = new GeneticAlgorithm(100, 20, 20, 10000, 0.01, SelectionType.TOURNAMENT, 20).getRoute(travellingCostMatrix);
             geneticAlgorithmRoutes.add(route);
             System.out.println(route);
             System.out.println("2-opt improvement " + new TwoOpt(route.getCitiesOrder()).getRoute(travellingCostMatrix));
