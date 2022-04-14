@@ -12,11 +12,6 @@ import java.util.stream.Collectors;
 public class GeneticAlgorithm extends Algorithm {
 
     private int populationSize;
-
-    /**
-     * number of selected individuals for crossover
-     */
-    private int selectionSize;
     private List<List<Integer>> population;
     private int epochs;
 
@@ -32,9 +27,8 @@ public class GeneticAlgorithm extends Algorithm {
     private double minCost = Double.MAX_VALUE;
     private List<Integer> bestRoute = new ArrayList<>();
 
-    public GeneticAlgorithm(int populationSize, int selectionSize, int elitismSize, int epochs, double mutationRate, SelectionType selectionType, int tournamentSize) {
+    public GeneticAlgorithm(int populationSize, int elitismSize, int epochs, double mutationRate, SelectionType selectionType, int tournamentSize) {
         this.populationSize = populationSize;
-        this.selectionSize = selectionSize;
         this.elitismSize = elitismSize;
         this.epochs = epochs;
         this.mutationRate = mutationRate;
@@ -53,10 +47,10 @@ public class GeneticAlgorithm extends Algorithm {
         for (int i = 0; i < epochs; i++) {
             List<Individual> individuals = mapToIndividuals(population);
             checkRouteCost(individuals);
-            List<List<Integer>> selectedPopulation = selectPopulation(individuals);
             List<Individual> elitism = elitism(individuals, elitismSize);
-            population = getNextPopulation(selectedPopulation, elitism);
+            population = getNextPopulation(individuals, elitism);
             mutate(population);
+//            System.out.println("Epoch: " + i + " minCost: " + minCost);
         }
 
         Route route = new Route();
@@ -91,17 +85,14 @@ public class GeneticAlgorithm extends Algorithm {
                 .collect(Collectors.toList());
     }
 
-    private List<List<Integer>> selectPopulation(List<Individual> individuals) {
-        List<List<Integer>> selectedPopulation = new ArrayList<>(selectionSize);
-        for (int i = 0; i < selectionSize; i++) {
-            if (selectionType == SelectionType.ROULETTE) {
-                selectedPopulation.add(selectByRoulette(individuals));
-            } else if (selectionType == SelectionType.TOURNAMENT) {
-                selectedPopulation.add(selectByTournament(individuals));
-            }
+    private List<Integer> select(List<Individual> individuals) {
+        if (selectionType == SelectionType.ROULETTE) {
+            return selectByRoulette(individuals);
+        } else if (selectionType == SelectionType.TOURNAMENT) {
+            return selectByTournament(individuals);
         }
 
-        return selectedPopulation;
+        throw new UnsupportedOperationException("Selection type not supported");
     }
 
     private List<Integer> selectByRoulette(List<Individual> individuals) {
@@ -129,15 +120,14 @@ public class GeneticAlgorithm extends Algorithm {
                 .orElseThrow().getCitiesOrder();
     }
 
-    private List<List<Integer>> getNextPopulation(List<List<Integer>> selectedPopulation, List<Individual> elitism) {
+    private List<List<Integer>> getNextPopulation(List<Individual> individuals, List<Individual> elitism) {
         List<List<Integer>> nextPopulation = new ArrayList<>(populationSize);
         nextPopulation.addAll(elitism.stream().map(Individual::getCitiesOrder).collect(Collectors.toList()));
-        int selectedPopulationSize = selectedPopulation.size();
         for (int i = 0; i < populationSize - elitism.size(); i++) {
-            int parent1Index = ThreadLocalRandom.current().nextInt(0, selectedPopulationSize);
-            int parent2Index = ThreadLocalRandom.current().nextInt(0, selectedPopulationSize);
+            List<Integer> parent1 = select(individuals);
+            List<Integer> parent2 = select(individuals);
 
-            List<Integer> child = crossover(selectedPopulation.get(parent1Index), selectedPopulation.get(parent2Index));
+            List<Integer> child = crossover(parent1, parent2);
             nextPopulation.add(child);
         }
         return nextPopulation;
