@@ -23,7 +23,8 @@ public class AntColonyOptimization extends Algorithm {
     private final double INIT_TRAIL_PHEROMONE_VALUE = 1.0;
     private int citiesNumber;
     private double[][] costMatrix;
-    private double[][] trails;
+    private double[][] pheromoneMatrix;
+    private double[][] probabilityMatrix;
     private List<Ant> ants = new ArrayList<>();
     private int currentCityIndex;
 
@@ -31,7 +32,7 @@ public class AntColonyOptimization extends Algorithm {
     private double bestTotalCost;
 
     public AntColonyOptimization(double alpha, double beta, double evaporation, double q,
-                                 double antFactor, double randomCitySelection, int maxIterations) {
+                                  double antFactor, double randomCitySelection, int maxIterations) {
         this.alpha = alpha;
         this.beta = beta;
         this.evaporation = evaporation;
@@ -46,7 +47,7 @@ public class AntColonyOptimization extends Algorithm {
         this.costMatrix = costMatrix;
         citiesNumber = costMatrix.length;
         int antsNumber = (int) (citiesNumber * antFactor);
-        trails = new double[citiesNumber][citiesNumber];
+        pheromoneMatrix = new double[citiesNumber][citiesNumber];
         bestTotalCost = Double.MAX_VALUE;
 
         for (int i = 0; i < antsNumber; i++) {
@@ -55,7 +56,8 @@ public class AntColonyOptimization extends Algorithm {
 
         setupTrails();
         for (int i = 0; i < maxIterations; i++) {
-            System.out.println("Iteration: " + i);
+//            System.out.println("Iteration: " + i);
+            probabilityMatrix = calculateProbabilityForVisitingCity(costMatrix, pheromoneMatrix);
             setupAnts();
             moveAnts();
             updateTrails();
@@ -96,7 +98,7 @@ public class AntColonyOptimization extends Algorithm {
             return notVisitedCities.get(ThreadLocalRandom.current().nextInt(notVisitedCities.size()));
         }
 
-        double[] probabilities = calculateProbabilitiesForVisitingCity(ant);
+        double[] probabilities = getProbabilityForVisitingCity(ant);
         double r = ThreadLocalRandom.current().nextDouble();
         double cumulativeProbability = 0;
         for (int i = 0; i < citiesNumber; i++) {
@@ -109,20 +111,20 @@ public class AntColonyOptimization extends Algorithm {
         throw new IllegalStateException("There are no other cities to select");
     }
 
-    public double[] calculateProbabilitiesForVisitingCity(Ant ant) {
+    public double[] getProbabilityForVisitingCity(Ant ant) {
         double[] probabilities = new double[citiesNumber];
         int currentCity = ant.citiesOrder[currentCityIndex];
         double pheromone = 0.0;
         for (int i = 0; i < citiesNumber; i++) {
             if (!ant.isVisited(i)) {
-                pheromone += Math.pow(trails[currentCity][i], alpha) * Math.pow(1.0 / costMatrix[currentCity][i], beta);
+                pheromone += probabilityMatrix[currentCity][i];
             }
         }
         for (int j = 0; j < citiesNumber; j++) {
             if (ant.isVisited(j)) {
                 probabilities[j] = 0.0;
             } else {
-                double numerator = Math.pow(trails[currentCity][j], alpha) * Math.pow(1.0 / costMatrix[currentCity][j], beta);
+                double numerator = probabilityMatrix[currentCity][j];
                 probabilities[j] = numerator / pheromone;
             }
         }
@@ -132,13 +134,13 @@ public class AntColonyOptimization extends Algorithm {
     private void updateTrails() {
         for (int i = 0; i < citiesNumber; i++) {
             for (int j = 0; j < citiesNumber; j++) {
-                trails[i][j] *= evaporation;
+                pheromoneMatrix[i][j] *= evaporation;
             }
         }
         for (Ant a : ants) {
             double contribution = Q / a.getTrailLength(costMatrix);
             for (int i = 0; i < citiesNumber - 1; i++) {
-                trails[a.citiesOrder[i]][a.citiesOrder[i + 1]] += contribution;
+                pheromoneMatrix[a.citiesOrder[i]][a.citiesOrder[i + 1]] += contribution;
             }
         }
     }
@@ -151,7 +153,7 @@ public class AntColonyOptimization extends Algorithm {
                 bestTotalCost = trailLength;
                 bestCitiesOrder = Arrays.stream(ant.citiesOrder.clone()).boxed().collect(Collectors.toList());
                 bestCitiesOrder.add(0);
-                System.out.println("Best solution: " + bestTotalCost);
+//                System.out.println("Best solution: " + bestTotalCost);
             }
         }
     }
@@ -159,9 +161,19 @@ public class AntColonyOptimization extends Algorithm {
     private void setupTrails() {
         for (int i = 0; i < citiesNumber; i++) {
             for (int j = 0; j < citiesNumber; j++) {
-                trails[i][j] = INIT_TRAIL_PHEROMONE_VALUE;
+                pheromoneMatrix[i][j] = INIT_TRAIL_PHEROMONE_VALUE;
             }
         }
+    }
+
+    private double[][] calculateProbabilityForVisitingCity(double[][] costMatrix, double[][] pheromoneMatrix) {
+        double[][] probabilities = new double[citiesNumber][citiesNumber];
+        for (int i = 0; i < citiesNumber; i++) {
+            for (int j = 0; j < citiesNumber; j++) {
+                probabilities[i][j] = Math.pow(pheromoneMatrix[i][j], alpha) * Math.pow(1 / costMatrix[i][j], beta);
+            }
+        }
+        return probabilities;
     }
 
 }
