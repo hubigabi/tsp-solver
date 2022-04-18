@@ -1,6 +1,12 @@
 <app-navbar></app-navbar>
 
 <div class="container">
-  tsp-algorithms works!
-</div>
+  <canvas id="canvas"></canvas>
 
+  <div class="aaaa">
+    <label for="citiesNumber" class="form-label">Number of cities:</label>
+    <input type="number" [formControl]="citiesNumber" class="form-control" id="citiesNumber">
+    <button type="submit" class="btn btn-primary" (click)="generateCities()">Generate</button>
+  </div>
+
+</div>
