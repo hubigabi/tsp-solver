@@ -36,11 +36,30 @@ export class TspAlgorithmsComponent implements OnInit {
 
     paper.project.clear();
     for (let city of cities) {
-      new paper.Path.Circle({
+      let cityCircle = new paper.Path.Circle({
         center: new paper.Point(city.x * widthRate, city.y * heightRate),
         radius: 3,
         fillColor: 'black',
       });
+      const group = new paper.Group();
+      group.addChild(cityCircle);
+
+      cityCircle.onMouseEnter = function (event: MouseEvent) {
+        const pointText = new paper.PointText(new paper.Point(this.position.x, this.position.y - 12));
+        pointText.justification = 'center';
+        pointText.fontSize = 16;
+        pointText.fillColor = new paper.Color('white');
+        pointText.strokeColor = new paper.Color('gray');
+        pointText.content = 'City: ' + city.id;
+        pointText.name = 'tooltip';
+        this.parent.addChild(pointText);
+      }
+
+      cityCircle.onMouseLeave = function (event: MouseEvent) {
+        let index = this.parent.children.findIndex(value => value.name === 'tooltip');
+        this.parent.children[index].remove();
+      }
+
     }
   }
 
