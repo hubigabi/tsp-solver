@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import * as paper from 'paper';
 import {FormControl, Validators} from "@angular/forms";
 import {City} from "../model/City";
+import {AlgorithmType} from "../model/AlgorithmType";
 
 @Component({
   selector: 'app-tsp-algorithms',
@@ -15,6 +16,7 @@ export class TspAlgorithmsComponent implements OnInit {
 
   citiesNumber = new FormControl(100, Validators.required);
   cities: City[] = []
+  chosenAlgorithm = "0";
 
   constructor() {
   }
@@ -61,6 +63,10 @@ export class TspAlgorithmsComponent implements OnInit {
       }
 
     }
+  }
+
+  runAlgorithm() {
+    console.log(this.chosenAlgorithm);
   }
 
 }

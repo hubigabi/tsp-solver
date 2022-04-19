@@ -18,8 +18,33 @@
     </div>
 
     <div class="col">
-      2 of 2
+      <label class="form-label">Choose algorithm:</label>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="0"
+               name="algorithmRadio"
+               id="nearestNeighbourAlgorithmRadio">
+        <label class="form-check-label" for="nearestNeighbourAlgorithmRadio">
+          Nearest Neighbour Algorithm
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="1" name="algorithmRadio"
+               id="twoOptRadio">
+        <label class="form-check-label" for="twoOptRadio">
+          2-opt
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="2" name="algorithmRadio"
+               id="parametersRadio">
+        <label class="form-check-label" for="parametersRadio">
+          Parameters
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary" (click)="runAlgorithm()">Run algorithm</button>
     </div>
+
   </div>
 
 </div>
