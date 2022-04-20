@@ -4,7 +4,7 @@
 
   <div class="row">
     <div class="col">
-      <label for="citiesNumber" class="form-label">Number of cities:</label>
+      <label for="citiesNumber" class="form-label">Number of cities</label>
       <div class="row">
         <div class="col-3">
           <input type="number" [formControl]="citiesNumber" class="form-control" id="citiesNumber">
@@ -17,32 +17,68 @@
       <canvas id="canvas"></canvas>
     </div>
 
-    <div class="col">
-      <label class="form-label">Choose algorithm:</label>
+    <div class="col p-3">
+      <label class="form-label">Choose algorithm</label>
       <div class="form-check">
         <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="0"
-               name="algorithmRadio"
-               id="nearestNeighbourAlgorithmRadio">
+               name="algorithmRadio" id="nearestNeighbourAlgorithmRadio">
         <label class="form-check-label" for="nearestNeighbourAlgorithmRadio">
           Nearest Neighbour Algorithm
         </label>
       </div>
-      <div class="form-check">
+
+      <div class="form-check pt-2">
         <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="1" name="algorithmRadio"
                id="twoOptRadio">
         <label class="form-check-label" for="twoOptRadio">
           2-opt
         </label>
       </div>
-      <div class="form-check">
+
+      <div class="form-check pt-2">
         <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="2" name="algorithmRadio"
-               id="parametersRadio">
-        <label class="form-check-label" for="parametersRadio">
-          Parameters
+               id="simulatedAnnealingRadio">
+        <label class="form-check-label" for="simulatedAnnealingRadio">
+          Simulated annealing
         </label>
       </div>
 
-      <button type="submit" class="btn btn-primary" (click)="runAlgorithm()">Run algorithm</button>
+      <div class="row" [hidden]="chosenAlgorithm != '2'">
+        <div class="col">
+          <label for="maxTemperature" class="form-label">Max temperature</label>
+          <input type="number" [formControl]="citiesNumber" class="form-control" id="maxTemperature">
+        </div>
+        <div class="col">
+          <label for="minTemperature" class="form-label">Min temperature</label>
+          <input type="number" [formControl]="citiesNumber" class="form-control" id="minTemperature">
+        </div>
+        <div class="col">
+          <label for="coolingRate" class="form-label">Cooling rate</label>
+          <input type="number" [formControl]="citiesNumber" class="form-control" id="coolingRate">
+        </div>
+        <div class="col">
+          <label for="epochsNumber" class="form-label">Epochs</label>
+          <input type="number" [formControl]="citiesNumber" class="form-control" id="epochsNumber">
+        </div>
+      </div>
+
+      <div class="form-check pt-2">
+        <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="3" name="algorithmRadio"
+               id="geneticAlgorithmRadio">
+        <label class="form-check-label" for="geneticAlgorithmRadio">
+          Genetic algorithm
+        </label>
+      </div>
+
+      <div class="form-check pt-2">
+        <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="4" name="algorithmRadio"
+               id="antColonyOptimizationRadio">
+        <label class="form-check-label" for="antColonyOptimizationRadio">
+          Ant colony optimization
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary mt-2" (click)="runAlgorithm()">Run algorithm</button>
     </div>
 
   </div>
