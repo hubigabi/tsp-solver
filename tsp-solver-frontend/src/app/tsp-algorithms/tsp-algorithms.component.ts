@@ -1,6 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import * as paper from 'paper';
-import {FormControl, Validators} from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from "@angular/forms";
 import {City} from "../model/City";
 
 @Component({
@@ -17,13 +25,30 @@ export class TspAlgorithmsComponent implements OnInit {
   cities: City[] = []
   chosenAlgorithm = "0";
 
-  constructor() {
+  simulatedAnnealingForm = this.fb.group({
+    maxTemperature: [100.0, [Validators.required, Validators.min(1)]],
+    minTemperature: [0.1, [Validators.required, Validators.min(0)]],
+    coolingRate: [0.99, [Validators.required, Validators.min(0.0001), Validators.max(0.9999)]],
+    epochsNumber: [1000, [Validators.required, Validators.min(1)]],
+  });
+
+  constructor(private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
+    this.simulatedAnnealingForm.get('maxTemperature')!.setValidators(this.greaterThan('minTemperature'));
     paper.setup('canvas');
     this.cities = City.generateRandomCities(100, this.cityMaxX, this.cityMaxY);
     this.drawCities(this.cities)
+  }
+
+  greaterThan(field: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const group = control.parent;
+      const fieldToCompare = group!.get(field);
+      const notGreater = Number(fieldToCompare!.value) >= Number(control.value);
+      return notGreater ? {'notGreater': {value: control.value}} : null;
+    }
   }
 
   generateCities() {
@@ -65,6 +90,8 @@ export class TspAlgorithmsComponent implements OnInit {
 
   runAlgorithm() {
     console.log(this.chosenAlgorithm);
+    console.log(this.simulatedAnnealingForm.value);
+    console.log(this.simulatedAnnealingForm.valid);
   }
 
 }
