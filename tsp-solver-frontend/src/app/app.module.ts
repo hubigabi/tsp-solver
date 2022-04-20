@@ -7,12 +7,14 @@ import {NavbarComponent} from './navbar/navbar.component';
 import {TspAlgorithmsComponent} from './tsp-algorithms/tsp-algorithms.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import { ValidationErrorComponent } from './validation-error/validation-error.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    TspAlgorithmsComponent
+    TspAlgorithmsComponent,
+    ValidationErrorComponent
   ],
   imports: [
     BrowserModule,

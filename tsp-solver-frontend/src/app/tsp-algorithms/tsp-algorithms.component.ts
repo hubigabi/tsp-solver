@@ -36,18 +36,18 @@ export class TspAlgorithmsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.simulatedAnnealingForm.get('maxTemperature')!.setValidators(this.greaterThan('minTemperature'));
+    this.simulatedAnnealingForm.setValidators(this.greaterThan('maxTemperature', 'minTemperature'));
     paper.setup('canvas');
     this.cities = City.generateRandomCities(100, this.cityMaxX, this.cityMaxY);
     this.drawCities(this.cities)
   }
 
-  greaterThan(field: string): ValidatorFn {
+  greaterThan(field1Name: string, field2Name: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const group = control.parent;
-      const fieldToCompare = group!.get(field);
-      const notGreater = Number(fieldToCompare!.value) >= Number(control.value);
-      return notGreater ? {'notGreater': {value: control.value}} : null;
+      const field1 = control.get(field1Name);
+      const field2 = control.get(field2Name);
+      const notGreater = Number(field1!.value) <= Number(field2!.value);
+      return notGreater ? {'notGreater': {value: field1!.value}} : null;
     }
   }
 
