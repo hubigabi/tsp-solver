@@ -42,8 +42,7 @@
           Simulated annealing
         </label>
       </div>
-
-      <div class="row" [hidden]="chosenAlgorithm != '2'">
+      <div class="row pt-2" [hidden]="chosenAlgorithm != '2'">
         <form [formGroup]="simulatedAnnealingForm">
           <div class="form-group row px-3">
             <div class="col">
@@ -65,8 +64,8 @@
             </div>
 
             <div class="col">
-              <label for="epochsNumber" class="form-label">Epochs</label>
-              <input type="number" min="1" formControlName="epochsNumber" class="form-control" id="epochsNumber">
+              <label for="epochs-sa" class="form-label">Epochs</label>
+              <input type="number" min="0" step="50" formControlName="epochs" class="form-control" id="epochs-sa">
             </div>
           </div>
 
@@ -82,6 +81,37 @@
           Genetic algorithm
         </label>
       </div>
+      <div class="row pt-2" [hidden]="chosenAlgorithm != '3'">
+        <form [formGroup]="geneticAlgorithmForm">
+          <div class="form-group row px-3">
+            <div class="col">
+              <label for="populationSize" class="form-label">Population size</label>
+              <input type="number" min="0" step="5" required formControlName="populationSize" class="form-control"
+                     id="populationSize">
+            </div>
+
+            <div class="col">
+              <label for="elitismSize" class="form-label">Elitism size</label>
+              <input type="number" min="0" formControlName="elitismSize" class="form-control"
+                     id="elitismSize">
+            </div>
+
+            <div class="col">
+              <label for="mutationRate" class="form-label">Mutation rate</label>
+              <input type="number" step="0.01" min="0" max="1" formControlName="mutationRate" class="form-control"
+                     id="mutationRate">
+            </div>
+
+            <div class="col">
+              <label for="epochs-ga" class="form-label">Epochs</label>
+              <input type="number" min="0" step="100" formControlName="epochs" class="form-control" id="epochs-ga">
+            </div>
+          </div>
+
+          <app-validation-error [message]="'Wrong parameters!'"
+                                [hidden]="geneticAlgorithmForm.valid"></app-validation-error>
+        </form>
+      </div>
 
       <div class="form-check pt-3">
         <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="4" name="algorithmRadio"
@@ -89,10 +119,65 @@
         <label class="form-check-label" for="antColonyOptimizationRadio">
           Ant colony optimization
         </label>
+        <div class="row pt-2" [hidden]="chosenAlgorithm != '4'">
+          <form [formGroup]="antColonyOptimizationForm">
+            <div class="form-group row px-3">
+              <div class="col">
+                <label for="alpha" class="form-label">&alpha;</label>
+                <input type="number" min="0" step="0.1" required formControlName="alpha" class="form-control"
+                       id="alpha">
+              </div>
+
+              <div class="col">
+                <label for="beta" class="form-label">&beta;</label>
+                <input type="number" min="0" step="0.1" required formControlName="beta" class="form-control"
+                       id="beta">
+              </div>
+
+              <div class="col">
+                <label for="evaporationRate" class="form-label">Evaporation rate</label>
+                <input type="number" step="0.01" min="0" max="1" formControlName="evaporationRate" class="form-control"
+                       id="evaporationRate">
+              </div>
+
+              <div class="col">
+                <label for="q" class="form-label">Q</label>
+                <input type="number" min="0" step="10" required formControlName="q" class="form-control"
+                       id="q">
+              </div>
+            </div>
+
+            <div class="form-group row px-3 pt-2">
+              <div class="col">
+                <label for="antFactor" class="form-label">Ant factor</label>
+                <input type="number" step="0.1" min="0" formControlName="antFactor" class="form-control"
+                       id="antFactor">
+              </div>
+
+              <div class="col">
+                <label for="randomCitySelection" class="form-label">Random city selection</label>
+                <input type="number" step="0.01" min="0" max="1" formControlName="randomCitySelection"
+                       class="form-control"
+                       id="randomCitySelection">
+              </div>
+
+              <div class="col">
+                <label for="iterations" class="form-label">Iterations</label>
+                <input type="number" min="0" step="10" formControlName="iterations" class="form-control"
+                       id="iterations">
+              </div>
+            </div>
+
+            <app-validation-error [message]="'Wrong parameters!'"
+                                  [hidden]="antColonyOptimizationForm.valid"></app-validation-error>
+          </form>
+        </div>
       </div>
 
       <button type="submit" class="btn btn-primary mt-3" (click)="runAlgorithm()"
-              [disabled]="chosenAlgorithm == '2' && !simulatedAnnealingForm.valid">
+              [disabled]="(chosenAlgorithm == '2' && !simulatedAnnealingForm.valid)
+              || (chosenAlgorithm == '3' && !geneticAlgorithmForm.valid)
+              || (chosenAlgorithm == '4' && !antColonyOptimizationForm.valid)">
         Run algorithm
       </button>
     </div>
