@@ -10,6 +10,7 @@ import {
   Validators
 } from "@angular/forms";
 import {City} from "../model/City";
+import {TspAlgorithmService} from "../service/tsp-algorithm.service";
 
 @Component({
   selector: 'app-tsp-algorithms',
@@ -49,7 +50,7 @@ export class TspAlgorithmsComponent implements OnInit {
     iterations: [50, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
   });
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private tspAlgorithmService: TspAlgorithmService) {
   }
 
   ngOnInit(): void {
@@ -108,8 +109,8 @@ export class TspAlgorithmsComponent implements OnInit {
 
   runAlgorithm() {
     console.log(this.chosenAlgorithm);
-    console.log(this.simulatedAnnealingForm.value);
-    console.log(this.simulatedAnnealingForm.valid);
+    this.tspAlgorithmService.getNearestNeighbour(this.cities)
+      .subscribe(value => console.log(value));
   }
 
 }
