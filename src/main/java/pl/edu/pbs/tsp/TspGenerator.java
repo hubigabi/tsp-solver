@@ -63,4 +63,5 @@ public class TspGenerator {
 
         return travellingCostMatrix;
     }
+
 }

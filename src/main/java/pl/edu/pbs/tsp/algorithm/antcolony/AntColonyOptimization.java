@@ -14,7 +14,7 @@ public class AntColonyOptimization extends Algorithm {
 
     private double alpha = 1;
     private double beta = 5;
-    private double evaporation = 0.5;
+    private double evaporationRate = 0.5;
     private double Q = 500;
     private double antFactor = 0.8;
     private double randomCitySelection = 0.01;
@@ -31,11 +31,11 @@ public class AntColonyOptimization extends Algorithm {
     private List<Integer> bestCitiesOrder;
     private double bestTotalCost;
 
-    public AntColonyOptimization(double alpha, double beta, double evaporation, double q,
+    public AntColonyOptimization(double alpha, double beta, double evaporationRate, double q,
                                   double antFactor, double randomCitySelection, int maxIterations) {
         this.alpha = alpha;
         this.beta = beta;
-        this.evaporation = evaporation;
+        this.evaporationRate = evaporationRate;
         this.Q = q;
         this.antFactor = antFactor;
         this.randomCitySelection = randomCitySelection;
@@ -134,7 +134,7 @@ public class AntColonyOptimization extends Algorithm {
     private void updateTrails() {
         for (int i = 0; i < citiesNumber; i++) {
             for (int j = 0; j < citiesNumber; j++) {
-                pheromoneMatrix[i][j] *= evaporation;
+                pheromoneMatrix[i][j] *= evaporationRate;
             }
         }
         for (Ant a : ants) {
