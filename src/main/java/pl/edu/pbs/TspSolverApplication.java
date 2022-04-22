@@ -27,7 +27,7 @@ public class TspSolverApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void compareAlgorithms() {
         System.out.println("Starting...");
-        List<City> cities = TspGenerator.generateCities(100);
+        List<City> cities = TspGenerator.generateCities(50);
         double[][] travellingCostMatrix = TspGenerator.toTravellingCostMatrix(cities);
 
         System.out.println("Nearest neighbour algorithm");

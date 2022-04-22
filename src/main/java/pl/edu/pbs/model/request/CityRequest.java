@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class CityRequest {
 
-    public int id;
-    public double x;
-    public double y;
+    private int id;
+    private double x;
+    private double y;
 
 }

@@ -32,7 +32,7 @@ public class AntColonyOptimization extends Algorithm {
     private double bestTotalCost;
 
     public AntColonyOptimization(double alpha, double beta, double evaporationRate, double q,
-                                  double antFactor, double randomCitySelection, int maxIterations) {
+                                 double antFactor, double randomCitySelection, int maxIterations) {
         this.alpha = alpha;
         this.beta = beta;
         this.evaporationRate = evaporationRate;
@@ -89,13 +89,7 @@ public class AntColonyOptimization extends Algorithm {
 
     private int selectNextCity(Ant ant) {
         if (ThreadLocalRandom.current().nextDouble() < randomCitySelection) {
-            ArrayList<Integer> notVisitedCities = new ArrayList<>();
-            for (int i = 0; i < ant.visited.length; i++) {
-                if (!ant.visited[i]) {
-                    notVisitedCities.add(i);
-                }
-            }
-            return notVisitedCities.get(ThreadLocalRandom.current().nextInt(notVisitedCities.size()));
+            return selectRandomCity(ant);
         }
 
         double[] probabilities = getProbabilityForVisitingCity(ant);
@@ -108,7 +102,19 @@ public class AntColonyOptimization extends Algorithm {
             }
         }
 
-        throw new IllegalStateException("There are no other cities to select");
+        //Rarely happens, when there are a lot of iterations and only one city was left to visit
+        //Caused by Nan
+        return selectRandomCity(ant);
+    }
+
+    private Integer selectRandomCity(Ant ant) {
+        ArrayList<Integer> notVisitedCities = new ArrayList<>();
+        for (int i = 0; i < ant.visited.length; i++) {
+            if (!ant.visited[i]) {
+                notVisitedCities.add(i);
+            }
+        }
+        return notVisitedCities.get(ThreadLocalRandom.current().nextInt(notVisitedCities.size()));
     }
 
     public double[] getProbabilityForVisitingCity(Ant ant) {
