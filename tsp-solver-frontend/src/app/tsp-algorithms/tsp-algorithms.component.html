@@ -188,10 +188,10 @@
       <thead>
       <tr>
         <th scope="col">#</th>
-        <th scope="col">Algorithm</th>
-        <th scope="col">Parameters</th>
-        <th scope="col">Calculation time</th>
-        <th scope="col">Total cost</th>
+        <th scope="col" (click)="sortTable('algorithmType')">Algorithm</th>
+        <th scope="col" (click)="sortTable('parameters')">Parameters</th>
+        <th scope="col" (click)="sortTable('calculationTime')">Calculation time</th>
+        <th scope="col" (click)="sortTable('totalCost')">Total cost</th>
         <th scope="col">Order</th>
       </tr>
       </thead>

@@ -52,6 +52,7 @@ export class TspAlgorithmsComponent implements OnInit {
   routeAlgorithmRows: RouteAlgorithmRow[] = [];
   idCounter = 0;
   requestStatuses = RequestStatus;
+  tableAscSortOrder = true;
 
   constructor(private fb: FormBuilder, private tspAlgorithmService: TspAlgorithmService) {
   }
@@ -247,6 +248,15 @@ export class TspAlgorithmsComponent implements OnInit {
     const startingCity = this.cities[0];
     const path = new paper.Path.Circle(new paper.Point(startingCity.x * widthRate, startingCity.y * heightRate), 10);
     path.strokeColor = new paper.Color('red');
+  }
+
+  sortTable(colName: keyof RouteAlgorithmRow) {
+    if (this.tableAscSortOrder) {
+      this.routeAlgorithmRows.sort((a, b) => a[colName] < b[colName] ? 1 : a[colName] > b[colName] ? -1 : 0)
+    } else {
+      this.routeAlgorithmRows.sort((a, b) => a[colName] > b[colName] ? 1 : a[colName] < b[colName] ? -1 : 0)
+    }
+    this.tableAscSortOrder = !this.tableAscSortOrder
   }
 
 }

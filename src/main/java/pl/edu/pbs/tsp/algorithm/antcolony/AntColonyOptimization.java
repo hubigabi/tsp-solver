@@ -103,7 +103,7 @@ public class AntColonyOptimization extends Algorithm {
         }
 
         //Rarely happens, when there are a lot of iterations and only one city was left to visit
-        //Caused by Nan
+        //Caused by NaN
         return selectRandomCity(ant);
     }
 
