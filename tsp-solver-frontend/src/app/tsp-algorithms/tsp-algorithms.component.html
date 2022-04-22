@@ -23,7 +23,7 @@
         <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="0"
                name="algorithmRadio" id="nearestNeighbourAlgorithmRadio">
         <label class="form-check-label" for="nearestNeighbourAlgorithmRadio">
-          Nearest Neighbour Algorithm
+          Nearest Neighbour
         </label>
       </div>
 
@@ -181,7 +181,62 @@
         Run algorithm
       </button>
     </div>
+  </div>
 
+  <div class="mb-5" *ngIf="routeAlgorithmRows.length > 0">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Algorithm</th>
+        <th scope="col">Parameters</th>
+        <th scope="col">Calculation time</th>
+        <th scope="col">Total cost</th>
+        <th scope="col">Order</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let routeAlgorithmRow of routeAlgorithmRows; index as i">
+        <th scope="row">{{ i + 1 }}</th>
+        <td>{{ routeAlgorithmRow.algorithmType }}</td>
+        <td>{{ routeAlgorithmRow.parameters }}</td>
+
+        <td>
+          <ng-container *ngIf="routeAlgorithmRow.completed; else notCompleted">
+            {{ routeAlgorithmRow.calculationTime | number }}
+          </ng-container>
+
+          <ng-template #notCompleted>
+            <div class="spinner-border text-success" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </ng-template>
+        </td>
+
+        <td>
+          <ng-container *ngIf="routeAlgorithmRow.completed; else notCompleted">
+            {{ routeAlgorithmRow.totalCost | number }}
+          </ng-container>
+          <ng-template #notCompleted>
+            <div class="spinner-border text-success" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </ng-template>
+        </td>
+
+        <td>
+          <ng-container *ngIf="routeAlgorithmRow.completed; else notCompleted">
+            {{ routeAlgorithmRow.citiesOrder }}
+          </ng-container>
+          <ng-template #notCompleted>
+            <div class="spinner-border text-success" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </ng-template>
+        </td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 
 </div>

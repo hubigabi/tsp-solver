@@ -4,13 +4,15 @@ import {
   AbstractControl,
   FormBuilder,
   FormControl,
-  FormGroup,
   ValidationErrors,
   ValidatorFn,
   Validators
 } from "@angular/forms";
 import {City} from "../model/City";
 import {TspAlgorithmService} from "../service/tsp-algorithm.service";
+import {RouteAlgorithmRow} from "./RouteAlgorithmRow";
+import {Observable} from "rxjs";
+import {RouteAlgorithm} from "../model/RouteAlgorithm";
 
 @Component({
   selector: 'app-tsp-algorithms',
@@ -49,6 +51,9 @@ export class TspAlgorithmsComponent implements OnInit {
     randomCitySelection: [0.01, [Validators.required, Validators.min(0.0), Validators.max(1)]],
     iterations: [50, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
   });
+
+  routeAlgorithmRows: RouteAlgorithmRow[] = [];
+  idCounter = 0;
 
   constructor(private fb: FormBuilder, private tspAlgorithmService: TspAlgorithmService) {
   }
@@ -108,9 +113,45 @@ export class TspAlgorithmsComponent implements OnInit {
   }
 
   runAlgorithm() {
-    console.log(this.chosenAlgorithm);
-    this.tspAlgorithmService.getNearestNeighbour(this.cities)
-      .subscribe(value => console.log(value));
+    const routeAlgorithmRowId = this.idCounter++
+    const routeAlgorithmRow: RouteAlgorithmRow = {
+      id: routeAlgorithmRowId,
+      algorithmType: '',
+      parameters: '',
+      calculationTime: 0,
+      totalCost: 0,
+      citiesOrder: [],
+      completed: false
+    };
+    let routeAlgorithm!: Observable<RouteAlgorithm>;
+
+    switch (this.chosenAlgorithm) {
+      case '0': {
+        routeAlgorithmRow.algorithmType = 'Nearest Neighbour';
+        routeAlgorithm = this.tspAlgorithmService.getNearestNeighbour(this.cities);
+        break;
+      }
+      case '1': {
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
+    this.routeAlgorithmRows.push(routeAlgorithmRow);
+
+    routeAlgorithm.subscribe(value => {
+      let completedRouteAlgorithmRow = this.routeAlgorithmRows.find(e => e.id === routeAlgorithmRowId);
+
+      if (completedRouteAlgorithmRow !== undefined) {
+        completedRouteAlgorithmRow.totalCost = value.totalCost;
+        completedRouteAlgorithmRow.calculationTime = value.calculationTime;
+        completedRouteAlgorithmRow.citiesOrder = value.citiesOrder;
+        completedRouteAlgorithmRow.completed = true;
+      }
+    })
+
   }
 
 }
