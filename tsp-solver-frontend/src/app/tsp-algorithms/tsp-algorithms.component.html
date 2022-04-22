@@ -226,7 +226,7 @@
 
         <td>
           <ng-container *ngIf="routeAlgorithmRow.completed; else notCompleted">
-            {{ routeAlgorithmRow.citiesOrder }}
+            <a href="#" (click)="drawCitiesOrder(routeAlgorithmRow.citiesOrder)">Order</a>
           </ng-container>
           <ng-template #notCompleted>
             <div class="spinner-border text-success" role="status">
