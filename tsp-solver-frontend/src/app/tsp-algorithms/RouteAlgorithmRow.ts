@@ -1,3 +1,5 @@
+import {RequestStatus} from "./RequestStatus";
+
 export interface RouteAlgorithmRow {
   id: number;
   algorithmType: string;
@@ -5,5 +7,5 @@ export interface RouteAlgorithmRow {
   calculationTime: number;
   totalCost: number;
   citiesOrder: number[];
-  completed: boolean
+  status: RequestStatus
 }

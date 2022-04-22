@@ -1,18 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import * as paper from 'paper';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  ValidationErrors,
-  ValidatorFn,
-  Validators
-} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
 import {City} from "../model/City";
 import {TspAlgorithmService} from "../service/tsp-algorithm.service";
 import {RouteAlgorithmRow} from "./RouteAlgorithmRow";
 import {Observable} from "rxjs";
 import {RouteAlgorithm} from "../model/RouteAlgorithm";
+import {SimulatedAnnealingRequest} from "../model/request/SimulatedAnnealingRequest";
+import {GeneticAlgorithmRequest} from "../model/request/GeneticAlgorithmRequest";
+import {AntColonyRequest} from "../model/request/AntColonyRequest";
+import {RequestStatus} from "./RequestStatus";
 
 @Component({
   selector: 'app-tsp-algorithms',
@@ -54,6 +51,7 @@ export class TspAlgorithmsComponent implements OnInit {
 
   routeAlgorithmRows: RouteAlgorithmRow[] = [];
   idCounter = 0;
+  requestStatuses = RequestStatus;
 
   constructor(private fb: FormBuilder, private tspAlgorithmService: TspAlgorithmService) {
   }
@@ -90,36 +88,103 @@ export class TspAlgorithmsComponent implements OnInit {
       calculationTime: 0,
       totalCost: 0,
       citiesOrder: [],
-      completed: false
+      status: RequestStatus.ONGOING
     };
     let routeAlgorithm!: Observable<RouteAlgorithm>;
 
     switch (this.chosenAlgorithm) {
       case '0': {
-        routeAlgorithmRow.algorithmType = 'Nearest Neighbour';
+        routeAlgorithmRow.algorithmType = 'Nearest neighbour';
         routeAlgorithm = this.tspAlgorithmService.getNearestNeighbour(this.cities);
         break;
       }
       case '1': {
+        routeAlgorithmRow.algorithmType = '2-opt';
+        routeAlgorithm = this.tspAlgorithmService.getTwoOpt(this.cities);
+        break;
+      }
+      case '2': {
+        const maxTemperature = this.simulatedAnnealingForm.get('maxTemperature')!.value;
+        const minTemperature = this.simulatedAnnealingForm.get('minTemperature')!.value;
+        const coolingRate = this.simulatedAnnealingForm.get('coolingRate')!.value;
+        const epochs = this.simulatedAnnealingForm.get('epochs')!.value;
+
+        routeAlgorithmRow.algorithmType = 'Simulated annealing';
+        routeAlgorithmRow.parameters = `Max temperature = ${maxTemperature}, `
+          + `Min  temperature = ${minTemperature}, `
+          + `Cooling rate = ${coolingRate}, `
+          + `Epochs = ${epochs}`;
+
+        const simulatedAnnealingRequest = new SimulatedAnnealingRequest(this.cities,
+          maxTemperature, minTemperature, coolingRate, epochs);
+        routeAlgorithm = this.tspAlgorithmService.getSimulatedAnnealing(simulatedAnnealingRequest);
+        break;
+      }
+      case '3': {
+        const populationSize = this.geneticAlgorithmForm.get('populationSize')!.value;
+        const elitismSize = this.geneticAlgorithmForm.get('elitismSize')!.value;
+        const mutationRate = this.geneticAlgorithmForm.get('mutationRate')!.value;
+        const epochs = this.geneticAlgorithmForm.get('epochs')!.value;
+
+        routeAlgorithmRow.algorithmType = 'Genetic algorithm';
+        routeAlgorithmRow.parameters = `Population size = ${populationSize}, `
+          + `Elitism  size = ${elitismSize}, `
+          + `Mutation rate = ${mutationRate}, `
+          + `Epochs = ${epochs}`;
+
+        const geneticAlgorithmRequest = new GeneticAlgorithmRequest(this.cities,
+          populationSize, elitismSize, mutationRate, epochs);
+        routeAlgorithm = this.tspAlgorithmService.getGeneticAlgorithm(geneticAlgorithmRequest);
+        break;
+      }
+      case '4': {
+        const alpha = this.antColonyOptimizationForm.get('alpha')!.value;
+        const beta = this.antColonyOptimizationForm.get('beta')!.value;
+        const evaporationRate = this.antColonyOptimizationForm.get('evaporationRate')!.value;
+        const q = this.antColonyOptimizationForm.get('q')!.value;
+        const antFactor = this.antColonyOptimizationForm.get('antFactor')!.value;
+        const randomCitySelection = this.antColonyOptimizationForm.get('randomCitySelection')!.value;
+        const iterations = this.antColonyOptimizationForm.get('iterations')!.value;
+
+        routeAlgorithmRow.algorithmType = 'Ant colony optimization';
+        routeAlgorithmRow.parameters = `α = ${alpha}, `
+          + `β = ${beta}, `
+          + `Evaporation = ${evaporationRate}, `
+          + `Q = ${q}, `
+          + `Ant factor = ${antFactor}, `
+          + `Random selection = ${randomCitySelection}, `
+          + `Iterations = ${iterations}`;
+
+        const antColonyRequest = new AntColonyRequest(this.cities,
+          alpha, beta, evaporationRate, q, antFactor, randomCitySelection, iterations);
+        routeAlgorithm = this.tspAlgorithmService.getAntColonyOptimization(antColonyRequest);
         break;
       }
       default: {
         break;
       }
     }
-
     this.routeAlgorithmRows.push(routeAlgorithmRow);
 
-    routeAlgorithm.subscribe(value => {
-      let completedRouteAlgorithmRow = this.routeAlgorithmRows.find(e => e.id === routeAlgorithmRowId);
+    routeAlgorithm.subscribe({
+      next: value => {
+        let completedRouteAlgorithmRow = this.routeAlgorithmRows.find(e => e.id === routeAlgorithmRowId);
 
-      if (completedRouteAlgorithmRow !== undefined) {
-        completedRouteAlgorithmRow.totalCost = value.totalCost;
-        completedRouteAlgorithmRow.calculationTime = value.calculationTime;
-        completedRouteAlgorithmRow.citiesOrder = value.citiesOrder;
-        completedRouteAlgorithmRow.completed = true;
+        if (completedRouteAlgorithmRow !== undefined) {
+          completedRouteAlgorithmRow.totalCost = value.totalCost;
+          completedRouteAlgorithmRow.calculationTime = value.calculationTime;
+          completedRouteAlgorithmRow.citiesOrder = value.citiesOrder;
+          completedRouteAlgorithmRow.status = RequestStatus.SUCCESS;
+        }
+      },
+      error: value => {
+        let completedRouteAlgorithmRow = this.routeAlgorithmRows.find(e => e.id === routeAlgorithmRowId);
+
+        if (completedRouteAlgorithmRow !== undefined) {
+          completedRouteAlgorithmRow.status = RequestStatus.FAILURE;
+        }
       }
-    })
+    });
 
   }
 
