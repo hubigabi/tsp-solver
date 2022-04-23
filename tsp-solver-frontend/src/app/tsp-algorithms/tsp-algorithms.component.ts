@@ -36,7 +36,7 @@ export class TspAlgorithmsComponent implements OnInit {
     populationSize: [100, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
     elitismSize: [20, [Validators.required, Validators.min(0), Validators.pattern("^[0-9]*$")]],
     mutationRate: [0.01, [Validators.required, Validators.min(0.0), Validators.max(1)]],
-    epochs: [10000, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
+    epochs: [1000, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
   });
 
   antColonyOptimizationForm = this.fb.group({

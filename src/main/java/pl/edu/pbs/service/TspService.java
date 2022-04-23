@@ -46,7 +46,7 @@ public class TspService {
                 request.getQ(), request.getAntFactor(), request.getRandomCitySelection(), request.getMaxIterations()).getRoute(costMatrix);
     }
 
-    private static double[][] toTravellingCostMatrix(List<CityRequest> cities) {
+    public double[][] toTravellingCostMatrix(List<CityRequest> cities) {
         int citiesNumber = cities.size();
         double[][] travellingCostMatrix = new double[citiesNumber][citiesNumber];
 
@@ -59,7 +59,7 @@ public class TspService {
         return travellingCostMatrix;
     }
 
-    private static double getDistance(CityRequest city1, CityRequest city2) {
+    private double getDistance(CityRequest city1, CityRequest city2) {
         double x = Math.abs(city1.getX() - city2.getX());
         double y = Math.abs(city1.getY() - city2.getY());
         return Math.hypot(x, y);
