@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import * as cytoscape from 'cytoscape';
 
+declare var require: any
+const automove = require('cytoscape-automove');
+
 @Component({
   selector: 'app-graph-spp',
   templateUrl: './graph-spp.component.html',
@@ -12,6 +15,8 @@ export class GraphSppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    cytoscape.use(automove);
+
     const cy = cytoscape({
       container: document.getElementById('cy'),
 
@@ -51,9 +56,17 @@ export class GraphSppComponent implements OnInit {
       layout: {
         name: 'grid',
         rows: 1
-      }
+      },
 
+      minZoom: 0.6,
+      maxZoom: 3,
     });
+
+    (cy as any).automove({
+      nodesMatching: (node: any) => true,
+      reposition: 'viewport'
+    });
+
   }
 
 }
