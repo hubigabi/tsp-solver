@@ -9,13 +9,15 @@ import {TspAlgorithmsComponent} from './tsp-algorithms/tsp-algorithms.component'
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ValidationErrorComponent} from './validation-error/validation-error.component';
+import {GraphSppComponent} from "./graph-spp/graph-spp.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     TspAlgorithmsComponent,
-    ValidationErrorComponent
+    ValidationErrorComponent,
+    GraphSppComponent
   ],
   imports: [
     BrowserModule,
