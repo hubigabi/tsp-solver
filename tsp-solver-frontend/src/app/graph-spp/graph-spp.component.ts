@@ -14,6 +14,7 @@ const automove = require('cytoscape-automove');
 export class GraphSppComponent implements OnInit {
 
   roadTypes: RoadType[] = [];
+  isRoadTypesCollapsed = false;
   cy!: cytoscape.Core;
   newCityName = new FormControl('', [Validators.required, this.noWhitespaceValidator]);
 
@@ -23,11 +24,14 @@ export class GraphSppComponent implements OnInit {
     color: [this.getRandomColor(), [Validators.required]],
   });
 
+  selectedRoadTypeId = -1;
+
   constructor(private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
     this.roadTypes = RoadType.getDefault();
+    this.clearRoadTypeForm();
     cytoscape.use(automove);
 
     this.cy = cytoscape({
@@ -105,20 +109,47 @@ export class GraphSppComponent implements OnInit {
   deleteRoadType(roadType: RoadType) {
     let index = this.roadTypes.findIndex(value => value.id == roadType.id);
     if (index > -1) {
+      if (this.roadTypes[index].id == this.selectedRoadTypeId) {
+        this.selectedRoadTypeId = -1;
+      }
+
       this.roadTypes.splice(index, 1);
     }
   }
 
-  saveRoadType() {
-    let id = Math.max.apply(Math, this.roadTypes.map(value => value.id)) + 1;
+  addRoadType() {
+    let id = 1;
+    if (this.roadTypes.length > 0) {
+      id = Math.max.apply(Math, this.roadTypes.map(value => value.id)) + 1
+    }
+
     const type = this.roadTypeForm.get('type')!.value;
     const weight = this.roadTypeForm.get('weight')!.value;
     const color = this.roadTypeForm.get('color')!.value;
-    console.log(id);
 
     let roadType = new RoadType(id, type, weight, color);
     this.roadTypes.push(roadType);
+    this.selectedRoadTypeId = -1;
+    this.clearRoadTypeForm();
+  }
 
+  editRoadType() {
+    const type = this.roadTypeForm.get('type')!.value;
+    const weight = this.roadTypeForm.get('weight')!.value;
+    const color = this.roadTypeForm.get('color')!.value;
+
+    let selectedRoadTypes = this.roadTypes.find(value => value.id == this.selectedRoadTypeId);
+
+    if (selectedRoadTypes !== undefined) {
+      selectedRoadTypes.type = type;
+      selectedRoadTypes.weight = weight;
+      selectedRoadTypes.color = color;
+    }
+    this.selectedRoadTypeId = -1;
+    this.clearRoadTypeForm();
+  }
+
+  clearRoadTypeForm() {
     this.roadTypeForm.get('type')!.setValue('');
     this.roadTypeForm.get('weight')!.setValue('1.0');
     this.roadTypeForm.get('color')!.setValue(this.getRandomColor());
@@ -133,5 +164,11 @@ export class GraphSppComponent implements OnInit {
     return color;
   }
 
+  selectEditingRoadType(roadType: RoadType) {
+    this.selectedRoadTypeId = roadType.id;
+    this.roadTypeForm.get('type')!.setValue(roadType.type);
+    this.roadTypeForm.get('weight')!.setValue(roadType.weight);
+    this.roadTypeForm.get('color')!.setValue(roadType.color);
+  }
 
 }

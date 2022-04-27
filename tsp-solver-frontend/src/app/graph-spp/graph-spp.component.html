@@ -13,69 +13,84 @@
         <div class="col-3">
           <input type="text" [formControl]="newCityName" class="form-control" id="cityName">
         </div>
-        <div class="col-3">
+        <div class="col-auto">
           <button type="submit" class="btn btn-primary" (click)="addCity()"
                   [disabled]=" !newCityName.valid">Add city
           </button>
         </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-outline-primary" (click)="roadTypeCollapse.toggle()"
+                  [attr.aria-expanded]="!isRoadTypesCollapsed">
+            Road types
+          </button>
+        </div>
       </div>
 
-      <table class="table table-striped mt-4" *ngIf="roadTypes.length > 0">
-        <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Type</th>
-          <th scope="col">Weight</th>
-          <th scope="col">Color</th>
-          <th scope="col">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let roadType of roadTypes; index as i">
-          <th scope="row">{{ i + 1 }}</th>
-          <td>{{ roadType.type }}</td>
-          <td>{{ roadType.weight | number}} </td>
-          <td>
-            <input type="color" class="form-control form-control-color" value="{{ roadType.color }}" disabled>
-          </td>
-          <td>
-            <button class="btn mx" (click)="deleteRoadType(roadType)"><i class="bi bi-pencil-fill"></i></button>
-            <button class="btn mx" (click)="deleteRoadType(roadType)"><i class="bi bi-trash-fill"></i></button>
-          </td>
-        </tbody>
-      </table>
-
-      <div class="row" [hidden]="false">
-        <form [formGroup]="roadTypeForm">
-          <div class="form-group row">
-            <div class="col">
-              <label for="roadType" class="form-label">Type</label>
-              <input type="text" formControlName="type" class="form-control" id="roadType">
-            </div>
-
-            <div class="col">
-              <label for="roadWeight" class="form-label">Weight</label>
-              <input type="number" min="0.1" max="10" step="0.1" formControlName="weight" class="form-control"
-                     id="roadWeight">
-            </div>
-
-            <div class="col-auto">
-              <label for="roadColor" class="form-label">Color</label>
-              <input type="color" formControlName="color" class="form-control form-control-color" id="roadColor">
-            </div>
-
-            <div class="col-auto" style="position:relative">
-              <button type="submit" class="btn btn-primary px-4" (click)="saveRoadType()"
-                      style="position: absolute; bottom:0;" [disabled]="!roadTypeForm.valid">Save
+      <div #roadTypeCollapse="ngbCollapse" [(ngbCollapse)]="isRoadTypesCollapsed">
+        <table class="table table-striped mt-4" *ngIf="roadTypes.length > 0">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Type</th>
+            <th scope="col">Weight</th>
+            <th scope="col">Color</th>
+            <th scope="col">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let roadType of roadTypes">
+            <td>{{ roadType.id }}</td>
+            <td>{{ roadType.type }}</td>
+            <td>{{ roadType.weight  | number : '1.2-2'}} </td>
+            <td>
+              <input type="color" class="form-control form-control-color" value="{{ roadType.color }}" disabled>
+            </td>
+            <td>
+              <button class="btn mx" (click)="selectEditingRoadType(roadType)"><i class="bi bi-pencil-fill"></i>
               </button>
-            </div>
-          </div>
-        </form>
-      </div>
+              <button class="btn mx" (click)="deleteRoadType(roadType)"><i class="bi bi-trash-fill"></i></button>
+            </td>
+          </tbody>
+        </table>
 
+        <div class="row">
+          <form [formGroup]="roadTypeForm">
+            <div class="form-group row">
+              <div class="col">
+                <label for="roadType" class="form-label">Type</label>
+                <input type="text" formControlName="type" class="form-control" id="roadType">
+              </div>
+
+              <div class="col">
+                <label for="roadWeight" class="form-label">Weight</label>
+                <input type="number" min="0.1" max="10" step="0.1" formControlName="weight" class="form-control"
+                       id="roadWeight">
+              </div>
+
+              <div class="col-auto">
+                <label for="roadColor" class="form-label">Color</label>
+                <input type="color" formControlName="color" class="form-control form-control-color" id="roadColor">
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="row pt-2">
+          <div class="col-auto" *ngIf="selectedRoadTypeId!= -1">
+            <button type="submit" class="btn btn-primary px-4" (click)="editRoadType()"
+                    [disabled]="!roadTypeForm.valid">Edit
+            </button>
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary px-4" (click)="addRoadType()"
+                    [disabled]="!roadTypeForm.valid">Add
+            </button>
+          </div>
+        </div>
+
+      </div>
     </div>
 
   </div>
-
 
 </div>
