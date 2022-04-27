@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as cytoscape from 'cytoscape';
-import {FormControl, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, Validators} from "@angular/forms";
 import {RoadType} from "./RoadType";
 
 declare var require: any
@@ -17,7 +17,13 @@ export class GraphSppComponent implements OnInit {
   cy!: cytoscape.Core;
   newCityName = new FormControl('', [Validators.required, this.noWhitespaceValidator]);
 
-  constructor() {
+  roadTypeForm = this.fb.group({
+    type: ['', [Validators.required, this.noWhitespaceValidator]],
+    weight: [1.0, [Validators.required, Validators.min(0.1), Validators.max(10)]],
+    color: [this.getRandomColor(), [Validators.required]],
+  });
+
+  constructor(private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
@@ -102,5 +108,30 @@ export class GraphSppComponent implements OnInit {
       this.roadTypes.splice(index, 1);
     }
   }
+
+  saveRoadType() {
+    let id = Math.max.apply(Math, this.roadTypes.map(value => value.id)) + 1;
+    const type = this.roadTypeForm.get('type')!.value;
+    const weight = this.roadTypeForm.get('weight')!.value;
+    const color = this.roadTypeForm.get('color')!.value;
+    console.log(id);
+
+    let roadType = new RoadType(id, type, weight, color);
+    this.roadTypes.push(roadType);
+
+    this.roadTypeForm.get('type')!.setValue('');
+    this.roadTypeForm.get('weight')!.setValue('1.0');
+    this.roadTypeForm.get('color')!.setValue(this.getRandomColor());
+  }
+
+  getRandomColor(): string {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
 
 }
