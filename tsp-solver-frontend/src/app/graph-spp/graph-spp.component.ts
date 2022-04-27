@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as cytoscape from 'cytoscape';
+import {FormControl, Validators} from "@angular/forms";
 
 declare var require: any
 const automove = require('cytoscape-automove');
@@ -11,24 +12,27 @@ const automove = require('cytoscape-automove');
 })
 export class GraphSppComponent implements OnInit {
 
+  cy!: cytoscape.Core;
+  newCityName = new FormControl('', [Validators.required, this.noWhitespaceValidator]);
+
   constructor() {
   }
 
   ngOnInit(): void {
     cytoscape.use(automove);
 
-    const cy = cytoscape({
+    this.cy = cytoscape({
       container: document.getElementById('cy'),
 
       elements: [
         {
-          data: {id: 'a'}
+          data: {id: 'A'}
         },
         {
-          data: {id: 'b'}
+          data: {id: 'B'}
         },
         {
-          data: {id: 'ab', source: 'a', target: 'b'}
+          data: {id: 'AB', source: 'A', target: 'B'}
         }
       ],
 
@@ -62,11 +66,32 @@ export class GraphSppComponent implements OnInit {
       maxZoom: 3,
     });
 
-    (cy as any).automove({
+    (this.cy as any).automove({
       nodesMatching: (node: any) => true,
       reposition: 'viewport'
     });
 
+  }
+
+  public noWhitespaceValidator(control: FormControl) {
+    const isWhitespace = (control.value || '').trim().length === 0;
+    const isValid = !isWhitespace;
+    return isValid ? null : {'whitespace': true};
+  }
+
+  addCity() {
+    const name = this.newCityName.value;
+    const nodesIdLength = this.cy.filter(`node[id = "${name}"]`).length
+    if (nodesIdLength == 0) {
+      this.cy.add({
+        group: 'nodes',
+        position: {x: 200, y: 200},
+        data: {id: name, weight: 75},
+      });
+    } else {
+      alert("Node with this name already exists");
+      this.newCityName.setValue('');
+    }
   }
 
 }

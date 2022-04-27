@@ -4,12 +4,21 @@
 
   <div class="row gx-5">
     <div class="col-7">
-      <label class="form-label">AAAAA</label>
       <div id="cy"></div>
     </div>
 
-    <div class="col-5 pt-5">
-      <label class="form-label">BBBBB</label>
+    <div class="col-5">
+      <label for="cityName" class="form-label">City name</label>
+      <div class="row">
+        <div class="col-3">
+          <input type="text" [formControl]="newCityName" class="form-control" id="cityName">
+        </div>
+        <div class="col-3">
+          <button type="submit" class="btn btn-primary" (click)="addCity()"
+                  [disabled]=" !newCityName.valid">Add city
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
