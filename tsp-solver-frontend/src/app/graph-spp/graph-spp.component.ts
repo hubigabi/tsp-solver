@@ -35,20 +35,21 @@ export class GraphSppComponent implements OnInit {
           data: {id: 'AB', source: 'A', target: 'B'}
         }
       ],
-
       style: [
         {
           selector: 'node',
           style: {
             'background-color': '#666',
-            'label': 'data(id)'
+            'width': 20,
+            'height': 20,
+            'label': 'data(id)',
+            "font-size": 10
           }
         },
-
         {
           selector: 'edge',
           style: {
-            'width': 3,
+            'width': 2,
             'line-color': '#ccc',
             'target-arrow-color': '#ccc',
             'target-arrow-shape': 'triangle',
@@ -56,12 +57,10 @@ export class GraphSppComponent implements OnInit {
           }
         }
       ],
-
       layout: {
-        name: 'grid',
-        rows: 1
+        name: 'cose',
+        animate: false,
       },
-
       minZoom: 0.6,
       maxZoom: 3,
     });
@@ -85,7 +84,7 @@ export class GraphSppComponent implements OnInit {
     if (nodesIdLength == 0) {
       this.cy.add({
         group: 'nodes',
-        position: {x: 200, y: 200},
+        position: {x: this.cy.extent().x1 + 30, y: this.cy.extent().y1 + 30},
         data: {id: name, weight: 75},
       });
     } else {
