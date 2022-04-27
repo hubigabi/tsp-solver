@@ -19,7 +19,34 @@
           </button>
         </div>
       </div>
+
+      <table class="table table-striped mt-4" *ngIf="roadTypes.length > 0">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Type</th>
+          <th scope="col">Weight</th>
+          <th scope="col">Color</th>
+          <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let roadType of roadTypes; index as i">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ roadType.type }}</td>
+          <td>{{ roadType.weight | number}} </td>
+          <td>
+            <input type="color" class="form-control form-control-color" value="{{ roadType.color }}" disabled>
+          </td>
+          <td>
+            <button class="btn mx"><i class="bi bi-pencil-fill" (click)="deleteRoadType(roadType)"></i></button>
+            <button class="btn mx"><i class="bi bi-trash-fill" (click)="deleteRoadType(roadType)"></i></button>
+          </td>
+        </tbody>
+      </table>
+
     </div>
+
   </div>
 
 

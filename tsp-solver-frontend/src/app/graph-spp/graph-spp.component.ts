@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import * as cytoscape from 'cytoscape';
 import {FormControl, Validators} from "@angular/forms";
+import {RoadType} from "./RoadType";
 
 declare var require: any
 const automove = require('cytoscape-automove');
@@ -12,6 +13,7 @@ const automove = require('cytoscape-automove');
 })
 export class GraphSppComponent implements OnInit {
 
+  roadTypes: RoadType[] = [];
   cy!: cytoscape.Core;
   newCityName = new FormControl('', [Validators.required, this.noWhitespaceValidator]);
 
@@ -19,6 +21,7 @@ export class GraphSppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.roadTypes = RoadType.getDefault();
     cytoscape.use(automove);
 
     this.cy = cytoscape({
@@ -90,6 +93,13 @@ export class GraphSppComponent implements OnInit {
     } else {
       alert("Node with this name already exists");
       this.newCityName.setValue('');
+    }
+  }
+
+  deleteRoadType(roadType: RoadType) {
+    let index = this.roadTypes.findIndex(value => value.id == roadType.id);
+    if (index > -1) {
+      this.roadTypes.splice(index, 1);
     }
   }
 
