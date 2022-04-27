@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import * as cytoscape from 'cytoscape';
 import {FormBuilder, FormControl, Validators} from "@angular/forms";
 import {RoadType} from "./RoadType";
+import {EdgeSingular} from "cytoscape";
+import {Edge} from "./Edge";
 
 declare var require: any
 const automove = require('cytoscape-automove');
@@ -25,6 +27,9 @@ export class GraphSppComponent implements OnInit {
   });
 
   selectedRoadTypeId = -1;
+  selectedNodeId = '';
+  selectedNodeEdges: Edge[] = [];
+  selectedEdgeId = '';
 
   constructor(private fb: FormBuilder) {
   }
@@ -45,7 +50,10 @@ export class GraphSppComponent implements OnInit {
           data: {id: 'B'}
         },
         {
-          data: {id: 'AB', source: 'A', target: 'B'}
+          data: {id: 'AB', source: 'A', target: 'B', distance: 15, roadType: this.roadTypes[0], bearingCapacity: 30}
+        },
+        {
+          data: {id: 'BA', source: 'B', target: 'A', distance: 20, roadType: this.roadTypes[1], bearingCapacity: 25}
         }
       ],
       style: [
@@ -81,6 +89,15 @@ export class GraphSppComponent implements OnInit {
     (this.cy as any).automove({
       nodesMatching: (node: any) => true,
       reposition: 'viewport'
+    });
+
+    this.cy.on('tap', 'node', event => {
+      const node = event.target;
+      this.selectedNodeId = node.id();
+      this.selectedNodeEdges = event.target.connectedEdges().map((edge: EdgeSingular) => {
+        let data = edge.data();
+        return new Edge(data.id, data.source, data.target, data.distance, data.roadType, data.bearingCapacity);
+      });
     });
 
   }
@@ -169,6 +186,14 @@ export class GraphSppComponent implements OnInit {
     this.roadTypeForm.get('type')!.setValue(roadType.type);
     this.roadTypeForm.get('weight')!.setValue(roadType.weight);
     this.roadTypeForm.get('color')!.setValue(roadType.color);
+  }
+
+  deleteEdge(edge: Edge) {
+    this.cy.remove(`edge[id = "${edge.id}"]`)
+  }
+
+  selectEditingEdge(edge: Edge) {
+    this.selectedEdgeId = edge.id;
   }
 
 }

@@ -89,6 +89,35 @@
         </div>
 
       </div>
+
+      <table class="table table-striped mt-4" *ngIf="selectedNodeEdges.length > 0">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Source</th>
+          <th scope="col">Target</th>
+          <th scope="col">Distance</th>
+          <th scope="col">Type</th>
+          <th scope="col">Capacity</th>
+          <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let edge of selectedNodeEdges; index as i">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ edge.source }}</td>
+          <td>{{ edge.target }}</td>
+          <td>{{ edge.distance  | number : '1.2-2'}}</td>
+          <td>{{ edge.roadType.type }}</td>
+          <td>{{ edge.bearingCapacity  | number : '1.2-2'}} </td>
+          <td>
+            <button class="btn mx" (click)="selectEditingEdge(edge)"><i class="bi bi-pencil-fill"></i>
+            </button>
+            <button class="btn mx" (click)="deleteEdge(edge)"><i class="bi bi-trash-fill"></i></button>
+          </td>
+        </tbody>
+      </table>
+
     </div>
 
   </div>
