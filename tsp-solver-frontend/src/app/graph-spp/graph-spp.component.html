@@ -18,6 +18,11 @@
                   [disabled]=" !newCityName.valid">Add city
           </button>
         </div>
+        <div class="col-auto" *ngIf="selectedNodeId != ''">
+          <button type="button" class="btn btn-danger" (click)="deleteCity()">
+            Delete city
+          </button>
+        </div>
         <div class="col-auto">
           <button type="button" class="btn btn-outline-primary" (click)="roadTypeCollapse.toggle()"
                   [attr.aria-expanded]="!isRoadTypesCollapsed">

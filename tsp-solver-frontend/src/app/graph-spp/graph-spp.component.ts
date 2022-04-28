@@ -60,10 +60,16 @@ export class GraphSppComponent implements OnInit {
           data: {id: 'B'}
         },
         {
-          data: {id: 'AB', source: 'A', target: 'B', distance: 15, roadType: this.roadTypes[0], bearingCapacity: 30}
+          data: {
+            id: 'AB', source: 'A', target: 'B', distance: 15, roadType: this.roadTypes[0],
+            bearingCapacity: 30, color: this.roadTypes[0].color
+          }
         },
         {
-          data: {id: 'BA', source: 'B', target: 'A', distance: 20, roadType: this.roadTypes[1], bearingCapacity: 25}
+          data: {
+            id: 'BA', source: 'B', target: 'A', distance: 20, roadType: this.roadTypes[1],
+            bearingCapacity: 25, color: this.roadTypes[1].color
+          }
         }
       ],
       style: [
@@ -81,8 +87,8 @@ export class GraphSppComponent implements OnInit {
           selector: 'edge',
           style: {
             'width': 2,
-            'line-color': '#ccc',
-            'target-arrow-color': '#ccc',
+            'line-color': 'data(color)',
+            'target-arrow-color': '#000000',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
             'label': 'data(distance)',
@@ -110,7 +116,8 @@ export class GraphSppComponent implements OnInit {
         .filter((edge: EdgeSingular) => edge.data().source == this.selectedNodeId)
         .map((edge: EdgeSingular) => {
           let data = edge.data();
-          return new Edge(data.id, data.source, data.target, data.distance, data.roadType, data.bearingCapacity);
+          const color = this.getRoadTypeColor(data.roadType);
+          return new Edge(data.id, data.source, data.target, data.distance, data.roadType, data.bearingCapacity, color);
         });
       this.edgeForm.get('source')!.setValue(this.selectedNodeId);
 
@@ -137,9 +144,9 @@ export class GraphSppComponent implements OnInit {
         data: {id: id},
       });
       this.allNodesId.push(id);
+      this.newCityName.setValue('');
     } else {
       alert("Node with this name already exists");
-      this.newCityName.setValue('');
     }
   }
 
@@ -155,6 +162,9 @@ export class GraphSppComponent implements OnInit {
         this.edgeForm.get('roadType')!.setValue(this.roadTypes.length > 0 ? this.roadTypes[0] : '');
       }
     }
+
+    this.cy.remove(`edge[roadType.id = ${roadType.id}]`)
+    this.selectedNodeEdges = this.selectedNodeEdges.filter(value => value.roadType.id != roadType.id);
   }
 
   addRoadType() {
@@ -178,13 +188,20 @@ export class GraphSppComponent implements OnInit {
     const weight = this.roadTypeForm.get('weight')!.value;
     const color = this.roadTypeForm.get('color')!.value;
 
-    let selectedRoadTypes = this.roadTypes.find(value => value.id == this.selectedRoadTypeId);
+    let selectedRoadType = this.roadTypes.find(value => value.id == this.selectedRoadTypeId);
 
-    if (selectedRoadTypes !== undefined) {
-      selectedRoadTypes.type = type;
-      selectedRoadTypes.weight = weight;
-      selectedRoadTypes.color = color;
+    if (selectedRoadType !== undefined) {
+      selectedRoadType.type = type;
+      selectedRoadType.weight = weight;
+      selectedRoadType.color = color;
     }
+
+    this.cy.edges(`[roadType.id = ${selectedRoadType?.id}]`)
+      .map(edge => {
+        edge.style({'line-color': color});
+        return edge;
+      });
+
     this.selectedRoadTypeId = -1;
     this.clearRoadTypeForm();
   }
@@ -238,11 +255,15 @@ export class GraphSppComponent implements OnInit {
     const distance = this.edgeForm.get('distance')!.value;
     const capacity = this.edgeForm.get('capacity')!.value;
     const id = source + target + '-' + this.generateId();
-    let edge = new Edge(id, source, target, distance, roadType, capacity);
+    const color = this.getRoadTypeColor(roadType);
+    let edge = new Edge(id, source, target, distance, roadType, capacity, color);
 
     this.cy.add({
       group: 'edges',
-      data: {id: id, source: source, target: target, roadType: roadType, distance: distance, bearingCapacity: capacity},
+      data: {
+        id: id, source: source, target: target, roadType: roadType,
+        distance: distance, bearingCapacity: capacity, color: color
+      },
     });
     this.selectedNodeEdges.push(edge);
 
@@ -256,10 +277,11 @@ export class GraphSppComponent implements OnInit {
     const roadType = this.edgeForm.get('roadType')!.value;
     const distance = this.edgeForm.get('distance')!.value;
     const capacity = this.edgeForm.get('capacity')!.value;
+    const color = this.getRoadTypeColor(roadType);
 
     let selectedEdgeId = this.selectedNodeEdges.findIndex(value => value.id == this.selectedEdgeId);
     if (selectedEdgeId > -1) {
-      let edge = new Edge(this.selectedEdgeId, source, target, distance, roadType, capacity);
+      let edge = new Edge(this.selectedEdgeId, source, target, distance, roadType, capacity, color);
       this.selectedNodeEdges[selectedEdgeId] = edge;
     }
     const edgeCy = this.cy.$(`edge[id = "${this.selectedEdgeId}"]`);
@@ -268,7 +290,8 @@ export class GraphSppComponent implements OnInit {
       target: target,
       roadType: roadType,
       distance: distance,
-      bearingCapacity: capacity
+      bearingCapacity: capacity,
+      color: color
     });
 
     this.selectedEdgeId = '';
@@ -284,6 +307,27 @@ export class GraphSppComponent implements OnInit {
   generateId(): string {
     const S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+  }
+
+  getRoadTypeColor(roadType: RoadType): string {
+    let road = this.roadTypes.find(value => value.id === roadType.id);
+    if (road != undefined) {
+      return road.color;
+    }
+    return this.getRandomColor();
+  }
+
+  deleteCity() {
+    this.cy.remove(`node[id = "${this.selectedNodeId}"]`)
+
+    const index = this.allNodesId.findIndex(value => value == this.selectedNodeId);
+    if (index > -1) {
+      this.allNodesId.splice(index, 1);
+    }
+    this.selectedNodeEdges = this.selectedNodeEdges.filter(value =>
+      value.source != this.selectedEdgeId && value.target != this.selectedEdgeId);
+    this.selectedEdgeId = ''
+    this.selectedNodeId = '';
   }
 
 }
