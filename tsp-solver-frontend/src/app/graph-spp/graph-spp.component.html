@@ -105,7 +105,7 @@
           </thead>
           <tbody>
           <tr *ngFor="let edge of selectedNodeEdges; index as i">
-            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ i + 1 }}</td>
             <td>{{ edge.source }}</td>
             <td>{{ edge.target }}</td>
             <td>{{ edge.roadType.type }}</td>
@@ -157,11 +157,11 @@
           </form>
         </div>
         <div class="row pt-2">
-          <!--          <div class="col-auto" *ngIf="selectedRoadTypeId!= -1">-->
-          <!--            <button type="submit" class="btn btn-primary px-4" (click)="editRoadType()"-->
-          <!--                    [disabled]="!roadTypeForm.valid">Edit-->
-          <!--            </button>-->
-          <!--          </div>-->
+          <div class="col-auto" *ngIf="selectedEdgeId!= ''">
+            <button type="submit" class="btn btn-primary px-4" (click)="editEdge()"
+                    [disabled]="!edgeForm.valid">Edit
+            </button>
+          </div>
           <div class="col-auto">
             <button type="submit" class="btn btn-primary px-4" (click)="addEdge()"
                     [disabled]="!edgeForm.valid">Add

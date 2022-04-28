@@ -46,6 +46,7 @@ export class GraphSppComponent implements OnInit {
   ngOnInit(): void {
     this.roadTypes = RoadType.getDefault();
     this.clearRoadTypeForm();
+    this.clearEdgeForm();
     cytoscape.use(automove);
 
     this.cy = cytoscape({
@@ -83,9 +84,11 @@ export class GraphSppComponent implements OnInit {
             'line-color': '#ccc',
             'target-arrow-color': '#ccc',
             'target-arrow-shape': 'triangle',
-            'curve-style': 'bezier'
+            'curve-style': 'bezier',
+            'label': 'data(distance)',
+            'font-size': 10,
           }
-        }
+        },
       ],
       layout: {
         name: 'cose',
@@ -103,10 +106,12 @@ export class GraphSppComponent implements OnInit {
     this.cy.on('tap', 'node', event => {
       const node = event.target;
       this.selectedNodeId = node.id();
-      this.selectedNodeEdges = event.target.connectedEdges().map((edge: EdgeSingular) => {
-        let data = edge.data();
-        return new Edge(data.id, data.source, data.target, data.distance, data.roadType, data.bearingCapacity);
-      });
+      this.selectedNodeEdges = event.target.connectedEdges()
+        .filter((edge: EdgeSingular) => edge.data().source == this.selectedNodeId)
+        .map((edge: EdgeSingular) => {
+          let data = edge.data();
+          return new Edge(data.id, data.source, data.target, data.distance, data.roadType, data.bearingCapacity);
+        });
       this.edgeForm.get('source')!.setValue(this.selectedNodeId);
 
       let target = this.allNodesId.find(value => value != this.selectedNodeId);
@@ -208,21 +213,77 @@ export class GraphSppComponent implements OnInit {
 
   deleteEdge(edge: Edge) {
     this.cy.remove(`edge[id = "${edge.id}"]`)
+
+    let index = this.selectedNodeEdges.findIndex(value => value.id == edge.id);
+    if (index > -1) {
+      this.selectedNodeEdges.splice(index, 1);
+      if (this.selectedEdgeId == edge.id) {
+        this.selectedEdgeId = '';
+      }
+    }
   }
 
   selectEditingEdge(edge: Edge) {
     this.selectedEdgeId = edge.id;
+    this.edgeForm.get('target')!.setValue(edge.target);
+    this.edgeForm.get('roadType')!.setValue(edge.roadType);
+    this.edgeForm.get('distance')!.setValue(edge.distance);
+    this.edgeForm.get('capacity')!.setValue(edge.bearingCapacity);
   }
 
   addEdge() {
     const source = this.edgeForm.get('source')!.value;
     const target = this.edgeForm.get('target')!.value;
     const roadType = this.edgeForm.get('roadType')!.value;
-    const weight = this.edgeForm.get('distance')!.value;
-    const color = this.edgeForm.get('capacity')!.value;
-    console.log(source);
-    console.log(target);
-    console.log(roadType);
+    const distance = this.edgeForm.get('distance')!.value;
+    const capacity = this.edgeForm.get('capacity')!.value;
+    const id = source + target + '-' + this.generateId();
+    let edge = new Edge(id, source, target, distance, roadType, capacity);
+
+    this.cy.add({
+      group: 'edges',
+      data: {id: id, source: source, target: target, roadType: roadType, distance: distance, bearingCapacity: capacity},
+    });
+    this.selectedNodeEdges.push(edge);
+
+    this.selectedEdgeId = '';
+    this.clearEdgeForm();
+  }
+
+  editEdge() {
+    const source = this.edgeForm.get('source')!.value;
+    const target = this.edgeForm.get('target')!.value;
+    const roadType = this.edgeForm.get('roadType')!.value;
+    const distance = this.edgeForm.get('distance')!.value;
+    const capacity = this.edgeForm.get('capacity')!.value;
+
+    let selectedEdgeId = this.selectedNodeEdges.findIndex(value => value.id == this.selectedEdgeId);
+    if (selectedEdgeId > -1) {
+      let edge = new Edge(this.selectedEdgeId, source, target, distance, roadType, capacity);
+      this.selectedNodeEdges[selectedEdgeId] = edge;
+    }
+    const edgeCy = this.cy.$(`edge[id = "${this.selectedEdgeId}"]`);
+    edgeCy.data({
+      source: source,
+      target: target,
+      roadType: roadType,
+      distance: distance,
+      bearingCapacity: capacity
+    });
+
+    this.selectedEdgeId = '';
+    this.clearEdgeForm();
+  }
+
+  clearEdgeForm() {
+    this.edgeForm.get('distance')!.setValue(10.0);
+    this.edgeForm.get('capacity')!.setValue(10.0);
+    this.edgeForm.get('roadType')!.setValue(this.roadTypes.length > 0 ? this.roadTypes[0] : '');
+  }
+
+  generateId(): string {
+    const S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
   }
 
 }
