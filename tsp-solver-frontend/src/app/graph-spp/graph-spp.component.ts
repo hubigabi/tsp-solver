@@ -93,6 +93,7 @@ export class GraphSppComponent implements OnInit {
             'curve-style': 'bezier',
             'label': 'data(distance)',
             'font-size': 10,
+            'text-rotation': 'autorotate',
           }
         },
       ],
