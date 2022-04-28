@@ -90,33 +90,77 @@
 
       </div>
 
-      <table class="table table-striped mt-4" *ngIf="selectedNodeEdges.length > 0">
-        <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Source</th>
-          <th scope="col">Target</th>
-          <th scope="col">Distance</th>
-          <th scope="col">Type</th>
-          <th scope="col">Capacity</th>
-          <th scope="col">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let edge of selectedNodeEdges; index as i">
-          <th scope="row">{{ i + 1 }}</th>
-          <td>{{ edge.source }}</td>
-          <td>{{ edge.target }}</td>
-          <td>{{ edge.distance  | number : '1.2-2'}}</td>
-          <td>{{ edge.roadType.type }}</td>
-          <td>{{ edge.bearingCapacity  | number : '1.2-2'}} </td>
-          <td>
-            <button class="btn mx" (click)="selectEditingEdge(edge)"><i class="bi bi-pencil-fill"></i>
+      <div *ngIf="selectedNodeId != ''">
+        <table class="table table-striped mt-4" *ngIf="selectedNodeEdges.length > 0">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Source</th>
+            <th scope="col">Target</th>
+            <th scope="col">Type</th>
+            <th scope="col">Distance</th>
+            <th scope="col">Capacity</th>
+            <th scope="col">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let edge of selectedNodeEdges; index as i">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ edge.source }}</td>
+            <td>{{ edge.target }}</td>
+            <td>{{ edge.roadType.type }}</td>
+            <td>{{ edge.distance  | number : '1.2-2'}}</td>
+            <td>{{ edge.bearingCapacity  | number : '1.2-2'}} </td>
+            <td>
+              <button class="btn mx" (click)="selectEditingEdge(edge)"><i class="bi bi-pencil-fill"></i>
+              </button>
+              <button class="btn mx" (click)="deleteEdge(edge)"><i class="bi bi-trash-fill"></i></button>
+            </td>
+          </tbody>
+        </table>
+
+        <div class="row">
+          <form [formGroup]="edgeForm">
+            <div class="form-group row">
+              <div class="col">
+                <label for="sourceEdge" class="form-label">Source</label>
+                <select id="sourceEdge" class="form-select" formControlName="source">
+                  <option [ngValue]="selectedNodeId">{{selectedNodeId}}</option>
+                </select>
+              </div>
+
+              <div class="col">
+                <label for="roadTypeEdge" class="form-label">Type</label>
+                <select id="roadTypeEdge" class="form-select" formControlName="roadType">
+                  <option *ngFor="let roadType of roadTypes" [ngValue]="roadType">{{roadType.type}}</option>
+                </select>
+              </div>
+
+              <div class="col">
+                <label for="distanceEdge" class="form-label">Distance</label>
+                <input type="number" min="0" step="1" formControlName="distance" class="form-control" id="distanceEdge">
+              </div>
+
+              <div class="col">
+                <label for="capacityEdge" class="form-label">Capacity</label>
+                <input type="number" min="0" step="1" formControlName="capacity" class="form-control" id="capacityEdge">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="row pt-2">
+          <!--          <div class="col-auto" *ngIf="selectedRoadTypeId!= -1">-->
+          <!--            <button type="submit" class="btn btn-primary px-4" (click)="editRoadType()"-->
+          <!--                    [disabled]="!roadTypeForm.valid">Edit-->
+          <!--            </button>-->
+          <!--          </div>-->
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary px-4" (click)="addEdge()"
+                    [disabled]="!edgeForm.valid">Add
             </button>
-            <button class="btn mx" (click)="deleteEdge(edge)"><i class="bi bi-trash-fill"></i></button>
-          </td>
-        </tbody>
-      </table>
+          </div>
+        </div>
+      </div>
 
     </div>
 

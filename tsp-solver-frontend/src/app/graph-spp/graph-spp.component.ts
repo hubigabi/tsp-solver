@@ -26,6 +26,13 @@ export class GraphSppComponent implements OnInit {
     color: [this.getRandomColor(), [Validators.required]],
   });
 
+  edgeForm = this.fb.group({
+    source: [{value: '', disabled: true}, [Validators.required]],
+    roadType: ['', [Validators.required]],
+    distance: [10.0, [Validators.required, Validators.min(0)]],
+    capacity: [10.0, [Validators.required, Validators.min(0)]],
+  });
+
   selectedRoadTypeId = -1;
   selectedNodeId = '';
   selectedNodeEdges: Edge[] = [];
@@ -98,6 +105,7 @@ export class GraphSppComponent implements OnInit {
         let data = edge.data();
         return new Edge(data.id, data.source, data.target, data.distance, data.roadType, data.bearingCapacity);
       });
+      this.edgeForm.get('source')!.setValue(this.selectedNodeId);
     });
 
   }
@@ -126,11 +134,14 @@ export class GraphSppComponent implements OnInit {
   deleteRoadType(roadType: RoadType) {
     let index = this.roadTypes.findIndex(value => value.id == roadType.id);
     if (index > -1) {
-      if (this.roadTypes[index].id == this.selectedRoadTypeId) {
+      this.roadTypes.splice(index, 1);
+      if (this.selectedRoadTypeId == roadType.id) {
         this.selectedRoadTypeId = -1;
       }
 
-      this.roadTypes.splice(index, 1);
+      if (this.edgeForm.get('roadType')!.value.id == roadType.id) {
+        this.edgeForm.get('roadType')!.setValue(this.roadTypes.length > 0 ? this.roadTypes[0] : '');
+      }
     }
   }
 
@@ -194,6 +205,13 @@ export class GraphSppComponent implements OnInit {
 
   selectEditingEdge(edge: Edge) {
     this.selectedEdgeId = edge.id;
+  }
+
+  addEdge() {
+    const roadType = this.edgeForm.get('roadType')!.value;
+    const weight = this.edgeForm.get('distance')!.value;
+    const color = this.edgeForm.get('capacity')!.value;
+    console.log(roadType);
   }
 
 }
