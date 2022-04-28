@@ -10,6 +10,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ValidationErrorComponent} from './validation-error/validation-error.component';
 import {GraphSppComponent} from "./graph-spp/graph-spp.component";
+import { FilterSelectedNodePipe } from './graph-spp/filter-selected-node.pipe';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import {GraphSppComponent} from "./graph-spp/graph-spp.component";
     NavbarComponent,
     TspAlgorithmsComponent,
     ValidationErrorComponent,
-    GraphSppComponent
+    GraphSppComponent,
+    FilterSelectedNodePipe
   ],
   imports: [
     BrowserModule,

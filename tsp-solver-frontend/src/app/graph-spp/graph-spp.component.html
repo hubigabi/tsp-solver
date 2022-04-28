@@ -119,13 +119,21 @@
           </tbody>
         </table>
 
-        <div class="row">
+        <div class="row pt-2">
           <form [formGroup]="edgeForm">
             <div class="form-group row">
               <div class="col">
                 <label for="sourceEdge" class="form-label">Source</label>
                 <select id="sourceEdge" class="form-select" formControlName="source">
                   <option [ngValue]="selectedNodeId">{{selectedNodeId}}</option>
+                </select>
+              </div>
+
+              <div class="col">
+                <label for="targetEdge" class="form-label">Target</label>
+                <select id="targetEdge" class="form-select" formControlName="target">
+                  <option *ngFor="let nodeId of allNodesId | filterSelectedNode: selectedNodeId"
+                          [ngValue]="nodeId">{{nodeId}}</option>
                 </select>
               </div>
 

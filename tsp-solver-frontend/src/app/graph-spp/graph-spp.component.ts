@@ -28,12 +28,14 @@ export class GraphSppComponent implements OnInit {
 
   edgeForm = this.fb.group({
     source: [{value: '', disabled: true}, [Validators.required]],
+    target: ['', [Validators.required]],
     roadType: ['', [Validators.required]],
-    distance: [10.0, [Validators.required, Validators.min(0)]],
-    capacity: [10.0, [Validators.required, Validators.min(0)]],
+    distance: [10.0, [Validators.required, Validators.min(0.01)]],
+    capacity: [10.0, [Validators.required, Validators.min(0.01)]],
   });
 
   selectedRoadTypeId = -1;
+  allNodesId: string[] = []
   selectedNodeId = '';
   selectedNodeEdges: Edge[] = [];
   selectedEdgeId = '';
@@ -106,8 +108,12 @@ export class GraphSppComponent implements OnInit {
         return new Edge(data.id, data.source, data.target, data.distance, data.roadType, data.bearingCapacity);
       });
       this.edgeForm.get('source')!.setValue(this.selectedNodeId);
+
+      let target = this.allNodesId.find(value => value != this.selectedNodeId);
+      this.edgeForm.get('target')!.setValue(target);
     });
 
+    this.allNodesId = this.cy.nodes().map(e => e.id());
   }
 
   public noWhitespaceValidator(control: FormControl) {
@@ -117,14 +123,15 @@ export class GraphSppComponent implements OnInit {
   }
 
   addCity() {
-    const name = this.newCityName.value;
-    const nodesIdLength = this.cy.filter(`node[id = "${name}"]`).length
+    const id = this.newCityName.value;
+    const nodesIdLength = this.cy.filter(`node[id = "${id}"]`).length
     if (nodesIdLength == 0) {
       this.cy.add({
         group: 'nodes',
         position: {x: this.cy.extent().x1 + 30, y: this.cy.extent().y1 + 30},
-        data: {id: name, weight: 75},
+        data: {id: id},
       });
+      this.allNodesId.push(id);
     } else {
       alert("Node with this name already exists");
       this.newCityName.setValue('');
@@ -208,9 +215,13 @@ export class GraphSppComponent implements OnInit {
   }
 
   addEdge() {
+    const source = this.edgeForm.get('source')!.value;
+    const target = this.edgeForm.get('target')!.value;
     const roadType = this.edgeForm.get('roadType')!.value;
     const weight = this.edgeForm.get('distance')!.value;
     const color = this.edgeForm.get('capacity')!.value;
+    console.log(source);
+    console.log(target);
     console.log(roadType);
   }
 
