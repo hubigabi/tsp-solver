@@ -1,10 +1,10 @@
 package pl.edu.pbs.service;
 
 import org.springframework.stereotype.Service;
-import pl.edu.pbs.model.request.AntColonyRequest;
-import pl.edu.pbs.model.request.CityRequest;
-import pl.edu.pbs.model.request.GeneticAlgorithmRequest;
-import pl.edu.pbs.model.request.SimulatedAnnealingRequest;
+import pl.edu.pbs.request.tsp.AntColonyRequest;
+import pl.edu.pbs.request.tsp.GeneticAlgorithmRequest;
+import pl.edu.pbs.request.tsp.SimulatedAnnealingRequest;
+import pl.edu.pbs.tsp.City;
 import pl.edu.pbs.tsp.Route;
 import pl.edu.pbs.tsp.algorithm.NearestNeighbourAlgorithm;
 import pl.edu.pbs.tsp.algorithm.SimulatedAnnealing;
@@ -18,12 +18,12 @@ import java.util.List;
 @Service
 public class TspService {
 
-    public Route getNearestNeighbourRoute(List<CityRequest> cities) {
+    public Route getNearestNeighbourRoute(List<City> cities) {
         double[][] costMatrix = toTravellingCostMatrix(cities);
         return new NearestNeighbourAlgorithm().getRoute(costMatrix);
     }
 
-    public Route getTwoOpt(List<CityRequest> cities) {
+    public Route getTwoOpt(List<City> cities) {
         double[][] costMatrix = toTravellingCostMatrix(cities);
         return new TwoOpt().getRoute(costMatrix);
     }
@@ -46,7 +46,7 @@ public class TspService {
                 request.getQ(), request.getAntFactor(), request.getRandomCitySelection(), request.getMaxIterations()).getRoute(costMatrix);
     }
 
-    public double[][] toTravellingCostMatrix(List<CityRequest> cities) {
+    public double[][] toTravellingCostMatrix(List<City> cities) {
         int citiesNumber = cities.size();
         double[][] travellingCostMatrix = new double[citiesNumber][citiesNumber];
 
@@ -59,7 +59,7 @@ public class TspService {
         return travellingCostMatrix;
     }
 
-    private double getDistance(CityRequest city1, CityRequest city2) {
+    private double getDistance(City city1, City city2) {
         double x = Math.abs(city1.getX() - city2.getX());
         double y = Math.abs(city1.getY() - city2.getY());
         return Math.hypot(x, y);

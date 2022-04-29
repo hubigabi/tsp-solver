@@ -16,7 +16,7 @@ export class SppService {
   }
 
   public getSppResult(sppRequest: SppRequest): Observable<any> {
-    return this.httpClient.post<RouteAlgorithm>(this.SPP_URL, sppRequest);
+    return this.httpClient.post<any>(this.SPP_URL, sppRequest);
   }
 
 }

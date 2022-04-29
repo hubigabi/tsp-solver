@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.pbs.model.request.AntColonyRequest;
-import pl.edu.pbs.model.request.CityRequest;
-import pl.edu.pbs.model.request.GeneticAlgorithmRequest;
-import pl.edu.pbs.model.request.SimulatedAnnealingRequest;
+import pl.edu.pbs.request.tsp.AntColonyRequest;
+import pl.edu.pbs.request.tsp.GeneticAlgorithmRequest;
+import pl.edu.pbs.request.tsp.SimulatedAnnealingRequest;
 import pl.edu.pbs.service.TspService;
+import pl.edu.pbs.tsp.City;
 import pl.edu.pbs.tsp.Route;
 
 import java.util.List;
@@ -22,13 +22,13 @@ public class TspController {
     private final TspService tspService;
 
     @PostMapping(path = "/nearest-neighbour")
-    public ResponseEntity<Route> getNearestNeighbour(@RequestBody List<CityRequest> cities) {
+    public ResponseEntity<Route> getNearestNeighbour(@RequestBody List<City> cities) {
         Route route = tspService.getNearestNeighbourRoute(cities);
         return new ResponseEntity<>(route, HttpStatus.OK);
     }
 
     @PostMapping(path = "/two-opt")
-    public ResponseEntity<Route> getTwoOpt(@RequestBody List<CityRequest> cities) {
+    public ResponseEntity<Route> getTwoOpt(@RequestBody List<City> cities) {
         Route route = tspService.getTwoOpt(cities);
         return new ResponseEntity<>(route, HttpStatus.OK);
     }

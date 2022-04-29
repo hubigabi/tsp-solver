@@ -22,12 +22,12 @@ public class TspAlgorithmTest {
 
     public final TspService tspService;
 
-    @EventListener(ApplicationReadyEvent.class)
+//    @EventListener(ApplicationReadyEvent.class)
     public void compareAlgorithms() {
         System.out.println("Starting...");
-//        List<City> cities = TspGenerator.generateCities(50);
-//        double[][] travellingCostMatrix = TspGenerator.toTravellingCostMatrix(cities);
-        double[][] travellingCostMatrix = tspService.toTravellingCostMatrix(TspProblem.att48Problem);
+        List<City> cities = TspGenerator.generateCities(100);
+        double[][] travellingCostMatrix = tspService.toTravellingCostMatrix(cities);
+//        double[][] travellingCostMatrix = tspService.toTravellingCostMatrix(TspProblem.att48Problem);
 
         System.out.println("Nearest neighbour algorithm");
         Route nearestNeighbourAlgorithmRoute = new NearestNeighbourAlgorithm().getRoute(travellingCostMatrix);
