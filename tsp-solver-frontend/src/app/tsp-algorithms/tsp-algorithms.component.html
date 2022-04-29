@@ -235,7 +235,7 @@
 
         <td>
           <ng-container *ngIf="routeAlgorithmRow.status === requestStatuses.SUCCESS; else notSuccess">
-            <a href="#" (click)="drawCitiesOrder(routeAlgorithmRow.citiesOrder)">Order</a>
+            <a href="#canvas" (click)="drawCitiesOrder(routeAlgorithmRow.citiesOrder)">Order</a>
           </ng-container>
           <ng-template #notSuccess>
             <ng-container *ngIf="routeAlgorithmRow.status === requestStatuses.ONGOING; else failure">
