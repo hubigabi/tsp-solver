@@ -4,6 +4,13 @@ import {FormBuilder, FormControl, Validators} from "@angular/forms";
 import {RoadType} from "./RoadType";
 import {EdgeSingular} from "cytoscape";
 import {Edge} from "./Edge";
+import {NodeRequest} from '../model/request/spp/NodeRequest';
+import {RoadTypeRequest} from "../model/request/spp/RoadTypeRequest";
+import {PathRequirement} from "../model/request/spp/PathRequirement";
+import {SppRequest} from "../model/request/spp/SppRequest";
+import {EdgeRequest} from "../model/request/spp/EdgeRequest";
+import {SppService} from "../service/spp.service";
+import {RequestStatus} from "../tsp-algorithms/RequestStatus";
 
 declare var require: any
 const automove = require('cytoscape-automove');
@@ -34,13 +41,17 @@ export class GraphSppComponent implements OnInit {
     capacity: [10.0, [Validators.required, Validators.min(0.01)]],
   });
 
+  findRoutesForm = this.fb.group({
+    bearingCapacity: [10.0, [Validators.required, Validators.min(0.01)]],
+  });
+
   selectedRoadTypeId = -1;
   allNodesId: string[] = []
   selectedNodeId = '';
   selectedNodeEdges: Edge[] = [];
   selectedEdgeId = '';
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private sppService: SppService) {
   }
 
   ngOnInit(): void {
@@ -332,6 +343,29 @@ export class GraphSppComponent implements OnInit {
       value.source != this.selectedEdgeId && value.target != this.selectedEdgeId);
     this.selectedEdgeId = ''
     this.selectedNodeId = '';
+  }
+
+  findRoutes() {
+    const nodesRequest = this.cy.nodes().map(e => new NodeRequest(e.id()));
+    const roadTypesRequest = this.roadTypes.map(roadType => new RoadTypeRequest(roadType.id, roadType.type, roadType.weight));
+    let edgesRequest = this.cy.edges().map((edge: EdgeSingular) => {
+      let data = edge.data();
+      return new EdgeRequest(data.id, data.source, data.target, data.distance, data.roadType.id, data.bearingCapacity);
+    });
+    const bearingCapacity = this.findRoutesForm.get('bearingCapacity')!.value;
+    const pathRequirement = new PathRequirement(bearingCapacity);
+
+    const sppRequest = new SppRequest(nodesRequest, roadTypesRequest, edgesRequest, pathRequirement);
+    console.log(sppRequest);
+    this.sppService.getSppResult(sppRequest)
+      .subscribe({
+        next: value => {
+          console.log(value);
+        },
+        error: value => {
+          console.log(value);
+        }
+      });
   }
 
 }

@@ -4,9 +4,9 @@ import {RouteAlgorithm} from "../model/RouteAlgorithm";
 import {Observable} from "rxjs";
 import {City} from "../model/City";
 import {environment} from "../../environments/environment";
-import {SimulatedAnnealingRequest} from "../model/request/SimulatedAnnealingRequest";
-import {GeneticAlgorithmRequest} from "../model/request/GeneticAlgorithmRequest";
-import {AntColonyRequest} from "../model/request/AntColonyRequest";
+import {SimulatedAnnealingRequest} from "../model/request/tsp/SimulatedAnnealingRequest";
+import {GeneticAlgorithmRequest} from "../model/request/tsp/GeneticAlgorithmRequest";
+import {AntColonyRequest} from "../model/request/tsp/AntColonyRequest";
 
 @Injectable({
   providedIn: 'root'

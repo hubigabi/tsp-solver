@@ -1,4 +1,4 @@
-import {City} from "../City";
+import {City} from "../../City";
 
 export class GeneticAlgorithmRequest {
   cities: City[]

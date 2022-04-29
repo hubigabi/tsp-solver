@@ -6,9 +6,9 @@ import {TspAlgorithmService} from "../service/tsp-algorithm.service";
 import {RouteAlgorithmRow} from "./RouteAlgorithmRow";
 import {Observable} from "rxjs";
 import {RouteAlgorithm} from "../model/RouteAlgorithm";
-import {SimulatedAnnealingRequest} from "../model/request/SimulatedAnnealingRequest";
-import {GeneticAlgorithmRequest} from "../model/request/GeneticAlgorithmRequest";
-import {AntColonyRequest} from "../model/request/AntColonyRequest";
+import {SimulatedAnnealingRequest} from "../model/request/tsp/SimulatedAnnealingRequest";
+import {GeneticAlgorithmRequest} from "../model/request/tsp/GeneticAlgorithmRequest";
+import {AntColonyRequest} from "../model/request/tsp/AntColonyRequest";
 import {RequestStatus} from "./RequestStatus";
 
 @Component({
