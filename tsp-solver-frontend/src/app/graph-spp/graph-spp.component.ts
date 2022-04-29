@@ -44,10 +44,13 @@ export class GraphSppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (typeof cytoscape('core', 'automove') !== 'function') {
+      cytoscape.use(automove);
+    }
+
     this.roadTypes = RoadType.getDefault();
     this.clearRoadTypeForm();
     this.clearEdgeForm();
-    cytoscape.use(automove);
 
     this.cy = cytoscape({
       container: document.getElementById('cy'),
