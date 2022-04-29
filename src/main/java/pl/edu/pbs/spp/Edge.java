@@ -11,4 +11,9 @@ public class Edge {
     private double distance;
     private double roadTypeId;
     private double bearingCapacity;
+
+    /**
+     * {@link Edge#cost} = {@link Edge#distance} * {@link RoadType#getWeight()}
+     */
+    private double cost;
 }

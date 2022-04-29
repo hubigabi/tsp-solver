@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.edu.pbs.request.tsp.AntColonyRequest;
 import pl.edu.pbs.request.tsp.GeneticAlgorithmRequest;
 import pl.edu.pbs.request.tsp.SimulatedAnnealingRequest;
-import pl.edu.pbs.service.TspService;
+import pl.edu.pbs.tsp.TspService;
 import pl.edu.pbs.tsp.City;
 import pl.edu.pbs.tsp.Route;
 

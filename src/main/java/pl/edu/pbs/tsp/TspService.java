@@ -1,4 +1,4 @@
-package pl.edu.pbs.service;
+package pl.edu.pbs.tsp;
 
 import org.springframework.stereotype.Service;
 import pl.edu.pbs.request.tsp.AntColonyRequest;

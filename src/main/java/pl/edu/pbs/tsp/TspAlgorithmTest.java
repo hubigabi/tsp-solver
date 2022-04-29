@@ -1,17 +1,13 @@
 package pl.edu.pbs.tsp;
 
 import lombok.AllArgsConstructor;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import pl.edu.pbs.service.TspService;
 import pl.edu.pbs.tsp.algorithm.NearestNeighbourAlgorithm;
 import pl.edu.pbs.tsp.algorithm.SimulatedAnnealing;
 import pl.edu.pbs.tsp.algorithm.TwoOpt;
 import pl.edu.pbs.tsp.algorithm.antcolony.AntColonyOptimization;
 import pl.edu.pbs.tsp.algorithm.ga.GeneticAlgorithm;
 import pl.edu.pbs.tsp.algorithm.ga.SelectionType;
-import pl.edu.pbs.tsp.problem.TspProblem;
 
 import java.util.ArrayList;
 import java.util.List;
