@@ -104,10 +104,10 @@ export class GraphSppComponent implements OnInit {
           style: {
             'width': 2,
             'line-color': 'data(color)',
-            'target-arrow-color': '#000000',
+            'target-arrow-color': '#333',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
-            'label': 'data(distance)',
+            'label': (e: any) => Math.round((e.data("distance") + Number.EPSILON) * 100) / 100 + '',
             'font-size': 10,
             'text-rotation': 'autorotate',
           }

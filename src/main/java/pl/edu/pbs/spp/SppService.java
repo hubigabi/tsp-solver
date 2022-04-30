@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 @Service
 public class SppService {
 
-    public void solve(SppRequest request) {
+    public Route[][] solve(SppRequest request) {
         List<Node> nodes = request.getNodes();
         List<RoadType> roadTypes = request.getRoadTypes();
 
@@ -42,8 +42,8 @@ public class SppService {
         System.out.println();
         floydWarshall(routeMatrix);
         printMatrix(routeMatrix);
-
-        System.out.println("Finished");
+        changeInfinityCost(routeMatrix);
+        return routeMatrix;
     }
 
     private List<Edge> processPathRequirement(List<Edge> edges, PathRequirement pathRequirement) {
@@ -88,6 +88,17 @@ public class SppService {
                 }
             }
             System.out.println();
+        }
+    }
+
+    private void changeInfinityCost(Route[][] routeMatrix) {
+        final double INFINITY = -1;
+        for (int i = 0; i < routeMatrix.length; i++) {
+            for (int j = 0; j < routeMatrix.length; j++) {
+                if (routeMatrix[i][j].getCost() == Double.MAX_VALUE) {
+                    routeMatrix[i][j].setCost(INFINITY);
+                }
+            }
         }
     }
 

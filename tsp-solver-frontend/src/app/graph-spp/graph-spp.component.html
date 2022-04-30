@@ -31,7 +31,8 @@
           <tbody>
           <tr *ngFor="let routes of routesMatrix; index as i">
             <th scope="row">{{routes[i].from}}</th>
-            <td *ngFor="let route of routes" class="text-center">{{route.cost}}</td>
+            <td *ngFor="let route of routes" class="text-center"
+                [innerHTML]="route.cost |  number: '1.0-2' | routeCost"></td>
           </tr>
           </tbody>
         </table>
