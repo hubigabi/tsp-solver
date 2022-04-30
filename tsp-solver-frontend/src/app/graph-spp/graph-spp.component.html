@@ -2,7 +2,7 @@
 
 <div class="container pt-3">
 
-  <div class="row gx-5">
+  <div class="row gx-4">
     <div class="col-7">
       <div id="cy"></div>
 
@@ -17,6 +17,11 @@
           <button type="submit" class="btn btn-primary" (click)="findRoutes()" [disabled]="!findRoutesForm.valid">
             Find routes
           </button>
+        </div>
+
+        <div class="col align-self-end">
+          <app-validation-error [message]="'All cities are not connected!'"
+                                *ngIf="!(costMatrix | costMatrixValid)"></app-validation-error>
         </div>
       </form>
 
@@ -207,6 +212,11 @@
             </button>
           </div>
         </div>
+      </div>
+      <div class="mt-4">
+        <app-algorithm-form *ngIf="(costMatrix.length> 0) &&(costMatrix | costMatrixValid)"
+                            [costMatrix]="costMatrix"
+                            (runAlgorithmEmitter)="onRunAlgorithm($event)"></app-algorithm-form>
       </div>
     </div>
 

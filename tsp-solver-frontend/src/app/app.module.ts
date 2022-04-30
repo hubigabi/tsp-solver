@@ -10,9 +10,10 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ValidationErrorComponent} from './validation-error/validation-error.component';
 import {GraphSppComponent} from "./graph-spp/graph-spp.component";
-import { FilterSelectedNodePipe } from './graph-spp/pipes/filter-selected-node.pipe';
-import { RouteCostPipe } from './graph-spp/pipes/route-cost.pipe';
-import { AlgorithmFormComponent } from './algorithm-form/algorithm-form.component';
+import {FilterSelectedNodePipe} from './graph-spp/pipes/filter-selected-node.pipe';
+import {RouteCostPipe} from './graph-spp/pipes/route-cost.pipe';
+import {AlgorithmFormComponent} from './algorithm-form/algorithm-form.component';
+import {CostMatrixValidPipe} from './graph-spp/pipes/cost-matrix-valid.pipe';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { AlgorithmFormComponent } from './algorithm-form/algorithm-form.componen
     GraphSppComponent,
     FilterSelectedNodePipe,
     RouteCostPipe,
-    AlgorithmFormComponent
+    AlgorithmFormComponent,
+    CostMatrixValidPipe
   ],
   imports: [
     BrowserModule,

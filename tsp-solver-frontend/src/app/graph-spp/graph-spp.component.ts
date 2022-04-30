@@ -11,6 +11,7 @@ import {SppRequest} from "../model/request/spp/SppRequest";
 import {EdgeRequest} from "../model/request/spp/EdgeRequest";
 import {SppService} from "../service/spp.service";
 import {Route} from "../model/request/spp/Route";
+import {AlgorithmRun} from "../algorithm-form/AlgorithmRun";
 
 declare var require: any
 const automove = require('cytoscape-automove');
@@ -52,6 +53,7 @@ export class GraphSppComponent implements OnInit {
   selectedEdgeId = '';
 
   routesMatrix: Route[][] = [];
+  costMatrix: number[][] = [];
 
   constructor(private fb: FormBuilder, private sppService: SppService) {
   }
@@ -126,6 +128,7 @@ export class GraphSppComponent implements OnInit {
       reposition: 'viewport'
     });
 
+    //TODO
     this.cy.on('tap', 'node', event => {
       const node = event.target;
       this.selectedNodeId = node.id();
@@ -362,11 +365,28 @@ export class GraphSppComponent implements OnInit {
       .subscribe({
         next: value => {
           this.routesMatrix = value.routesMatrix;
+          this.costMatrix = this.getCostMatrix(this.routesMatrix);
+          console.log(this.costMatrix);
         },
         error: value => {
           console.log(value);
         }
       });
+  }
+
+  getCostMatrix(routesMatrix: Route[][]): number[][] {
+    const costMatrix: number[][] = [];
+    for (let i = 0; i < routesMatrix.length; i++) {
+      costMatrix[i] = [];
+      for (let j = 0; j < routesMatrix[i].length; j++) {
+        costMatrix[i][j] = routesMatrix[i][j].cost;
+      }
+    }
+    return costMatrix;
+  }
+
+  onRunAlgorithm($event: AlgorithmRun) {
+
   }
 
 }
