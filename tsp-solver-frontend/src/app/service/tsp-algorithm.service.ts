@@ -2,7 +2,6 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {RouteAlgorithm} from "../model/RouteAlgorithm";
 import {Observable} from "rxjs";
-import {City} from "../model/City";
 import {environment} from "../../environments/environment";
 import {SimulatedAnnealingRequest} from "../model/request/tsp/SimulatedAnnealingRequest";
 import {GeneticAlgorithmRequest} from "../model/request/tsp/GeneticAlgorithmRequest";
@@ -22,12 +21,12 @@ export class TspAlgorithmService {
   constructor(private httpClient: HttpClient) {
   }
 
-  public getNearestNeighbour(cities: City[]): Observable<RouteAlgorithm> {
-    return this.httpClient.post<RouteAlgorithm>(this.NEAREST_NEIGHBOUR_URL, cities);
+  public getNearestNeighbour(costMatrix: number[][]): Observable<RouteAlgorithm> {
+    return this.httpClient.post<RouteAlgorithm>(this.NEAREST_NEIGHBOUR_URL, costMatrix);
   }
 
-  public getTwoOpt(cities: City[]): Observable<RouteAlgorithm> {
-    return this.httpClient.post<RouteAlgorithm>(this.TWO_OPT_URL, cities);
+  public getTwoOpt(costMatrix: number[][]): Observable<RouteAlgorithm> {
+    return this.httpClient.post<RouteAlgorithm>(this.TWO_OPT_URL, costMatrix);
   }
 
   public getSimulatedAnnealing(request: SimulatedAnnealingRequest): Observable<RouteAlgorithm> {

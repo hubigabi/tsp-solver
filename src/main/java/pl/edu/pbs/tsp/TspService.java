@@ -4,8 +4,6 @@ import org.springframework.stereotype.Service;
 import pl.edu.pbs.request.tsp.AntColonyRequest;
 import pl.edu.pbs.request.tsp.GeneticAlgorithmRequest;
 import pl.edu.pbs.request.tsp.SimulatedAnnealingRequest;
-import pl.edu.pbs.tsp.City;
-import pl.edu.pbs.tsp.Route;
 import pl.edu.pbs.tsp.algorithm.NearestNeighbourAlgorithm;
 import pl.edu.pbs.tsp.algorithm.SimulatedAnnealing;
 import pl.edu.pbs.tsp.algorithm.TwoOpt;
@@ -18,32 +16,27 @@ import java.util.List;
 @Service
 public class TspService {
 
-    public Route getNearestNeighbourRoute(List<City> cities) {
-        double[][] costMatrix = toTravellingCostMatrix(cities);
+    public Route getNearestNeighbourRoute(double[][] costMatrix) {
         return new NearestNeighbourAlgorithm().getRoute(costMatrix);
     }
 
-    public Route getTwoOpt(List<City> cities) {
-        double[][] costMatrix = toTravellingCostMatrix(cities);
+    public Route getTwoOpt(double[][] costMatrix) {
         return new TwoOpt().getRoute(costMatrix);
     }
 
     public Route getSimulatedAnnealing(SimulatedAnnealingRequest request) {
-        double[][] costMatrix = toTravellingCostMatrix(request.getCities());
         return new SimulatedAnnealing(request.getMaxTemperature(), request.getMinTemperature(),
-                request.getCoolingRate(), request.getEpochsNumber()).getRoute(costMatrix);
+                request.getCoolingRate(), request.getEpochsNumber()).getRoute(request.getCostMatrix());
     }
 
     public Route getGeneticAlgorithm(GeneticAlgorithmRequest request) {
-        double[][] costMatrix = toTravellingCostMatrix(request.getCities());
         return new GeneticAlgorithm(request.getPopulationSize(), request.getElitismSize(),
-                request.getEpochsNumber(), request.getMutationRate(), SelectionType.TOURNAMENT, 10).getRoute(costMatrix);
+                request.getEpochsNumber(), request.getMutationRate(), SelectionType.TOURNAMENT, 10).getRoute(request.getCostMatrix());
     }
 
     public Route getAntColonyOptimization(AntColonyRequest request) {
-        double[][] costMatrix = toTravellingCostMatrix(request.getCities());
         return new AntColonyOptimization(request.getAlpha(), request.getBeta(), request.getEvaporationRate(),
-                request.getQ(), request.getAntFactor(), request.getRandomCitySelection(), request.getMaxIterations()).getRoute(costMatrix);
+                request.getQ(), request.getAntFactor(), request.getRandomCitySelection(), request.getMaxIterations()).getRoute(request.getCostMatrix());
     }
 
     public double[][] toTravellingCostMatrix(List<City> cities) {

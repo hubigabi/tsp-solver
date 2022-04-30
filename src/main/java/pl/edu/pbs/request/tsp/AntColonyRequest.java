@@ -1,14 +1,11 @@
 package pl.edu.pbs.request.tsp;
 
 import lombok.Data;
-import pl.edu.pbs.tsp.City;
-
-import java.util.List;
 
 @Data
 public class AntColonyRequest {
 
-    private List<City> cities;
+    private double[][] costMatrix;
     private double alpha;
     private double beta;
     private double evaporationRate;

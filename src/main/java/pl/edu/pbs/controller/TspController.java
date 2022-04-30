@@ -22,14 +22,14 @@ public class TspController {
     private final TspService tspService;
 
     @PostMapping(path = "/nearest-neighbour")
-    public ResponseEntity<Route> getNearestNeighbour(@RequestBody List<City> cities) {
-        Route route = tspService.getNearestNeighbourRoute(cities);
+    public ResponseEntity<Route> getNearestNeighbour(@RequestBody double[][] costMatrix) {
+        Route route = tspService.getNearestNeighbourRoute(costMatrix);
         return new ResponseEntity<>(route, HttpStatus.OK);
     }
 
     @PostMapping(path = "/two-opt")
-    public ResponseEntity<Route> getTwoOpt(@RequestBody List<City> cities) {
-        Route route = tspService.getTwoOpt(cities);
+    public ResponseEntity<Route> getTwoOpt(@RequestBody double[][] costMatrix) {
+        Route route = tspService.getTwoOpt(costMatrix);
         return new ResponseEntity<>(route, HttpStatus.OK);
     }
 

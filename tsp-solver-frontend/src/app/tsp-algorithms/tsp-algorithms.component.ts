@@ -1,15 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import * as paper from 'paper';
-import {AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
+import {FormControl, Validators} from "@angular/forms";
 import {City} from "../model/City";
-import {TspAlgorithmService} from "../service/tsp-algorithm.service";
 import {RouteAlgorithmRow} from "./RouteAlgorithmRow";
-import {Observable} from "rxjs";
-import {RouteAlgorithm} from "../model/RouteAlgorithm";
-import {SimulatedAnnealingRequest} from "../model/request/tsp/SimulatedAnnealingRequest";
-import {GeneticAlgorithmRequest} from "../model/request/tsp/GeneticAlgorithmRequest";
-import {AntColonyRequest} from "../model/request/tsp/AntColonyRequest";
 import {RequestStatus} from "./RequestStatus";
+import {AlgorithmRun} from "../algorithm-form/AlgorithmRun";
 
 @Component({
   selector: 'app-tsp-algorithms',
@@ -23,170 +18,28 @@ export class TspAlgorithmsComponent implements OnInit {
 
   citiesNumber = new FormControl(100, Validators.required);
   cities: City[] = []
-  chosenAlgorithm = "0";
+  costMatrix: number[][] = [];
 
-  simulatedAnnealingForm = this.fb.group({
-    maxTemperature: [100.0, [Validators.required, Validators.min(1)]],
-    minTemperature: [0.1, [Validators.required, Validators.min(0)]],
-    coolingRate: [0.99, [Validators.required, Validators.min(0.0001), Validators.max(0.9999)]],
-    epochs: [1000, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
-  });
-
-  geneticAlgorithmForm = this.fb.group({
-    populationSize: [100, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
-    elitismSize: [20, [Validators.required, Validators.min(0), Validators.pattern("^[0-9]*$")]],
-    mutationRate: [0.01, [Validators.required, Validators.min(0.0), Validators.max(1)]],
-    epochs: [1000, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
-  });
-
-  antColonyOptimizationForm = this.fb.group({
-    alpha: [1, [Validators.required, Validators.min(0)]],
-    beta: [5, [Validators.required, Validators.min(0)]],
-    evaporationRate: [0.5, [Validators.required, Validators.min(0.0), Validators.max(1)]],
-    q: [500, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
-    antFactor: [0.8, [Validators.required, Validators.min(0.1)]],
-    randomCitySelection: [0.01, [Validators.required, Validators.min(0.0), Validators.max(1)]],
-    iterations: [50, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
-  });
-
-  routeAlgorithmRows: RouteAlgorithmRow[] = [];
   idCounter = 0;
+  routeAlgorithmRows: RouteAlgorithmRow[] = [];
   requestStatuses = RequestStatus;
   tableAscSortOrder = true;
 
-  constructor(private fb: FormBuilder, private tspAlgorithmService: TspAlgorithmService) {
+  constructor() {
   }
 
   ngOnInit(): void {
-    this.simulatedAnnealingForm.setValidators(this.greaterThan('maxTemperature', 'minTemperature'));
-    this.geneticAlgorithmForm.setValidators(this.greaterThan('populationSize', 'elitismSize'));
     paper.setup('canvas');
     this.cities = City.generateRandomCities(100, this.cityMaxX, this.cityMaxY);
+    this.costMatrix = City.toCostMatrix(this.cities);
     this.drawCities(this.cities)
-  }
-
-  greaterThan(field1Name: string, field2Name: string): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const field1 = control.get(field1Name);
-      const field2 = control.get(field2Name);
-      const notGreater = Number(field1!.value) <= Number(field2!.value);
-      return notGreater ? {'notGreater': {value: field1!.value}} : null;
-    }
   }
 
   generateCities() {
     this.routeAlgorithmRows = [];
     this.cities = City.generateRandomCities(this.citiesNumber.value, this.cityMaxX, this.cityMaxY);
+    this.costMatrix = City.toCostMatrix(this.cities);
     this.drawCities(this.cities)
-  }
-
-  runAlgorithm() {
-    const routeAlgorithmRowId = this.idCounter++
-    const routeAlgorithmRow: RouteAlgorithmRow = {
-      id: routeAlgorithmRowId,
-      algorithmType: '',
-      parameters: '',
-      calculationTime: 0,
-      totalCost: 0,
-      citiesOrder: [],
-      status: RequestStatus.ONGOING
-    };
-    let routeAlgorithm!: Observable<RouteAlgorithm>;
-
-    switch (this.chosenAlgorithm) {
-      case '0': {
-        routeAlgorithmRow.algorithmType = 'Nearest neighbour';
-        routeAlgorithm = this.tspAlgorithmService.getNearestNeighbour(this.cities);
-        break;
-      }
-      case '1': {
-        routeAlgorithmRow.algorithmType = '2-opt';
-        routeAlgorithm = this.tspAlgorithmService.getTwoOpt(this.cities);
-        break;
-      }
-      case '2': {
-        const maxTemperature = this.simulatedAnnealingForm.get('maxTemperature')!.value;
-        const minTemperature = this.simulatedAnnealingForm.get('minTemperature')!.value;
-        const coolingRate = this.simulatedAnnealingForm.get('coolingRate')!.value;
-        const epochs = this.simulatedAnnealingForm.get('epochs')!.value;
-
-        routeAlgorithmRow.algorithmType = 'Simulated annealing';
-        routeAlgorithmRow.parameters = `Max temperature = ${maxTemperature}, `
-          + `Min  temperature = ${minTemperature}, `
-          + `Cooling rate = ${coolingRate}, `
-          + `Epochs = ${epochs}`;
-
-        const simulatedAnnealingRequest = new SimulatedAnnealingRequest(this.cities,
-          maxTemperature, minTemperature, coolingRate, epochs);
-        routeAlgorithm = this.tspAlgorithmService.getSimulatedAnnealing(simulatedAnnealingRequest);
-        break;
-      }
-      case '3': {
-        const populationSize = this.geneticAlgorithmForm.get('populationSize')!.value;
-        const elitismSize = this.geneticAlgorithmForm.get('elitismSize')!.value;
-        const mutationRate = this.geneticAlgorithmForm.get('mutationRate')!.value;
-        const epochs = this.geneticAlgorithmForm.get('epochs')!.value;
-
-        routeAlgorithmRow.algorithmType = 'Genetic algorithm';
-        routeAlgorithmRow.parameters = `Population size = ${populationSize}, `
-          + `Elitism  size = ${elitismSize}, `
-          + `Mutation rate = ${mutationRate}, `
-          + `Epochs = ${epochs}`;
-
-        const geneticAlgorithmRequest = new GeneticAlgorithmRequest(this.cities,
-          populationSize, elitismSize, mutationRate, epochs);
-        routeAlgorithm = this.tspAlgorithmService.getGeneticAlgorithm(geneticAlgorithmRequest);
-        break;
-      }
-      case '4': {
-        const alpha = this.antColonyOptimizationForm.get('alpha')!.value;
-        const beta = this.antColonyOptimizationForm.get('beta')!.value;
-        const evaporationRate = this.antColonyOptimizationForm.get('evaporationRate')!.value;
-        const q = this.antColonyOptimizationForm.get('q')!.value;
-        const antFactor = this.antColonyOptimizationForm.get('antFactor')!.value;
-        const randomCitySelection = this.antColonyOptimizationForm.get('randomCitySelection')!.value;
-        const iterations = this.antColonyOptimizationForm.get('iterations')!.value;
-
-        routeAlgorithmRow.algorithmType = 'Ant colony optimization';
-        routeAlgorithmRow.parameters = `α = ${alpha}, `
-          + `β = ${beta}, `
-          + `Evaporation = ${evaporationRate}, `
-          + `Q = ${q}, `
-          + `Ant factor = ${antFactor}, `
-          + `Random selection = ${randomCitySelection}, `
-          + `Iterations = ${iterations}`;
-
-        const antColonyRequest = new AntColonyRequest(this.cities,
-          alpha, beta, evaporationRate, q, antFactor, randomCitySelection, iterations);
-        routeAlgorithm = this.tspAlgorithmService.getAntColonyOptimization(antColonyRequest);
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-    this.routeAlgorithmRows.push(routeAlgorithmRow);
-
-    routeAlgorithm.subscribe({
-      next: value => {
-        let completedRouteAlgorithmRow = this.routeAlgorithmRows.find(e => e.id === routeAlgorithmRowId);
-
-        if (completedRouteAlgorithmRow !== undefined) {
-          completedRouteAlgorithmRow.totalCost = value.totalCost;
-          completedRouteAlgorithmRow.calculationTime = value.calculationTime;
-          completedRouteAlgorithmRow.citiesOrder = value.citiesOrder;
-          completedRouteAlgorithmRow.status = RequestStatus.SUCCESS;
-        }
-      },
-      error: value => {
-        let completedRouteAlgorithmRow = this.routeAlgorithmRows.find(e => e.id === routeAlgorithmRowId);
-
-        if (completedRouteAlgorithmRow !== undefined) {
-          completedRouteAlgorithmRow.status = RequestStatus.FAILURE;
-        }
-      }
-    });
-
   }
 
   drawCity(city: City, widthRate: number, heightRate: number) {
@@ -257,6 +110,33 @@ export class TspAlgorithmsComponent implements OnInit {
       this.routeAlgorithmRows.sort((a, b) => a[colName] > b[colName] ? 1 : a[colName] < b[colName] ? -1 : 0)
     }
     this.tableAscSortOrder = !this.tableAscSortOrder
+  }
+
+  onRunAlgorithm($event: AlgorithmRun) {
+    const routeAlgorithmRowId = this.idCounter++
+    let routeAlgorithmRow = $event.routeAlgorithmRow;
+    routeAlgorithmRow.id = routeAlgorithmRowId;
+    this.routeAlgorithmRows.push(routeAlgorithmRow);
+
+    $event.routeAlgorithmObservable.subscribe({
+      next: value => {
+        let completedRouteAlgorithmRow = this.routeAlgorithmRows.find(e => e.id === routeAlgorithmRowId);
+
+        if (completedRouteAlgorithmRow !== undefined) {
+          completedRouteAlgorithmRow.totalCost = value.totalCost;
+          completedRouteAlgorithmRow.calculationTime = value.calculationTime;
+          completedRouteAlgorithmRow.citiesOrder = value.citiesOrder;
+          completedRouteAlgorithmRow.status = RequestStatus.SUCCESS;
+        }
+      },
+      error: value => {
+        let completedRouteAlgorithmRow = this.routeAlgorithmRows.find(e => e.id === routeAlgorithmRowId);
+
+        if (completedRouteAlgorithmRow !== undefined) {
+          completedRouteAlgorithmRow.status = RequestStatus.FAILURE;
+        }
+      }
+    });
   }
 
 }

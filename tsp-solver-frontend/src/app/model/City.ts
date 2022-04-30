@@ -18,4 +18,15 @@ export class City {
     return cities;
   }
 
+  static toCostMatrix(cities: City[]): number[][] {
+    const costMatrix: number[][] = [];
+    for (let i = 0; i < cities.length; i++) {
+      costMatrix[i] = [];
+      for (let j = 0; j < cities.length; j++) {
+        costMatrix[i][j] = Math.hypot(Math.abs(cities[i].x - cities[j].x), Math.abs(cities[i].y - cities[j].y));
+      }
+    }
+    return costMatrix;
+  }
+
 }

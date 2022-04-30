@@ -12,6 +12,7 @@ import {ValidationErrorComponent} from './validation-error/validation-error.comp
 import {GraphSppComponent} from "./graph-spp/graph-spp.component";
 import { FilterSelectedNodePipe } from './graph-spp/pipes/filter-selected-node.pipe';
 import { RouteCostPipe } from './graph-spp/pipes/route-cost.pipe';
+import { AlgorithmFormComponent } from './algorithm-form/algorithm-form.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { RouteCostPipe } from './graph-spp/pipes/route-cost.pipe';
     ValidationErrorComponent,
     GraphSppComponent,
     FilterSelectedNodePipe,
-    RouteCostPipe
+    RouteCostPipe,
+    AlgorithmFormComponent
   ],
   imports: [
     BrowserModule,

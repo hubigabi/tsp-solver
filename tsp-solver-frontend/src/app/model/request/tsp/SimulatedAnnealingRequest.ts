@@ -1,14 +1,13 @@
-import {City} from "../../City";
-
 export class SimulatedAnnealingRequest {
-  cities: City[]
+  costMatrix: number[][]
   maxTemperature: number;
   minTemperature: number;
   coolingRate: number;
   epochsNumber: number
 
-  constructor(cities: City[], maxTemperature: number, minTemperature: number, coolingRate: number, epochsNumber: number) {
-    this.cities = cities;
+  constructor(costMatrix: number[][], maxTemperature: number, minTemperature: number,
+              coolingRate: number, epochsNumber: number) {
+    this.costMatrix = costMatrix;
     this.maxTemperature = maxTemperature;
     this.minTemperature = minTemperature;
     this.coolingRate = coolingRate;

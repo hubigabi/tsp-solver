@@ -1,7 +1,5 @@
-import {City} from "../../City";
-
 export class AntColonyRequest {
-  cities: City[]
+  costMatrix: number[][]
   alpha: number;
   beta: number;
   evaporationRate: number;
@@ -10,9 +8,9 @@ export class AntColonyRequest {
   randomCitySelection: number;
   maxIterations: number;
 
-  constructor(cities: City[], alpha: number, beta: number, evaporationRate: number, q: number,
-              antFactor: number, randomCitySelection: number, maxIterations: number) {
-    this.cities = cities;
+  constructor(costMatrix: number[][], alpha: number, beta: number, evaporationRate: number,
+              q: number, antFactor: number, randomCitySelection: number, maxIterations: number) {
+    this.costMatrix = costMatrix;
     this.alpha = alpha;
     this.beta = beta;
     this.evaporationRate = evaporationRate;
