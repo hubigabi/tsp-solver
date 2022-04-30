@@ -5,6 +5,37 @@
   <div class="row gx-5">
     <div class="col-7">
       <div id="cy"></div>
+
+      <form [formGroup]="findRoutesForm" class="row mt-3">
+        <div class="col-auto">
+          <label for="bearingCapacity" class="form-label">Min bearing capacity</label>
+          <input type="number" min="0" step="1" formControlName="bearingCapacity" class="form-control"
+                 id="bearingCapacity">
+        </div>
+
+        <div class="col-auto align-self-end">
+          <button type="submit" class="btn btn-primary" (click)="findRoutes()" [disabled]="!findRoutesForm.valid">
+            Find routes
+          </button>
+        </div>
+      </form>
+
+      <div class="table-responsive">
+        <table class="table table-striped mt-4" *ngIf="routesMatrix.length > 0">
+          <thead>
+          <tr>
+            <th scope="col"></th>
+            <th *ngFor="let routes of routesMatrix; index as i" scope="col" class="text-center">{{routes[i].to}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let routes of routesMatrix; index as i">
+            <th scope="row">{{routes[i].from}}</th>
+            <td *ngFor="let route of routes" class="text-center">{{route.cost}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="col-5">
@@ -44,7 +75,7 @@
           </thead>
           <tbody>
           <tr *ngFor="let roadType of roadTypes">
-            <td>{{ roadType.id }}</td>
+            <th scope="row">{{ roadType.id }}</th>
             <td>{{ roadType.type }}</td>
             <td>{{ roadType.weight  | number : '1.2-2'}} </td>
             <td>
@@ -55,6 +86,7 @@
               </button>
               <button class="btn mx" (click)="deleteRoadType(roadType)"><i class="bi bi-trash-fill"></i></button>
             </td>
+          </tr>
           </tbody>
         </table>
 
@@ -110,7 +142,7 @@
           </thead>
           <tbody>
           <tr *ngFor="let edge of selectedNodeEdges; index as i">
-            <td>{{ i + 1 }}</td>
+            <th scope="row">{{ i + 1 }}</th>
             <td>{{ edge.source }}</td>
             <td>{{ edge.target }}</td>
             <td>{{ edge.roadType.type }}</td>
@@ -121,6 +153,7 @@
               </button>
               <button class="btn mx" (click)="deleteEdge(edge)"><i class="bi bi-trash-fill"></i></button>
             </td>
+          </tr>
           </tbody>
         </table>
 
@@ -177,19 +210,5 @@
     </div>
 
   </div>
-
-  <form [formGroup]="findRoutesForm" class="row mt-3">
-    <div class="col-auto">
-      <label for="bearingCapacity" class="form-label">Min bearing capacity</label>
-      <input type="number" min="0" step="1" formControlName="bearingCapacity" class="form-control"
-             id="bearingCapacity">
-    </div>
-
-    <div class="col-auto align-self-end">
-      <button type="submit" class="btn btn-primary" (click)="findRoutes()" [disabled]="!findRoutesForm.valid">
-        Find routes
-      </button>
-    </div>
-  </form>
 
 </div>

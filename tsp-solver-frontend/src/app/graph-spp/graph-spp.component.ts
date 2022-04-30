@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import * as cytoscape from 'cytoscape';
+import {EdgeSingular} from 'cytoscape';
 import {FormBuilder, FormControl, Validators} from "@angular/forms";
 import {RoadType} from "./RoadType";
-import {EdgeSingular} from "cytoscape";
 import {Edge} from "./Edge";
 import {NodeRequest} from '../model/request/spp/NodeRequest';
 import {RoadTypeRequest} from "../model/request/spp/RoadTypeRequest";
@@ -10,7 +10,7 @@ import {PathRequirement} from "../model/request/spp/PathRequirement";
 import {SppRequest} from "../model/request/spp/SppRequest";
 import {EdgeRequest} from "../model/request/spp/EdgeRequest";
 import {SppService} from "../service/spp.service";
-import {RequestStatus} from "../tsp-algorithms/RequestStatus";
+import {Route} from "../model/request/spp/Route";
 
 declare var require: any
 const automove = require('cytoscape-automove');
@@ -50,6 +50,8 @@ export class GraphSppComponent implements OnInit {
   selectedNodeId = '';
   selectedNodeEdges: Edge[] = [];
   selectedEdgeId = '';
+
+  routesMatrix: Route[][] = [];
 
   constructor(private fb: FormBuilder, private sppService: SppService) {
   }
@@ -296,8 +298,7 @@ export class GraphSppComponent implements OnInit {
 
     let selectedEdgeId = this.selectedNodeEdges.findIndex(value => value.id == this.selectedEdgeId);
     if (selectedEdgeId > -1) {
-      let edge = new Edge(this.selectedEdgeId, source, target, distance, roadType, capacity, color);
-      this.selectedNodeEdges[selectedEdgeId] = edge;
+      this.selectedNodeEdges[selectedEdgeId] = new Edge(this.selectedEdgeId, source, target, distance, roadType, capacity, color);
     }
     const edgeCy = this.cy.$(`edge[id = "${this.selectedEdgeId}"]`);
     edgeCy.data({
@@ -360,7 +361,7 @@ export class GraphSppComponent implements OnInit {
     this.sppService.getSppResult(sppRequest)
       .subscribe({
         next: value => {
-          console.log(value);
+          this.routesMatrix = value.routesMatrix;
         },
         error: value => {
           console.log(value);
