@@ -49,7 +49,7 @@
 
     <td>
       <ng-container *ngIf="routeAlgorithmRow.status === requestStatuses.SUCCESS; else notSuccess">
-        <a href="#canvas" (click)="onRouteOrderClick(routeAlgorithmRow.citiesOrder)">Order</a>
+        <a href="" (click)="$event.preventDefault();onRouteOrderClick(routeAlgorithmRow.citiesOrder)">Order</a>
       </ng-container>
       <ng-template #notSuccess>
         <ng-container *ngIf="routeAlgorithmRow.status === requestStatuses.ONGOING; else failure">

@@ -12,6 +12,8 @@ import {EdgeRequest} from "../model/request/spp/EdgeRequest";
 import {SppService} from "../service/spp.service";
 import {Route} from "../model/request/spp/Route";
 import {AlgorithmRun} from "../algorithm-form/AlgorithmRun";
+import {RouteAlgorithmRow} from "../tsp-algorithms/RouteAlgorithmRow";
+import {RequestStatus} from "../tsp-algorithms/RequestStatus";
 
 declare var require: any
 const automove = require('cytoscape-automove');
@@ -54,6 +56,9 @@ export class GraphSppComponent implements OnInit {
 
   routesMatrix: Route[][] = [];
   costMatrix: number[][] = [];
+
+  idCounter = 0;
+  routeAlgorithmRows: RouteAlgorithmRow[] = [];
 
   constructor(private fb: FormBuilder, private sppService: SppService) {
   }
@@ -390,7 +395,34 @@ export class GraphSppComponent implements OnInit {
   }
 
   onRunAlgorithm(algorithmRun: AlgorithmRun) {
+    const routeAlgorithmRowId = this.idCounter++
+    let routeAlgorithmRow = algorithmRun.routeAlgorithmRow;
+    routeAlgorithmRow.id = routeAlgorithmRowId;
+    this.routeAlgorithmRows.push(routeAlgorithmRow);
 
+    algorithmRun.routeAlgorithmObservable.subscribe({
+      next: value => {
+        let completedRouteAlgorithmRow = this.routeAlgorithmRows.find(e => e.id === routeAlgorithmRowId);
+
+        if (completedRouteAlgorithmRow !== undefined) {
+          completedRouteAlgorithmRow.totalCost = value.totalCost;
+          completedRouteAlgorithmRow.calculationTime = value.calculationTime;
+          completedRouteAlgorithmRow.citiesOrder = value.citiesOrder;
+          completedRouteAlgorithmRow.status = RequestStatus.SUCCESS;
+        }
+      },
+      error: value => {
+        let completedRouteAlgorithmRow = this.routeAlgorithmRows.find(e => e.id === routeAlgorithmRowId);
+
+        if (completedRouteAlgorithmRow !== undefined) {
+          completedRouteAlgorithmRow.status = RequestStatus.FAILURE;
+        }
+      }
+    });
+  }
+
+  onRouteOrderClick(citiesOrder: number[]) {
+    console.log(citiesOrder);
   }
 
 }

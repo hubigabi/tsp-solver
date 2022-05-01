@@ -20,7 +20,7 @@
         </div>
 
         <div class="col align-self-end">
-          <app-validation-error [message]="'All cities are not connected!'"
+          <app-validation-error [message]="'Cities are not connected!'"
                                 *ngIf="!(costMatrix | costMatrixValid)"></app-validation-error>
         </div>
       </form>
@@ -219,7 +219,11 @@
                             (runAlgorithmEmitter)="onRunAlgorithm($event)"></app-algorithm-form>
       </div>
     </div>
+  </div>
 
+  <div class="mb-5" *ngIf="routeAlgorithmRows.length > 0">
+    <app-route-algorithm-table [routeAlgorithmRows]="routeAlgorithmRows"
+                               (routeOrderClickEmitter)="onRouteOrderClick($event)"></app-route-algorithm-table>
   </div>
 
 </div>
