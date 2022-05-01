@@ -14,6 +14,7 @@ import {FilterSelectedNodePipe} from './graph-spp/pipes/filter-selected-node.pip
 import {RouteCostPipe} from './graph-spp/pipes/route-cost.pipe';
 import {AlgorithmFormComponent} from './algorithm-form/algorithm-form.component';
 import {CostMatrixValidPipe} from './graph-spp/pipes/cost-matrix-valid.pipe';
+import { RouteAlgorithmTableComponent } from './route-algorithm-table/route-algorithm-table.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import {CostMatrixValidPipe} from './graph-spp/pipes/cost-matrix-valid.pipe';
     FilterSelectedNodePipe,
     RouteCostPipe,
     AlgorithmFormComponent,
-    CostMatrixValidPipe
+    CostMatrixValidPipe,
+    RouteAlgorithmTableComponent
   ],
   imports: [
     BrowserModule,

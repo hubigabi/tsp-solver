@@ -128,21 +128,25 @@ export class GraphSppComponent implements OnInit {
       reposition: 'viewport'
     });
 
-    //TODO
-    this.cy.on('tap', 'node', event => {
-      const node = event.target;
-      this.selectedNodeId = node.id();
-      this.selectedNodeEdges = event.target.connectedEdges()
-        .filter((edge: EdgeSingular) => edge.data().source == this.selectedNodeId)
-        .map((edge: EdgeSingular) => {
-          let data = edge.data();
-          const color = this.getRoadTypeColor(data.roadType);
-          return new Edge(data.id, data.source, data.target, data.distance, data.roadType, data.bearingCapacity, color);
-        });
-      this.edgeForm.get('source')!.setValue(this.selectedNodeId);
+    this.cy.on('tap', event => {
+      if (event.target.isNode?.()) {
+        const node = event.target;
+        this.selectedNodeId = node.id();
+        this.selectedNodeEdges = event.target.connectedEdges()
+          .filter((edge: EdgeSingular) => edge.data().source == this.selectedNodeId)
+          .map((edge: EdgeSingular) => {
+            let data = edge.data();
+            const color = this.getRoadTypeColor(data.roadType);
+            return new Edge(data.id, data.source, data.target, data.distance, data.roadType, data.bearingCapacity, color);
+          });
+        this.edgeForm.get('source')!.setValue(this.selectedNodeId);
 
-      let target = this.allNodesId.find(value => value != this.selectedNodeId);
-      this.edgeForm.get('target')!.setValue(target);
+        let target = this.allNodesId.find(value => value != this.selectedNodeId);
+        this.edgeForm.get('target')!.setValue(target);
+      } else {
+        this.selectedNodeId = ''
+        this.selectedNodeEdges = [];
+      }
     });
 
     this.allNodesId = this.cy.nodes().map(e => e.id());
@@ -385,7 +389,7 @@ export class GraphSppComponent implements OnInit {
     return costMatrix;
   }
 
-  onRunAlgorithm($event: AlgorithmRun) {
+  onRunAlgorithm(algorithmRun: AlgorithmRun) {
 
   }
 

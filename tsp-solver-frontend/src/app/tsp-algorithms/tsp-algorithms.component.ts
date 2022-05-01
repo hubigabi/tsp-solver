@@ -22,8 +22,6 @@ export class TspAlgorithmsComponent implements OnInit {
 
   idCounter = 0;
   routeAlgorithmRows: RouteAlgorithmRow[] = [];
-  requestStatuses = RequestStatus;
-  tableAscSortOrder = true;
 
   constructor() {
   }
@@ -103,22 +101,13 @@ export class TspAlgorithmsComponent implements OnInit {
     path.strokeColor = new paper.Color('red');
   }
 
-  sortTable(colName: keyof RouteAlgorithmRow) {
-    if (this.tableAscSortOrder) {
-      this.routeAlgorithmRows.sort((a, b) => a[colName] < b[colName] ? 1 : a[colName] > b[colName] ? -1 : 0)
-    } else {
-      this.routeAlgorithmRows.sort((a, b) => a[colName] > b[colName] ? 1 : a[colName] < b[colName] ? -1 : 0)
-    }
-    this.tableAscSortOrder = !this.tableAscSortOrder
-  }
-
-  onRunAlgorithm($event: AlgorithmRun) {
+  onRunAlgorithm(algorithmRun: AlgorithmRun) {
     const routeAlgorithmRowId = this.idCounter++
-    let routeAlgorithmRow = $event.routeAlgorithmRow;
+    let routeAlgorithmRow = algorithmRun.routeAlgorithmRow;
     routeAlgorithmRow.id = routeAlgorithmRowId;
     this.routeAlgorithmRows.push(routeAlgorithmRow);
 
-    $event.routeAlgorithmObservable.subscribe({
+    algorithmRun.routeAlgorithmObservable.subscribe({
       next: value => {
         let completedRouteAlgorithmRow = this.routeAlgorithmRows.find(e => e.id === routeAlgorithmRowId);
 
@@ -137,6 +126,10 @@ export class TspAlgorithmsComponent implements OnInit {
         }
       }
     });
+  }
+
+  onRouteOrderClick(citiesOrder: number[]) {
+    this.drawCitiesOrder(citiesOrder);
   }
 
 }
