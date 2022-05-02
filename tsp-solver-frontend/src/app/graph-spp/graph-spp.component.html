@@ -8,6 +8,13 @@
 
       <form [formGroup]="findRoutesForm" class="row mt-3">
         <div class="col-auto">
+          <label for="startingCity" class="form-label">Starting city</label>
+          <select id="startingCity" class="form-select" formControlName="startingCity">
+            <option *ngFor="let nodeId of allNodesId" [ngValue]="nodeId">{{nodeId}}</option>
+          </select>
+        </div>
+
+        <div class="col-auto">
           <label for="bearingCapacity" class="form-label">Min bearing capacity</label>
           <input type="number" min="0" step="1" formControlName="bearingCapacity" class="form-control"
                  id="bearingCapacity">
@@ -221,7 +228,7 @@
     </div>
   </div>
 
-  <div class="mb-5" *ngIf="routeAlgorithmRows.length > 0">
+  <div class="mt-4" *ngIf="routeAlgorithmRows.length > 0">
     <app-route-algorithm-table [routeAlgorithmRows]="routeAlgorithmRows"
                                (routeOrderClickEmitter)="onRouteOrderClick($event)"></app-route-algorithm-table>
   </div>

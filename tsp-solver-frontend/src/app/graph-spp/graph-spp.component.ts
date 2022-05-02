@@ -45,6 +45,7 @@ export class GraphSppComponent implements OnInit {
   });
 
   findRoutesForm = this.fb.group({
+    startingCity: ['', Validators.required],
     bearingCapacity: [10.0, [Validators.required, Validators.min(0.01)]],
   });
 
@@ -155,6 +156,7 @@ export class GraphSppComponent implements OnInit {
     });
 
     this.allNodesId = this.cy.nodes().map(e => e.id());
+    this.findRoutesForm.get('startingCity')!.setValue(this.allNodesId.length > 0 ? this.allNodesId[0] : '');
   }
 
   public noWhitespaceValidator(control: FormControl) {
@@ -354,12 +356,26 @@ export class GraphSppComponent implements OnInit {
     }
     this.selectedNodeEdges = this.selectedNodeEdges.filter(value =>
       value.source != this.selectedEdgeId && value.target != this.selectedEdgeId);
+
+    if (this.findRoutesForm.get('startingCity')!.value === this.selectedNodeId) {
+      this.findRoutesForm.get('startingCity')!.setValue(this.allNodesId.length > 0 ? this.allNodesId[0] : '');
+    }
     this.selectedEdgeId = ''
     this.selectedNodeId = '';
   }
 
   findRoutes() {
     const nodesRequest = this.cy.nodes().map(e => new NodeRequest(e.id()));
+    let startingCityIndex = nodesRequest.findIndex(value => value.id === this.findRoutesForm.get('startingCity')!.value)
+    if (startingCityIndex > -1) {
+      // Move starting city to the begging of array
+      const element = nodesRequest[startingCityIndex];
+      nodesRequest.splice(startingCityIndex, 1);
+      nodesRequest.splice(0, 0, element);
+    } else {
+      alert("Starting city does not exist");
+    }
+
     const roadTypesRequest = this.roadTypes.map(roadType => new RoadTypeRequest(roadType.id, roadType.type, roadType.weight));
     let edgesRequest = this.cy.edges().map((edge: EdgeSingular) => {
       let data = edge.data();
@@ -369,7 +385,6 @@ export class GraphSppComponent implements OnInit {
     const pathRequirement = new PathRequirement(bearingCapacity);
 
     const sppRequest = new SppRequest(nodesRequest, roadTypesRequest, edgesRequest, pathRequirement);
-    console.log(sppRequest);
     this.sppService.getSppResult(sppRequest)
       .subscribe({
         next: value => {
@@ -381,6 +396,7 @@ export class GraphSppComponent implements OnInit {
           console.log(value);
         }
       });
+    this.routeAlgorithmRows = [];
   }
 
   getCostMatrix(routesMatrix: Route[][]): number[][] {
@@ -423,6 +439,9 @@ export class GraphSppComponent implements OnInit {
 
   onRouteOrderClick(citiesOrder: number[]) {
     console.log(citiesOrder);
+
+    const aaa = citiesOrder.map(cityId => this.routesMatrix[cityId][0].from);
+    console.log(aaa);
   }
 
 }
