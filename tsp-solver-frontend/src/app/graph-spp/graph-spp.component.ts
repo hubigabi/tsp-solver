@@ -84,6 +84,15 @@ export class GraphSppComponent implements OnInit {
           data: {id: 'B'}
         },
         {
+          data: {id: 'C'}
+        },
+        {
+          data: {id: 'D'}
+        },
+        {
+          data: {id: 'E'}
+        },
+        {
           data: {
             id: 'AB', source: 'A', target: 'B', distance: 15, roadType: this.roadTypes[0],
             bearingCapacity: 30, color: this.roadTypes[0].color
@@ -91,8 +100,25 @@ export class GraphSppComponent implements OnInit {
         },
         {
           data: {
-            id: 'BA', source: 'B', target: 'A', distance: 20, roadType: this.roadTypes[1],
-            bearingCapacity: 25, color: this.roadTypes[1].color
+            id: 'BC', source: 'B', target: 'C', distance: 20, roadType: this.roadTypes[0],
+            bearingCapacity: 25, color: this.roadTypes[0].color
+          },
+        },
+        {
+          data: {
+            id: 'CD', source: 'C', target: 'D', distance: 20, roadType: this.roadTypes[0],
+            bearingCapacity: 25, color: this.roadTypes[0].color
+          }
+        },
+        {
+          data: {
+            id: 'DE', source: 'D', target: 'E', distance: 20, roadType: this.roadTypes[0],
+            bearingCapacity: 25, color: this.roadTypes[0].color
+          }
+        }, {
+          data: {
+            id: 'EA', source: 'E', target: 'A', distance: 20, roadType: this.roadTypes[0],
+            bearingCapacity: 25, color: this.roadTypes[0].color
           }
         }
       ],
@@ -437,11 +463,16 @@ export class GraphSppComponent implements OnInit {
     });
   }
 
+  aaa(route: Route) {
+    console.log(route);
+  }
+
   onRouteOrderClick(citiesOrder: number[]) {
     console.log(citiesOrder);
 
     const aaa = citiesOrder.map(cityId => this.routesMatrix[cityId][0].from);
     console.log(aaa);
   }
+
 
 }

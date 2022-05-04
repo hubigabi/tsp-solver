@@ -1,9 +1,11 @@
 package pl.edu.pbs.spp;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.stereotype.Service;
 import pl.edu.pbs.request.spp.SppRequest;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,31 +19,39 @@ public class SppService {
         setEdgesCost(edges, roadTypes);
 
         Route[][] routeMatrix = new Route[nodes.size()][nodes.size()];
+        HashMap<EdgeKey, Edge> edgesMap = new HashMap<>();
 
         for (int i = 0; i < nodes.size(); i++) {
             String source = nodes.get(i).getId();
             for (int j = 0; j < nodes.size(); j++) {
                 String target = nodes.get(j).getId();
                 double cost;
+                int successorNode;
                 if (i == j) {
                     cost = 0;
+                    successorNode = -1;
                 } else {
-                    cost = edges.stream()
-                            .filter(edge -> edge.getSource().equals(source) && edge.getTarget().equals(target))
-                            .map(Edge::getCost)
-                            .min(Double::compareTo)
-                            .orElse(Double.MAX_VALUE);
-                }
-                boolean isDirected = (cost != Double.MAX_VALUE);
+                    Optional<Edge> edge = edges.stream()
+                            .filter(e -> e.getSource().equals(source) && e.getTarget().equals(target))
+                            .min(Comparator.comparingDouble(Edge::getCost));
 
-                routeMatrix[i][j] = new Route(source, target, isDirected, cost);
+                    if (edge.isPresent()) {
+                        cost = edge.get().getCost();
+                        successorNode = j;
+                        edgesMap.put(new EdgeKey(source, target), edge.get());
+                    } else {
+                        cost = Double.MAX_VALUE;
+                        successorNode = -1;
+                    }
+
+                }
+
+                routeMatrix[i][j] = new Route(source, target, cost, successorNode, new ArrayList<>(), new ArrayList<>());
             }
         }
 
-        printMatrix(routeMatrix);
-        System.out.println();
         floydWarshall(routeMatrix);
-        printMatrix(routeMatrix);
+        setPath(routeMatrix, edgesMap);
         changeInfinityCost(routeMatrix);
         return routeMatrix;
     }
@@ -72,22 +82,46 @@ public class SppService {
                 for (int k = 0; k < n; k++) {
                     if (matrix[j][i].getCost() + matrix[i][k].getCost() < matrix[j][k].getCost()) {
                         matrix[j][k].setCost(matrix[j][i].getCost() + matrix[i][k].getCost());
+                        matrix[j][k].setSuccessorNode(matrix[j][i].getSuccessorNode());
                     }
                 }
             }
         }
     }
 
-    private void printMatrix(Route[][] routeMatrix) {
+    private void setPath(Route[][] routeMatrix, HashMap<EdgeKey, Edge> edgesMap) {
         for (int i = 0; i < routeMatrix.length; i++) {
             for (int j = 0; j < routeMatrix.length; j++) {
-                if (routeMatrix[i][j].getCost() == Double.MAX_VALUE) {
-                    System.out.print("INF ");
+
+                if (routeMatrix[i][j].getSuccessorNode() == -1) {
+                    routeMatrix[i][j].setNodesPath(new ArrayList<>());
                 } else {
-                    System.out.print(routeMatrix[i][j].getCost() + "  ");
+                    List<String> path = new ArrayList<>();
+                    path.add(routeMatrix[i][0].getFrom());
+
+                    int index = i;
+                    while (index != j) {
+                        index = routeMatrix[index][j].getSuccessorNode();
+                        path.add(routeMatrix[index][0].getFrom());
+                    }
+
+                    routeMatrix[i][j].setNodesPath(List.copyOf(path));
+
+                    List<String> edgesPath = new ArrayList<>();
+                    for (int k = 0; k < path.size() - 1; k++) {
+                        EdgeKey edgeKey = new EdgeKey(path.get(k), path.get(k + 1));
+                        Edge edge = edgesMap.get(edgeKey);
+                        if (edge != null) {
+                            edgesPath.add(edge.getId());
+                        } else {
+                            throw new RuntimeException("Edge connecting " + path.get(k)
+                                    + " and " + path.get(k + 1) + " not found");
+                        }
+                    }
+
+                    routeMatrix[i][j].setEdgesPath(edgesPath);
                 }
             }
-            System.out.println();
         }
     }
 
@@ -101,5 +135,13 @@ public class SppService {
             }
         }
     }
+
+    @Data
+    @AllArgsConstructor
+    public static class EdgeKey {
+        String fromNode;
+        String toNode;
+    }
+
 
 }
