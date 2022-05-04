@@ -1,3 +1,4 @@
+<simple-notifications [options]="options"></simple-notifications>
 <app-navbar></app-navbar>
 
 <div class="container pt-3">
@@ -62,11 +63,11 @@
         </div>
         <div class="col-auto">
           <button type="submit" class="btn btn-primary" (click)="addCity()"
-                  [disabled]=" !newCityName.valid">Add city
+                  [disabled]=" !newCityName.valid || isPathShown">Add city
           </button>
         </div>
         <div class="col-auto" *ngIf="selectedNodeId != ''">
-          <button type="button" class="btn btn-danger" (click)="deleteCity()">
+          <button type="button" class="btn btn-danger" [disabled]="isPathShown" (click)="deleteCity()">
             Delete city
           </button>
         </div>
@@ -98,9 +99,11 @@
               <input type="color" class="form-control form-control-color" value="{{ roadType.color }}" disabled>
             </td>
             <td>
-              <button class="btn mx" (click)="selectEditingRoadType(roadType)"><i class="bi bi-pencil-fill"></i>
+              <button class="btn mx" [disabled]="isPathShown" (click)="selectEditingRoadType(roadType)"><i
+                class="bi bi-pencil-fill"></i>
               </button>
-              <button class="btn mx" (click)="deleteRoadType(roadType)"><i class="bi bi-trash-fill"></i></button>
+              <button class="btn mx" [disabled]="isPathShown" (click)="deleteRoadType(roadType)"><i
+                class="bi bi-trash-fill"></i></button>
             </td>
           </tr>
           </tbody>
@@ -131,12 +134,12 @@
         <div class="row pt-2">
           <div class="col-auto" *ngIf="selectedRoadTypeId!= -1">
             <button type="submit" class="btn btn-primary px-4" (click)="editRoadType()"
-                    [disabled]="!roadTypeForm.valid">Edit
+                    [disabled]="!roadTypeForm.valid || isPathShown">Edit
             </button>
           </div>
           <div class="col-auto">
             <button type="submit" class="btn btn-primary px-4" (click)="addRoadType()"
-                    [disabled]="!roadTypeForm.valid">Add
+                    [disabled]="!roadTypeForm.valid || isPathShown">Add
             </button>
           </div>
         </div>
@@ -165,9 +168,11 @@
             <td>{{ edge.distance  | number : '1.2-2'}}</td>
             <td>{{ edge.bearingCapacity  | number : '1.2-2'}} </td>
             <td>
-              <button class="btn mx" (click)="selectEditingEdge(edge)"><i class="bi bi-pencil-fill"></i>
+              <button class="btn mx" [disabled]="isPathShown" (click)="selectEditingEdge(edge)"><i
+                class="bi bi-pencil-fill"></i>
               </button>
-              <button class="btn mx" (click)="deleteEdge(edge)"><i class="bi bi-trash-fill"></i></button>
+              <button class="btn mx" [disabled]="isPathShown" (click)="deleteEdge(edge)"><i
+                class="bi bi-trash-fill"></i></button>
             </td>
           </tr>
           </tbody>
@@ -213,12 +218,12 @@
         <div class="row pt-2">
           <div class="col-auto" *ngIf="selectedEdgeId!= ''">
             <button type="submit" class="btn btn-primary px-4" (click)="editEdge()"
-                    [disabled]="!edgeForm.valid">Edit
+                    [disabled]="!edgeForm.valid || isPathShown">Edit
             </button>
           </div>
           <div class="col-auto">
             <button type="submit" class="btn btn-primary px-4" (click)="addEdge()"
-                    [disabled]="!edgeForm.valid">Add
+                    [disabled]="!edgeForm.valid || isPathShown">Add
             </button>
           </div>
         </div>

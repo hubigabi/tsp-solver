@@ -14,7 +14,8 @@ import {FilterSelectedNodePipe} from './graph-spp/pipes/filter-selected-node.pip
 import {RouteCostPipe} from './graph-spp/pipes/route-cost.pipe';
 import {AlgorithmFormComponent} from './algorithm-form/algorithm-form.component';
 import {CostMatrixValidPipe} from './graph-spp/pipes/cost-matrix-valid.pipe';
-import { RouteAlgorithmTableComponent } from './route-algorithm-table/route-algorithm-table.component';
+import {RouteAlgorithmTableComponent} from './route-algorithm-table/route-algorithm-table.component';
+import {SimpleNotificationsModule} from 'angular2-notifications';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,7 @@ import { RouteAlgorithmTableComponent } from './route-algorithm-table/route-algo
     RouteCostPipe,
     AlgorithmFormComponent,
     CostMatrixValidPipe,
-    RouteAlgorithmTableComponent
+    RouteAlgorithmTableComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,7 +37,8 @@ import { RouteAlgorithmTableComponent } from './route-algorithm-table/route-algo
     NgbModule,
     ReactiveFormsModule,
     FormsModule,
-    NoopAnimationsModule
+    NoopAnimationsModule,
+    SimpleNotificationsModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

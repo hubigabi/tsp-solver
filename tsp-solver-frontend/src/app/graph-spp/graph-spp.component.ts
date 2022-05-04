@@ -14,6 +14,7 @@ import {Route} from "../model/request/spp/Route";
 import {AlgorithmRun} from "../algorithm-form/AlgorithmRun";
 import {RouteAlgorithmRow} from "../tsp-algorithms/RouteAlgorithmRow";
 import {RequestStatus} from "../tsp-algorithms/RequestStatus";
+import {NotificationsService} from "angular2-notifications";
 
 declare var require: any
 const automove = require('cytoscape-automove');
@@ -61,7 +62,13 @@ export class GraphSppComponent implements OnInit {
   idCounter = 0;
   routeAlgorithmRows: RouteAlgorithmRow[] = [];
 
-  constructor(private fb: FormBuilder, private sppService: SppService) {
+  isPathShown = false;
+  options = {
+    preventDuplicates: true
+  };
+
+  constructor(private fb: FormBuilder, private sppService: SppService,
+              private notificationsService: NotificationsService) {
   }
 
   ngOnInit(): void {
@@ -489,6 +496,7 @@ export class GraphSppComponent implements OnInit {
 
       return node
     });
+    this.setPathShown()
   }
 
   onCitiesOrderClick(citiesOrder: number[]) {
@@ -518,7 +526,25 @@ export class GraphSppComponent implements OnInit {
 
       return edge
     });
+    this.setPathShown()
   }
 
+  setPathShown() {
+    this.isPathShown = true;
+    this.notificationsService.warn('Path is shown',
+      'Click here to restore view', {
+        clickToClose: true
+      }).click?.subscribe((event) => {
+      this.cy.nodes().map(node => {
+        node.style({'opacity': 1.0});
+        return node
+      });
+      this.cy.edges().map(node => {
+        node.style({'opacity': 1.0});
+        return node
+      });
+      this.isPathShown = false;
+    });
+  }
 
 }
