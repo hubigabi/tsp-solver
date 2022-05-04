@@ -463,15 +463,61 @@ export class GraphSppComponent implements OnInit {
     });
   }
 
-  aaa(route: Route) {
+  onRouteMatrixClick(route: Route) {
     console.log(route);
+
+    this.cy.edges().map(edge => {
+      let id = edge.data().id;
+
+      if (route.edgesPath.includes(id)) {
+        edge.style({'opacity': 1.0});
+      } else {
+        edge.style({'opacity': 0.1});
+      }
+
+      return edge
+    });
+
+    this.cy.nodes().map(node => {
+      let id = node.data().id;
+
+      if (route.nodesPath.includes(id) || route.from === id || route.to === id) {
+        node.style({'opacity': 1.0});
+      } else {
+        node.style({'opacity': 0.1});
+      }
+
+      return node
+    });
   }
 
-  onRouteOrderClick(citiesOrder: number[]) {
-    console.log(citiesOrder);
+  onCitiesOrderClick(citiesOrder: number[]) {
+    const citiesIdOrder = citiesOrder.map(cityId => this.routesMatrix[cityId][0].from);
 
-    const aaa = citiesOrder.map(cityId => this.routesMatrix[cityId][0].from);
-    console.log(aaa);
+    let edgesPath: number[] = []
+    for (let i = 0; i < citiesOrder.length - 1; i++) {
+      edgesPath = edgesPath.concat(this.routesMatrix[citiesOrder[i]][citiesOrder[i + 1]].edgesPath);
+    }
+
+    console.log(citiesIdOrder);
+    console.log(edgesPath);
+
+    this.cy.nodes().map(node => {
+      node.style({'opacity': 1.0});
+      return node
+    });
+
+    this.cy.edges().map(edge => {
+      let id = edge.data().id;
+
+      if (edgesPath.includes(id)) {
+        edge.style({'opacity': 1.0});
+      } else {
+        edge.style({'opacity': 0.1});
+      }
+
+      return edge
+    });
   }
 
 

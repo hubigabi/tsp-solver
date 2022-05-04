@@ -44,14 +44,9 @@
           <tr *ngFor="let routes of routesMatrix; index as i">
             <th scope="row">{{routes[i].from}}</th>
             <td *ngFor="let route of routes" class="text-center">
-              <a *ngIf="(route.cost !== 0 && route.cost !== -1); else noCost" href="" style="text-decoration: none;"
-                 (click)="$event.preventDefault(); aaa(route)"
+              <a href="" style="text-decoration: none;" (click)="$event.preventDefault(); onRouteMatrixClick(route)"
                  [innerHTML]="route.cost |  number: '1.0-2' | routeCost">
               </a>
-
-              <ng-template #noCost>
-                <span [innerHTML]="route.cost |  number: '1.0-2' | routeCost"></span>
-              </ng-template>
             </td>
           </tr>
           </tbody>
@@ -238,7 +233,7 @@
 
   <div class="mt-4" *ngIf="routeAlgorithmRows.length > 0">
     <app-route-algorithm-table [routeAlgorithmRows]="routeAlgorithmRows"
-                               (routeOrderClickEmitter)="onRouteOrderClick($event)"></app-route-algorithm-table>
+                               (routeOrderClickEmitter)="onCitiesOrderClick($event)"></app-route-algorithm-table>
   </div>
 
 </div>
