@@ -4,7 +4,19 @@
 <div class="container pt-3">
 
   <div class="row gx-4">
-    <div class="col-7">
+    <div class="col-6">
+      <div class="row mb-3">
+        <div class="col-auto">
+          <label for="nodesNumber" class="form-label">Number of nodes</label>
+        </div>
+        <div class="col-3">
+          <input type="number" [formControl]="nodesNumber" class="form-control" id="nodesNumber">
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-primary" (click)="generateGraph()">Generate graph</button>
+        </div>
+      </div>
+
       <div id="cy"></div>
 
       <form [formGroup]="findRoutesForm" class="row mt-3">
@@ -33,8 +45,8 @@
         </div>
       </form>
 
-      <div class="table-responsive">
-        <table class="table table-striped mt-4" *ngIf="routesMatrix.length > 0">
+      <div class="table-responsive mt-4" style="max-height: 600px">
+        <table class="table table-striped" *ngIf="routesMatrix.length > 0">
           <thead>
           <tr>
             <th scope="col"></th>
@@ -55,7 +67,7 @@
       </div>
     </div>
 
-    <div class="col-5">
+    <div class="col-6">
       <label for="cityName" class="form-label">City name</label>
       <div class="row">
         <div class="col-3">
@@ -80,6 +92,7 @@
       </div>
 
       <div #roadTypeCollapse="ngbCollapse" [(ngbCollapse)]="isRoadTypesCollapsed">
+        <hr>
         <table class="table table-striped mt-4" *ngIf="roadTypes.length > 0">
           <thead>
           <tr>
@@ -147,6 +160,7 @@
       </div>
 
       <div *ngIf="selectedNodeId != ''">
+        <hr>
         <table class="table table-striped mt-4" *ngIf="selectedNodeEdges.length > 0">
           <thead>
           <tr>
@@ -228,9 +242,9 @@
           </div>
         </div>
       </div>
-      <div class="mt-4">
-        <app-algorithm-form *ngIf="(costMatrix.length> 0) &&(costMatrix | costMatrixValid)"
-                            [costMatrix]="costMatrix"
+      <div class="mt-4" *ngIf="(costMatrix.length> 0) &&(costMatrix | costMatrixValid)">
+        <hr>
+        <app-algorithm-form [costMatrix]="costMatrix"
                             (runAlgorithmEmitter)="onRunAlgorithm($event)"></app-algorithm-form>
       </div>
     </div>

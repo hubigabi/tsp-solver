@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as cytoscape from 'cytoscape';
-import {EdgeSingular} from 'cytoscape';
+import {EdgeSingular, ElementDefinition} from 'cytoscape';
 import {FormBuilder, FormControl, Validators} from "@angular/forms";
 import {RoadType} from "./RoadType";
 import {Edge} from "./Edge";
@@ -15,9 +15,10 @@ import {AlgorithmRun} from "../algorithm-form/AlgorithmRun";
 import {RouteAlgorithmRow} from "../tsp-algorithms/RouteAlgorithmRow";
 import {RequestStatus} from "../tsp-algorithms/RequestStatus";
 import {NotificationsService} from "angular2-notifications";
+import {GraphRequest} from '../model/request/spp/generator/GraphRequest';
 
-declare var require: any
-const automove = require('cytoscape-automove');
+// declare var require: any
+// const automove = require('cytoscape-automove');
 
 @Component({
   selector: 'app-graph-spp',
@@ -30,6 +31,8 @@ export class GraphSppComponent implements OnInit {
   isRoadTypesCollapsed = false;
   cy!: cytoscape.Core;
   newCityName = new FormControl('', [Validators.required, this.noWhitespaceValidator]);
+
+  nodesNumber = new FormControl(50, Validators.required);
 
   roadTypeForm = this.fb.group({
     type: ['', [Validators.required, this.noWhitespaceValidator]],
@@ -72,9 +75,9 @@ export class GraphSppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (typeof cytoscape('core', 'automove') !== 'function') {
-      cytoscape.use(automove);
-    }
+    // if (typeof cytoscape('core', 'automove') !== 'function') {
+      // cytoscape.use(automove);
+    // }
 
     this.roadTypes = RoadType.getDefault();
     this.clearRoadTypeForm();
@@ -133,7 +136,7 @@ export class GraphSppComponent implements OnInit {
         {
           selector: 'node',
           style: {
-            'background-color': '#666',
+            'background-color': '#888',
             'width': 20,
             'height': 20,
             'label': 'data(id)',
@@ -162,10 +165,10 @@ export class GraphSppComponent implements OnInit {
       maxZoom: 3,
     });
 
-    (this.cy as any).automove({
-      nodesMatching: (node: any) => true,
-      reposition: 'viewport'
-    });
+    // (this.cy as any).automove({
+    //   nodesMatching: (node: any) => true,
+    //   reposition: 'viewport'
+    // });
 
     this.cy.on('tap', event => {
       if (event.target.isNode?.()) {
@@ -418,6 +421,7 @@ export class GraphSppComponent implements OnInit {
     const pathRequirement = new PathRequirement(bearingCapacity);
 
     const sppRequest = new SppRequest(nodesRequest, roadTypesRequest, edgesRequest, pathRequirement);
+    console.log(sppRequest);
     this.sppService.getSppResult(sppRequest)
       .subscribe({
         next: value => {
@@ -547,4 +551,63 @@ export class GraphSppComponent implements OnInit {
     });
   }
 
+  generateGraph() {
+    this.sppService.generateGraph(new GraphRequest(this.nodesNumber.value))
+      .subscribe({
+        next: graphResult => {
+          console.log(graphResult);
+
+          this.roadTypes = graphResult.roadTypes
+            .map(value => new RoadType(value.id, value.type, value.weight, this.getRandomColor()));
+          this.allNodesId = graphResult.nodes.map(value => value.id);
+
+          this.cy.remove('edge');
+          this.cy.remove('node');
+
+          let nodes: ElementDefinition[] = graphResult.nodes.map(node => {
+            return {
+              group: 'nodes',
+              data: {id: node.id}
+            };
+          });
+          this.cy.add(nodes);
+
+          let edges: ElementDefinition[] = graphResult.edges.map(edge => {
+            let roadType = this.roadTypes.find(value => value.id === edge.roadTypeId);
+            return {
+              group: 'edges',
+              data: {
+                id: edge.id,
+                source: edge.source,
+                target: edge.target,
+                distance: edge.distance,
+                roadType: roadType,
+                bearingCapacity: edge.bearingCapacity,
+                color: roadType?.color
+              }
+            };
+          });
+          this.cy.add(edges);
+
+          const layout = this.cy.layout({
+            name: 'cose',
+            animate: false,
+            nodeOverlap: 40,
+            idealEdgeLength: function( edge ){ return 100; },
+          });
+          layout.run();
+
+          this.selectedRoadTypeId = -1;
+          this.selectedNodeId = '';
+          this.selectedNodeEdges = [];
+          this.selectedEdgeId = '';
+          this.routesMatrix = [];
+          this.costMatrix = [];
+          this.routeAlgorithmRows = [];
+        },
+        error: value => {
+          console.log(value);
+        }
+      });
+  }
 }

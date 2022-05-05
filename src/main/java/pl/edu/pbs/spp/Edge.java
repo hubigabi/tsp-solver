@@ -1,15 +1,17 @@
 package pl.edu.pbs.spp;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class Edge {
 
     private String id;
     private String source;
     private String target;
+    private int roadTypeId;
     private double distance;
-    private double roadTypeId;
     private double bearingCapacity;
 
     /**

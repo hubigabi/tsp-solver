@@ -1,7 +1,7 @@
 package pl.edu.pbs.spp;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Value;
 import org.springframework.stereotype.Service;
 import pl.edu.pbs.request.spp.SppRequest;
 
@@ -136,7 +136,7 @@ public class SppService {
         }
     }
 
-    @Data
+    @Value
     @AllArgsConstructor
     public static class EdgeKey {
         String fromNode;
