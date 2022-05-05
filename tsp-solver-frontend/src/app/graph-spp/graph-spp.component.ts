@@ -76,7 +76,7 @@ export class GraphSppComponent implements OnInit {
 
   ngOnInit(): void {
     // if (typeof cytoscape('core', 'automove') !== 'function') {
-      // cytoscape.use(automove);
+    // cytoscape.use(automove);
     // }
 
     this.roadTypes = RoadType.getDefault();
@@ -104,7 +104,7 @@ export class GraphSppComponent implements OnInit {
         },
         {
           data: {
-            id: 'AB', source: 'A', target: 'B', distance: 15, roadType: this.roadTypes[0],
+            id: 'AB', source: 'A', target: 'B', distance: 20, roadType: this.roadTypes[0],
             bearingCapacity: 30, color: this.roadTypes[0].color
           }
         },
@@ -125,7 +125,8 @@ export class GraphSppComponent implements OnInit {
             id: 'DE', source: 'D', target: 'E', distance: 20, roadType: this.roadTypes[0],
             bearingCapacity: 25, color: this.roadTypes[0].color
           }
-        }, {
+        },
+        {
           data: {
             id: 'EA', source: 'E', target: 'A', distance: 20, roadType: this.roadTypes[0],
             bearingCapacity: 25, color: this.roadTypes[0].color
@@ -593,7 +594,9 @@ export class GraphSppComponent implements OnInit {
             name: 'cose',
             animate: false,
             nodeOverlap: 40,
-            idealEdgeLength: function( edge ){ return 100; },
+            idealEdgeLength: function (edge) {
+              return 100;
+            },
           });
           layout.run();
 

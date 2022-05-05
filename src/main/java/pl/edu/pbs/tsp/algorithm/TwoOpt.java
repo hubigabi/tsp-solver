@@ -21,6 +21,7 @@ public class TwoOpt extends Algorithm {
         if (bestRoute == null || bestRoute.size() != costMatrix.length + 1) {
             bestRoute = generateRandomRoute(costMatrix.length);
         }
+        boolean isMatrixSymmetric = isMatrixSymmetric(costMatrix);
         double minCost = calculateCost(bestRoute, costMatrix);
 
         double newMinCost = minCost;
@@ -31,8 +32,13 @@ public class TwoOpt extends Algorithm {
             for (int i = 1; i < costMatrix.length - 1; i++) {
                 for (int j = i + 1; j < costMatrix.length; j++) {
                     List<Integer> newRoute = twoOptSwap(bestRoute, i, j);
-                    double deltaCost = costMatrix[newRoute.get(i - 1)][newRoute.get(i)] + costMatrix[newRoute.get(j)][newRoute.get(j + 1)]
-                            - costMatrix[bestRoute.get(i - 1)][bestRoute.get(i)] - costMatrix[bestRoute.get(j)][bestRoute.get(j + 1)];
+                    double deltaCost;
+                    if (isMatrixSymmetric) {
+                        deltaCost = costMatrix[newRoute.get(i - 1)][newRoute.get(i)] + costMatrix[newRoute.get(j)][newRoute.get(j + 1)]
+                                - costMatrix[bestRoute.get(i - 1)][bestRoute.get(i)] - costMatrix[bestRoute.get(j)][bestRoute.get(j + 1)];
+                    } else {
+                        deltaCost = calculateCost(newRoute, costMatrix) - minCost;
+                    }
                     if (deltaCost < 0 && minCost + deltaCost < newMinCost) {
                         newBestRoute = new ArrayList<>(newRoute);
                         newMinCost = minCost + deltaCost;
@@ -54,6 +60,17 @@ public class TwoOpt extends Algorithm {
         newRoute.addAll(reversedSubList);
         newRoute.addAll(route.subList(j + 1, route.size()));
         return newRoute;
+    }
+
+    private boolean isMatrixSymmetric(double[][] costMatrix) {
+        for (int i = 0; i < costMatrix.length; i++) {
+            for (int j = 0; j < costMatrix.length; j++) {
+                if (costMatrix[i][j] != costMatrix[j][i]) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }
