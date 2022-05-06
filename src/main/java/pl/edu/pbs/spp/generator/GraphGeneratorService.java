@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @Service
 public class GraphGeneratorService {
 
+    private static final double rewiringEdgeProbability = 0.1;
+
     public GraphResult generateGraph(GraphRequest request) {
         Supplier<String> vSupplier = new Supplier<>() {
             private int id = 0;
@@ -30,8 +32,15 @@ public class GraphGeneratorService {
         };
 
         Graph<String, DefaultEdge> graph = new SimpleDirectedGraph<>(vSupplier, SupplierUtil.createDefaultEdgeSupplier(), false);
+        int nodesNumber = request.getNodesNumber();
+        int k = (int) Math.ceil(Math.log(nodesNumber + nodesNumber * rewiringEdgeProbability));
+        // k must be even
+        if ((k % 2) != 0) {
+            k++;
+        }
+
         WattsStrogatzGraphGenerator<String, DefaultEdge> graphGenerator =
-                new WattsStrogatzGraphGenerator<>(request.getNodesNumber(), 10, 0.1);
+                new WattsStrogatzGraphGenerator<>(nodesNumber, k, rewiringEdgeProbability);
         graphGenerator.generateGraph(graph);
 
         List<Node> nodes = graph.vertexSet().stream()
@@ -40,8 +49,8 @@ public class GraphGeneratorService {
 
         List<RoadType> roadTypes = List.of(
                 new RoadType(1, "Road", 1.0),
-                new RoadType(2, "Highway", 0.8),
-                new RoadType(3, "State highway", 0.9)
+                new RoadType(2, "Highway", 0.7),
+                new RoadType(3, "State highway", 0.8)
         );
 
         List<Edge> edges = graph.edgeSet().stream()
@@ -51,7 +60,7 @@ public class GraphGeneratorService {
                     String id = source + target + "-" + UUID.randomUUID();
                     RoadType roadType = roadTypes.get(ThreadLocalRandom.current().nextInt(0, roadTypes.size()));
                     double distance = ThreadLocalRandom.current().nextInt(1, 20);
-                    double bearingCapacity = ThreadLocalRandom.current().nextInt(5, 50);
+                    double bearingCapacity = ThreadLocalRandom.current().nextInt(10, 50);
                     double cost = distance * roadType.getWeight();
                     return new Edge(id, source, target, roadType.getId(), distance, bearingCapacity, cost);
                 }).collect(Collectors.toList());
