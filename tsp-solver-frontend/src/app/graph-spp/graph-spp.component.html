@@ -13,7 +13,7 @@
           <input type="number" [formControl]="nodesNumber" class="form-control" id="nodesNumber">
         </div>
         <div class="col-auto">
-          <button type="submit" class="btn btn-primary" (click)="generateGraph()">Generate graph</button>
+          <button type="submit" class="btn btn-primary" (click)="generateGraph($event)">Generate graph</button>
         </div>
       </div>
 
@@ -34,7 +34,7 @@
         </div>
 
         <div class="col-auto align-self-end">
-          <button type="submit" class="btn btn-primary" (click)="findRoutes()" [disabled]="!findRoutesForm.valid">
+          <button type="submit" class="btn btn-primary" (click)="findRoutes($event)" [disabled]="!findRoutesForm.valid">
             Find routes
           </button>
         </div>

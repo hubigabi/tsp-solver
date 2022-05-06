@@ -31,7 +31,7 @@ public class GraphGeneratorService {
 
         Graph<String, DefaultEdge> graph = new SimpleDirectedGraph<>(vSupplier, SupplierUtil.createDefaultEdgeSupplier(), false);
         WattsStrogatzGraphGenerator<String, DefaultEdge> graphGenerator =
-                new WattsStrogatzGraphGenerator<>(request.getNodesNumber(), 10, 0.5);
+                new WattsStrogatzGraphGenerator<>(request.getNodesNumber(), 10, 0.1);
         graphGenerator.generateGraph(graph);
 
         List<Node> nodes = graph.vertexSet().stream()

@@ -27,9 +27,13 @@ import {GraphRequest} from '../model/request/spp/generator/GraphRequest';
 })
 export class GraphSppComponent implements OnInit {
 
+  cy!: cytoscape.Core;
+  nodeColor = '#888';
+  selectedNodeColor = '#FFFF33';
+  targetArrowShape = 'triangle';
+
   roadTypes: RoadType[] = [];
   isRoadTypesCollapsed = false;
-  cy!: cytoscape.Core;
   newCityName = new FormControl('', [Validators.required, this.noWhitespaceValidator]);
 
   nodesNumber = new FormControl(50, Validators.required);
@@ -137,7 +141,7 @@ export class GraphSppComponent implements OnInit {
         {
           selector: 'node',
           style: {
-            'background-color': '#888',
+            'background-color': this.nodeColor,
             'width': 20,
             'height': 20,
             'label': 'data(id)',
@@ -192,6 +196,18 @@ export class GraphSppComponent implements OnInit {
       }
     });
 
+    this.cy.on('select', 'node', evt => {
+      evt.target.nodes().animate({
+        style: {'background-color': this.selectedNodeColor}
+      });
+    });
+
+    this.cy.on('unselect', 'node', evt => {
+      evt.target.nodes().animate({
+        style: {'background-color': this.nodeColor}
+      });
+    });
+
     this.allNodesId = this.cy.nodes().map(e => e.id());
     this.findRoutesForm.get('startingCity')!.setValue(this.allNodesId.length > 0 ? this.allNodesId[0] : '');
   }
@@ -233,6 +249,7 @@ export class GraphSppComponent implements OnInit {
 
     this.cy.remove(`edge[roadType.id = ${roadType.id}]`)
     this.selectedNodeEdges = this.selectedNodeEdges.filter(value => value.roadType.id != roadType.id);
+    this.clearRoutes();
   }
 
   addRoadType() {
@@ -272,6 +289,7 @@ export class GraphSppComponent implements OnInit {
 
     this.selectedRoadTypeId = -1;
     this.clearRoadTypeForm();
+    this.clearRoutes();
   }
 
   clearRoadTypeForm() {
@@ -306,6 +324,7 @@ export class GraphSppComponent implements OnInit {
         this.selectedEdgeId = '';
       }
     }
+    this.clearRoutes();
   }
 
   selectEditingEdge(edge: Edge) {
@@ -337,6 +356,7 @@ export class GraphSppComponent implements OnInit {
 
     this.selectedEdgeId = '';
     this.clearEdgeForm();
+    this.clearRoutes();
   }
 
   editEdge() {
@@ -363,6 +383,7 @@ export class GraphSppComponent implements OnInit {
 
     this.selectedEdgeId = '';
     this.clearEdgeForm();
+    this.clearRoutes();
   }
 
   clearEdgeForm() {
@@ -399,9 +420,11 @@ export class GraphSppComponent implements OnInit {
     }
     this.selectedEdgeId = ''
     this.selectedNodeId = '';
+    this.clearRoutes();
   }
 
-  findRoutes() {
+  findRoutes(event: any) {
+    event.target.disabled = true;
     const nodesRequest = this.cy.nodes().map(e => new NodeRequest(e.id()));
     let startingCityIndex = nodesRequest.findIndex(value => value.id === this.findRoutesForm.get('startingCity')!.value)
     if (startingCityIndex > -1) {
@@ -429,9 +452,11 @@ export class GraphSppComponent implements OnInit {
           this.routesMatrix = value.routesMatrix;
           this.costMatrix = this.getCostMatrix(this.routesMatrix);
           console.log(this.costMatrix);
+          event.target.disabled = false;
         },
         error: value => {
           console.log(value);
+          event.target.disabled = false;
         }
       });
     this.routeAlgorithmRows = [];
@@ -480,11 +505,20 @@ export class GraphSppComponent implements OnInit {
 
     this.cy.edges().map(edge => {
       let id = edge.data().id;
+      edge.unselect();
 
       if (route.edgesPath.includes(id)) {
-        edge.style({'opacity': 1.0});
+        edge.style({
+            'opacity': 1.0,
+            'target-arrow-shape': this.targetArrowShape,
+          }
+        );
       } else {
-        edge.style({'opacity': 0.1});
+        edge.style({
+            'opacity': 0.1,
+            'target-arrow-shape': 'none',
+          }
+        );
       }
 
       return edge
@@ -492,16 +526,24 @@ export class GraphSppComponent implements OnInit {
 
     this.cy.nodes().map(node => {
       let id = node.data().id;
+      node.unselect()
 
-      if (route.nodesPath.includes(id) || route.from === id || route.to === id) {
+      if (route.nodesPath.includes(id)) {
         node.style({'opacity': 1.0});
       } else {
         node.style({'opacity': 0.1});
       }
 
+      if (route.from === id || route.to === id) {
+        node.style({'opacity': 1.0});
+        node.select();
+      }
+
       return node
     });
     this.setPathShown()
+
+
   }
 
   onCitiesOrderClick(citiesOrder: number[]) {
@@ -516,6 +558,12 @@ export class GraphSppComponent implements OnInit {
     console.log(edgesPath);
 
     this.cy.nodes().map(node => {
+      if (node.id() === citiesIdOrder[0]) {
+        node.select()
+      } else {
+        node.unselect();
+      }
+
       node.style({'opacity': 1.0});
       return node
     });
@@ -524,9 +572,15 @@ export class GraphSppComponent implements OnInit {
       let id = edge.data().id;
 
       if (edgesPath.includes(id)) {
-        edge.style({'opacity': 1.0});
+        edge.style({
+          'opacity': 1.0,
+          'target-arrow-shape': this.targetArrowShape
+        });
       } else {
-        edge.style({'opacity': 0.1});
+        edge.style({
+          'opacity': 0.1,
+          'target-arrow-shape': 'none'
+        });
       }
 
       return edge
@@ -541,7 +595,10 @@ export class GraphSppComponent implements OnInit {
         clickToClose: true
       }).click?.subscribe((event) => {
       this.cy.nodes().map(node => {
-        node.style({'opacity': 1.0});
+        node.style({
+          'opacity': 1.0,
+          'target-arrow-shape': this.targetArrowShape
+        });
         return node
       });
       this.cy.edges().map(node => {
@@ -552,7 +609,8 @@ export class GraphSppComponent implements OnInit {
     });
   }
 
-  generateGraph() {
+  generateGraph(event: any) {
+    event.target.disabled = true;
     this.sppService.generateGraph(new GraphRequest(this.nodesNumber.value))
       .subscribe({
         next: graphResult => {
@@ -607,10 +665,20 @@ export class GraphSppComponent implements OnInit {
           this.routesMatrix = [];
           this.costMatrix = [];
           this.routeAlgorithmRows = [];
+          this.isPathShown = false;
+          event.target.disabled = false;
         },
         error: value => {
           console.log(value);
+          event.target.disabled = false;
         }
       });
   }
+
+  clearRoutes() {
+    this.routesMatrix = [];
+    this.costMatrix = [];
+    this.routeAlgorithmRows = [];
+  }
+
 }
