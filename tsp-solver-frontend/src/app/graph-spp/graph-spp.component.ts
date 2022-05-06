@@ -168,6 +168,7 @@ export class GraphSppComponent implements OnInit {
       },
       minZoom: 0.6,
       maxZoom: 3,
+      wheelSensitivity: 0.5,
     });
 
     // (this.cy as any).automove({
