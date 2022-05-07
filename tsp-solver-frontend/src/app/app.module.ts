@@ -16,6 +16,8 @@ import {AlgorithmFormComponent} from './algorithm-form/algorithm-form.component'
 import {CostMatrixValidPipe} from './graph-spp/pipes/cost-matrix-valid.pipe';
 import {RouteAlgorithmTableComponent} from './route-algorithm-table/route-algorithm-table.component';
 import {SimpleNotificationsModule} from 'angular2-notifications';
+import {MatSelectModule} from '@angular/material/select';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,9 @@ import {SimpleNotificationsModule} from 'angular2-notifications';
     ReactiveFormsModule,
     FormsModule,
     NoopAnimationsModule,
-    SimpleNotificationsModule.forRoot()
+    SimpleNotificationsModule.forRoot(),
+    MatSelectModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -59,6 +59,7 @@ export class GraphSppComponent implements OnInit {
   findRoutesForm = this.fb.group({
     startingCity: ['', Validators.required],
     bearingCapacity: [10.0, [Validators.required, Validators.min(0.01)]],
+    roadTypes: ['', [Validators.required]],
   });
 
   selectedRoadTypeId = -1;
@@ -263,6 +264,11 @@ export class GraphSppComponent implements OnInit {
       if (this.edgeForm.get('roadType')!.value.id == roadType.id) {
         this.edgeForm.get('roadType')!.setValue(this.roadTypes.length > 0 ? this.roadTypes[0] : '');
       }
+
+      let selectedRoadTypesInFindRoutesForm: RoadType[] = this.findRoutesForm.get('roadTypes')!.value;
+      this.findRoutesForm.get('roadTypes')!.setValue(
+        selectedRoadTypesInFindRoutesForm.filter(value => value.id !== roadType.id)
+      );
     }
 
     this.cy.remove(`edge[roadType.id = ${roadType.id}]`)
@@ -442,6 +448,8 @@ export class GraphSppComponent implements OnInit {
   }
 
   findRoutes(event: any) {
+    console.log(this.findRoutesForm.get('roadTypes')!.value);
+
     event.target.disabled = true;
     const nodesRequest = this.cy.nodes().map(e => new NodeRequest(e.id()));
     let startingCityIndex = nodesRequest.findIndex(value => value.id === this.findRoutesForm.get('startingCity')!.value)
@@ -460,7 +468,8 @@ export class GraphSppComponent implements OnInit {
       return new EdgeRequest(data.id, data.source, data.target, data.distance, data.roadType.id, data.bearingCapacity);
     });
     const bearingCapacity = this.findRoutesForm.get('bearingCapacity')!.value;
-    const pathRequirement = new PathRequirement(bearingCapacity);
+    const roadTypesId = this.findRoutesForm.get('roadTypes')!.value.map((value: RoadType) => value.id);
+    const pathRequirement = new PathRequirement(bearingCapacity, roadTypesId);
 
     const sppRequest = new SppRequest(nodesRequest, roadTypesRequest, edgesRequest, pathRequirement);
     console.log(sppRequest);

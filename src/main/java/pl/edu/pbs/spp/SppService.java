@@ -58,8 +58,10 @@ public class SppService {
 
     private List<Edge> processPathRequirement(List<Edge> edges, PathRequirement pathRequirement) {
         double bearingCapacity = pathRequirement.getBearingCapacity();
+        List<Integer> roadTypesId = pathRequirement.getRoadTypesId();
         return edges.stream()
                 .filter(edge -> edge.getBearingCapacity() >= bearingCapacity)
+                .filter(edge -> roadTypesId.contains(edge.getRoadTypeId()))
                 .collect(Collectors.toList());
     }
 
