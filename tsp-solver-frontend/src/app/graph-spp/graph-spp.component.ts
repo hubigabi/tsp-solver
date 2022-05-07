@@ -17,8 +17,9 @@ import {RequestStatus} from "../tsp-algorithms/RequestStatus";
 import {NotificationsService} from "angular2-notifications";
 import {GraphRequest} from '../model/request/spp/generator/GraphRequest';
 
-// declare var require: any
+declare var require: any
 // const automove = require('cytoscape-automove');
+const panzoom = require('cytoscape-panzoom');
 
 @Component({
   selector: 'app-graph-spp',
@@ -31,6 +32,8 @@ export class GraphSppComponent implements OnInit {
   nodeColor = '#888';
   selectedNodeColor = '#FFFF33';
   targetArrowShape = 'triangle';
+  minZoom = 0.7;
+  maxZoom = 3;
 
   roadTypes: RoadType[] = [];
   isRoadTypesCollapsed = false;
@@ -82,6 +85,9 @@ export class GraphSppComponent implements OnInit {
     // if (typeof cytoscape('core', 'automove') !== 'function') {
     // cytoscape.use(automove);
     // }
+    if (typeof cytoscape('core', 'panzoom') !== 'function') {
+      cytoscape.use(panzoom);
+    }
 
     this.roadTypes = RoadType.getDefault();
     this.clearRoadTypeForm();
@@ -166,15 +172,19 @@ export class GraphSppComponent implements OnInit {
         name: 'cose',
         animate: false,
       },
-      minZoom: 0.6,
-      maxZoom: 3,
-      wheelSensitivity: 0.5,
+      minZoom: this.minZoom,
+      maxZoom: this.maxZoom,
     });
 
     // (this.cy as any).automove({
     //   nodesMatching: (node: any) => true,
     //   reposition: 'viewport'
     // });
+
+    (this.cy as any).panzoom({
+      minZoom: this.minZoom,
+      maxZoom: this.maxZoom,
+    })
 
     this.cy.on('tap', event => {
       if (event.target.isNode?.()) {

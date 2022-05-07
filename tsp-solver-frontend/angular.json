@@ -28,6 +28,8 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/cytoscape-panzoom/font-awesome-4.0.3/css/font-awesome.min.css",
+              "./node_modules/cytoscape-panzoom/cytoscape.js-panzoom.css",
               "src/styles.css"
             ],
             "scripts": []
