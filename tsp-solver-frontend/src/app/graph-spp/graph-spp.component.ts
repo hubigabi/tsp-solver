@@ -217,6 +217,7 @@ export class GraphSppComponent implements OnInit {
 
     this.allNodesId = this.cy.nodes().map(e => e.id());
     this.findRoutesForm.get('startingCity')!.setValue(this.allNodesId.length > 0 ? this.allNodesId[0] : '');
+    this.findRoutesForm.get('roadTypes')!.setValue(this.roadTypes);
   }
 
   private loadCytoscapeExtensions() {
@@ -569,8 +570,6 @@ export class GraphSppComponent implements OnInit {
       return node
     });
     this.setPathShown()
-
-
   }
 
   onCitiesOrderClick(citiesOrder: number[]) {
@@ -624,12 +623,14 @@ export class GraphSppComponent implements OnInit {
       this.cy.nodes().map(node => {
         node.style({
           'opacity': 1.0,
-          'target-arrow-shape': this.targetArrowShape
         });
         return node
       });
       this.cy.edges().map(node => {
-        node.style({'opacity': 1.0});
+        node.style({
+          'opacity': 1.0,
+          'target-arrow-shape': this.targetArrowShape
+        });
         return node
       });
       this.isPathShown = false;
@@ -689,6 +690,7 @@ export class GraphSppComponent implements OnInit {
           this.costMatrix = [];
           this.routeAlgorithmRows = [];
           this.isPathShown = false;
+          this.findRoutesForm.get('roadTypes')!.setValue(this.roadTypes);
           event.target.disabled = false;
         },
         error: value => {
@@ -702,6 +704,29 @@ export class GraphSppComponent implements OnInit {
     this.routesMatrix = [];
     this.costMatrix = [];
     this.routeAlgorithmRows = [];
+  }
+
+  excludeNotConnectedCities(event: any) {
+    event.target.disabled = true;
+
+    do {
+      let mostInfinityCounts = 0;
+      let mostInfinityIndex = -1;
+      this.routesMatrix.forEach((route, index) => {
+        const infinityCounts = route.filter(value => value.cost === -1).length;
+        if (infinityCounts > mostInfinityCounts) {
+          mostInfinityCounts = infinityCounts;
+          mostInfinityIndex = index;
+        }
+      })
+      if (mostInfinityIndex !== -1) {
+        this.routesMatrix.forEach(routes => routes.splice(mostInfinityIndex, 1))
+        this.routesMatrix.splice(mostInfinityIndex, 1);
+      }
+    } while (this.routesMatrix.flat().map(value => value.cost).includes(-1))
+
+    this.costMatrix = this.getCostMatrix(this.routesMatrix);
+    event.target.disabled = false;
   }
 
 }
