@@ -20,6 +20,7 @@ import {GraphRequest} from '../model/request/spp/generator/GraphRequest';
 declare var require: any
 // const automove = require('cytoscape-automove');
 const panzoom = require('cytoscape-panzoom');
+const coseBilkent = require('cytoscape-cose-bilkent');
 
 @Component({
   selector: 'app-graph-spp',
@@ -82,12 +83,7 @@ export class GraphSppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // if (typeof cytoscape('core', 'automove') !== 'function') {
-    // cytoscape.use(automove);
-    // }
-    if (typeof cytoscape('core', 'panzoom') !== 'function') {
-      cytoscape.use(panzoom);
-    }
+    this.loadCytoscapeExtensions();
 
     this.roadTypes = RoadType.getDefault();
     this.clearRoadTypeForm();
@@ -169,8 +165,7 @@ export class GraphSppComponent implements OnInit {
         },
       ],
       layout: {
-        name: 'cose',
-        animate: false,
+        name: 'cose-bilkent',
       },
       minZoom: this.minZoom,
       maxZoom: this.maxZoom,
@@ -221,6 +216,18 @@ export class GraphSppComponent implements OnInit {
 
     this.allNodesId = this.cy.nodes().map(e => e.id());
     this.findRoutesForm.get('startingCity')!.setValue(this.allNodesId.length > 0 ? this.allNodesId[0] : '');
+  }
+
+  private loadCytoscapeExtensions() {
+    // if (typeof cytoscape('core', 'automove') !== 'function') {
+    // cytoscape.use(automove);
+    // }
+    if (typeof cytoscape('core', 'panzoom') !== 'function') {
+      cytoscape.use(panzoom);
+    }
+    if (typeof cytoscape('core', 'coseBilkent') !== 'function') {
+      cytoscape.use(coseBilkent);
+    }
   }
 
   public noWhitespaceValidator(control: FormControl) {
@@ -659,13 +666,9 @@ export class GraphSppComponent implements OnInit {
           });
           this.cy.add(edges);
 
-          const layout = this.cy.layout({
-            name: 'cose',
-            animate: false,
-            nodeOverlap: 40,
-            idealEdgeLength: function (edge) {
-              return 100;
-            },
+          const layout = (this.cy as any).layout({
+            name: 'cose-bilkent',
+            quality: 'proof',
           });
           layout.run();
 
