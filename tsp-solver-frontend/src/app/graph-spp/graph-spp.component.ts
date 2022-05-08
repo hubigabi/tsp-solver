@@ -74,6 +74,7 @@ export class GraphSppComponent implements OnInit {
   idCounter = 0;
   routeAlgorithmRows: RouteAlgorithmRow[] = [];
 
+  isRoutesMatrixTableCollapsed = false;
   isPathShown = false;
   options = {
     preventDuplicates: true
@@ -449,9 +450,8 @@ export class GraphSppComponent implements OnInit {
   }
 
   findRoutes(event: any) {
-    console.log(this.findRoutesForm.get('roadTypes')!.value);
-
     event.target.disabled = true;
+    this.isRoutesMatrixTableCollapsed = false;
     const nodesRequest = this.cy.nodes().map(e => new NodeRequest(e.id()));
     let startingCityIndex = nodesRequest.findIndex(value => value.id === this.findRoutesForm.get('startingCity')!.value)
     if (startingCityIndex > -1) {

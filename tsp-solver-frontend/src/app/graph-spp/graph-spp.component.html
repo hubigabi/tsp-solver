@@ -53,6 +53,14 @@
           </div>
 
           <div class="col-auto align-self-end">
+            <button type="button" class="btn btn-outline-primary" (click)="routesMatrixTableCollapse.toggle()"
+                    [attr.aria-expanded]="!isRoutesMatrixTableCollapsed"
+                    [hidden]="!(costMatrix | costMatrixValid) || routesMatrix.length === 0">
+              Routes
+            </button>
+          </div>
+
+          <div class="col-auto align-self-end">
             <button class="btn btn-primary" (click)="excludeNotConnectedCities($event)"
                     [hidden]="(costMatrix | costMatrixValid)">
               Exclude cities
@@ -66,7 +74,8 @@
         </div>
       </form>
 
-      <div class="table-responsive mt-4" style="max-height: 600px">
+      <div class="table-responsive mt-4" style="max-height: 600px" #routesMatrixTableCollapse="ngbCollapse"
+           [(ngbCollapse)]="isRoutesMatrixTableCollapsed">
         <table class="table table-striped" *ngIf="routesMatrix.length > 0">
           <thead>
           <tr>
