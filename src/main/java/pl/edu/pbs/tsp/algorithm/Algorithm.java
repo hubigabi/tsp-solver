@@ -45,4 +45,15 @@ public abstract class Algorithm {
         return cost;
     }
 
+    protected boolean isMatrixSymmetric(double[][] costMatrix) {
+        for (int i = 0; i < costMatrix.length; i++) {
+            for (int j = 0; j < costMatrix.length; j++) {
+                if (costMatrix[i][j] != costMatrix[j][i]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }

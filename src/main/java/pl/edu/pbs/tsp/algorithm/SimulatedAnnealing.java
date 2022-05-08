@@ -30,13 +30,14 @@ public class SimulatedAnnealing extends Algorithm {
     @Override
     protected Route solve(double[][] costMatrix) {
         this.costMatrix = costMatrix;
+        boolean isMatrixSymmetric = isMatrixSymmetric(costMatrix);
         bestRoute = generateRandomRoute(costMatrix.length);
         minCost = calculateCost(bestRoute, costMatrix);
 
         while (temperature > minTemperature) {
             for (int i = 0; i < epochsNumber; i++) {
                 List<Integer> route = new ArrayList<>(bestRoute);
-                adjustRoute(route);
+                adjustRoute(route, isMatrixSymmetric);
                 checkRoute(route);
             }
             temperature *= coolingRate;
@@ -48,17 +49,19 @@ public class SimulatedAnnealing extends Algorithm {
         return route;
     }
 
-    private void adjustRoute(List<Integer> route) {
-        // Reversing route from two random cities
+    private void adjustRoute(List<Integer> route, boolean isMatrixSymmetric) {
         int index1 = ThreadLocalRandom.current().nextInt(1, route.size() - 1);
         int index2 = ThreadLocalRandom.current().nextInt(1, route.size() - 1);
-        Collections.reverse(route.subList(Math.min(index1, index2), Math.max(index1, index2) + 1));
-
-//        Only swapping two random cities
-//        int city1 = route.get(index1);
-//        int city2 = route.get(index2);
-//        route.set(index1, city2);
-//        route.set(index2, city1);
+        if (isMatrixSymmetric) {
+            // Reversing route from two random cities
+            Collections.reverse(route.subList(Math.min(index1, index2), Math.max(index1, index2) + 1));
+        } else {
+            // Swapping two random cities
+            int city1 = route.get(index1);
+            int city2 = route.get(index2);
+            route.set(index1, city2);
+            route.set(index2, city1);
+        }
     }
 
     private void checkRoute(List<Integer> route) {
