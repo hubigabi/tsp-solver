@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import * as cytoscape from 'cytoscape';
 import {EdgeSingular, ElementDefinition} from 'cytoscape';
 import {FormBuilder, FormControl, Validators} from "@angular/forms";
@@ -40,7 +40,7 @@ export class GraphSppComponent implements OnInit {
   isRoadTypesCollapsed = false;
   newCityName = new FormControl('', [Validators.required, this.noWhitespaceValidator]);
 
-  nodesNumber = new FormControl(50, Validators.required);
+  nodesNumber = new FormControl(100, Validators.required);
 
   roadTypeForm = this.fb.group({
     type: ['', [Validators.required, this.noWhitespaceValidator]],
@@ -79,6 +79,8 @@ export class GraphSppComponent implements OnInit {
   options = {
     preventDuplicates: true
   };
+
+  @ViewChild('generateGraphButton') generateGraphButton!: ElementRef<HTMLElement>;
 
   constructor(private fb: FormBuilder, private sppService: SppService,
               private notificationsService: NotificationsService) {
@@ -219,6 +221,10 @@ export class GraphSppComponent implements OnInit {
     this.allNodesId = this.cy.nodes().map(e => e.id());
     this.findRoutesForm.get('startingCity')!.setValue(this.allNodesId.length > 0 ? this.allNodesId[0] : '');
     this.findRoutesForm.get('roadTypes')!.setValue(this.roadTypes);
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => this.generateGraphButton.nativeElement.click(), 1000);
   }
 
   private loadCytoscapeExtensions() {

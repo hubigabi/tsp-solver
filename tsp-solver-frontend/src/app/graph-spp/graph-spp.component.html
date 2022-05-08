@@ -13,7 +13,9 @@
           <input type="number" [formControl]="nodesNumber" class="form-control" id="nodesNumber">
         </div>
         <div class="col-auto">
-          <button type="submit" class="btn btn-primary" (click)="generateGraph($event)">Generate graph</button>
+          <button #generateGraphButton type="submit" class="btn btn-primary" (click)="generateGraph($event)">
+            Generate graph
+          </button>
         </div>
       </form>
 

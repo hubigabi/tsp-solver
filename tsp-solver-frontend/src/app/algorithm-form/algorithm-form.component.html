@@ -1,8 +1,8 @@
-<label class="form-label">Choose algorithm</label>
+<label class="form-label mb-3 algorithm-label">Choose algorithm</label>
 <div class="form-check">
   <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="0"
          name="algorithmRadio" id="nearestNeighbourAlgorithmRadio">
-  <label class="form-check-label" for="nearestNeighbourAlgorithmRadio">
+  <label class="form-check-label algorithm-label" for="nearestNeighbourAlgorithmRadio">
     Nearest Neighbour
   </label>
 </div>
@@ -10,7 +10,7 @@
 <div class="form-check pt-3">
   <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="1" name="algorithmRadio"
          id="twoOptRadio">
-  <label class="form-check-label" for="twoOptRadio">
+  <label class="form-check-label algorithm-label" for="twoOptRadio">
     2-opt
   </label>
 </div>
@@ -18,7 +18,7 @@
 <div class="form-check pt-3">
   <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="2" name="algorithmRadio"
          id="simulatedAnnealingRadio">
-  <label class="form-check-label" for="simulatedAnnealingRadio">
+  <label class="form-check-label algorithm-label" for="simulatedAnnealingRadio">
     Simulated annealing
   </label>
 </div>
@@ -57,7 +57,7 @@
 <div class="form-check pt-3">
   <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="3" name="algorithmRadio"
          id="geneticAlgorithmRadio">
-  <label class="form-check-label" for="geneticAlgorithmRadio">
+  <label class="form-check-label algorithm-label" for="geneticAlgorithmRadio">
     Genetic algorithm
   </label>
 </div>
@@ -96,7 +96,7 @@
 <div class="form-check pt-3">
   <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="4" name="algorithmRadio"
          id="antColonyOptimizationRadio">
-  <label class="form-check-label" for="antColonyOptimizationRadio">
+  <label class="form-check-label algorithm-label" for="antColonyOptimizationRadio">
     Ant colony optimization
   </label>
 </div>
