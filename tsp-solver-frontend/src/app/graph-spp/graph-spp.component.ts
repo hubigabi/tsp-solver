@@ -590,7 +590,12 @@ export class GraphSppComponent implements OnInit {
         node.unselect();
       }
 
-      node.style({'opacity': 1.0});
+      if (citiesIdOrder.includes(node.id())) {
+        node.style({'opacity': 1.0});
+      } else {
+        node.style({'opacity': 0.1});
+      }
+
       return node
     });
 
@@ -709,21 +714,51 @@ export class GraphSppComponent implements OnInit {
   excludeNotConnectedCities(event: any) {
     event.target.disabled = true;
 
+    const includedCitiesId: string[] = [];
+    let leastInfinityCityId = '';
     do {
-      let mostInfinityCounts = 0;
-      let mostInfinityIndex = -1;
+      leastInfinityCityId = '';
+      let leastInfinityIndex = -1;
+      let leastInfinityCounts = (this.routesMatrix.length - 1) * 2;
       this.routesMatrix.forEach((route, index) => {
-        const infinityCounts = route.filter(value => value.cost === -1).length;
-        if (infinityCounts > mostInfinityCounts) {
-          mostInfinityCounts = infinityCounts;
-          mostInfinityIndex = index;
+        if (!includedCitiesId.includes(route[0].from)) {
+          const infinityCounts = route.filter(value => value.cost === -1).length
+            + this.routesMatrix.filter(value => value[index].cost === -1).length;
+
+          if (infinityCounts < leastInfinityCounts) {
+            leastInfinityCounts = infinityCounts;
+            leastInfinityCityId = route[0].from;
+            leastInfinityIndex = index;
+          }
         }
       })
-      if (mostInfinityIndex !== -1) {
-        this.routesMatrix.forEach(routes => routes.splice(mostInfinityIndex, 1))
-        this.routesMatrix.splice(mostInfinityIndex, 1);
+
+      if (leastInfinityCityId !== '') {
+        includedCitiesId.push(leastInfinityCityId);
+
+        const citiesIdToDelete = new Set();
+        this.routesMatrix.forEach(value => {
+          if (value[leastInfinityIndex].cost === -1) {
+            citiesIdToDelete.add(value[0].from);
+          }
+        })
+        this.routesMatrix[leastInfinityIndex].forEach(value => {
+          if (value.cost === -1) {
+            citiesIdToDelete.add(value.to);
+          }
+        })
+
+        for (const cityId of citiesIdToDelete) {
+          const cityIndex = this.routesMatrix.findIndex(value => value[0].from === cityId);
+
+          if (cityId !== -1) {
+            this.routesMatrix.forEach(routes => routes.splice(cityIndex, 1))
+            this.routesMatrix.splice(cityIndex, 1);
+          }
+        }
+
       }
-    } while (this.routesMatrix.flat().map(value => value.cost).includes(-1))
+    } while (leastInfinityCityId !== '')
 
     this.costMatrix = this.getCostMatrix(this.routesMatrix);
     event.target.disabled = false;
