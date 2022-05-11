@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT -jar tsp-solver-backend/target/tsp-solver-backend-0.0.1-SNAPSHOT.jar

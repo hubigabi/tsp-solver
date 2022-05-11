@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-		<groupId>pl.edu.pbs</groupId>
-		<artifactId>tsp-solver</artifactId>
+        <groupId>pl.edu.pbs</groupId>
+        <artifactId>tsp-solver</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -13,13 +13,13 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <dependencies>
-	   <dependency>
-		   <groupId>pl.edu.pbs</groupId>
-		   <artifactId>tsp-solver-frontend</artifactId>
-		   <version>${project.version}</version>
-		   <scope>runtime</scope>
-	   </dependency>
-	
+        <dependency>
+            <groupId>pl.edu.pbs</groupId>
+            <artifactId>tsp-solver-frontend</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -51,18 +51,21 @@
 
     <build>
         <plugins>
-			<plugin>
+            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
+                        <id>copy-resources</id> 
                         <phase>validate</phase>
-                        <goals><goal>copy-resources</goal></goals>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/classes/resources/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.parent.basedir}/tsp-solver-frontend/dist/tsp-solver-frontend/</directory>
+                                    <directory>${project.parent.basedir}/tsp-solver-frontend/dist/tsp-solver-frontend/
+                                    </directory>
                                 </resource>
                             </resources>
                         </configuration>
