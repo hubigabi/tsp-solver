@@ -88,8 +88,8 @@
           <tr *ngFor="let routes of routesMatrix; index as i">
             <th scope="row">{{routes[i].from}}</th>
             <td *ngFor="let route of routes" class="text-center">
-              <a href="" style="text-decoration: none;" (click)="$event.preventDefault(); onRouteMatrixClick(route)"
-                 [innerHTML]="route.cost |  number: '1.0-2' | routeCost">
+              <a href="" style="text-decoration: none;" (click)="$event.preventDefault(); onRouteMatrixClick(route)">
+                {{route.cost |  number: '1.0-2' | routeCost}}
               </a>
             </td>
           </tr>

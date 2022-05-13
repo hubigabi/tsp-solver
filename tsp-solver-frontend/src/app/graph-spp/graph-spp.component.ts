@@ -252,7 +252,7 @@ export class GraphSppComponent implements OnInit {
     if (nodesIdLength == 0) {
       this.cy.add({
         group: 'nodes',
-        position: {x: this.cy.extent().x1 + 30, y: this.cy.extent().y1 + 30},
+        position: {x: this.cy.extent().x2 - 25, y: this.cy.extent().y1 + 25},
         data: {id: id},
       });
       this.allNodesId.push(id);
@@ -695,9 +695,16 @@ export class GraphSppComponent implements OnInit {
           this.cy.add(edges);
 
           const layout = (this.cy as any).layout({
-            name: 'cose-bilkent',
-            quality: 'proof',
+            name: 'cose-bilkent'
           });
+          const nodesNumber = nodes.length;
+          if (nodesNumber <= 150) {
+            layout.quality = 'proof';
+          } else if (nodesNumber > 150 && nodesNumber <= 300) {
+            layout.quality = 'default';
+          } else {
+            layout.quality = 'draft';
+          }
           layout.run();
 
           this.selectedRoadTypeId = -1;

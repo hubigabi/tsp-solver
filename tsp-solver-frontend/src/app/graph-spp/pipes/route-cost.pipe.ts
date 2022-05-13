@@ -9,7 +9,7 @@ export class RouteCostPipe implements PipeTransform {
     if (value == null) {
       return '';
     } else if (+value === -1) {
-      return "&infin;";
+      return "\u221E";
     } else {
       return value;
     }
