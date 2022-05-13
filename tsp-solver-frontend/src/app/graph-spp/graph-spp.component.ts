@@ -636,7 +636,6 @@ export class GraphSppComponent implements OnInit {
     const notification = this.notificationsService.warn(title, content, {
       clickToClose: true
     });
-    notification.title = "aaa";
 
     notification.click?.subscribe((event) => {
       this.cy.nodes().map(node => {
