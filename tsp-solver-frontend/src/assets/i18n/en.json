@@ -45,6 +45,8 @@
   "Starting city": "Starting city",
   "Min bearing capacity": "Min bearing capacity",
   "Find routes": "Find routes",
+  "Exclude cities": "Exclude cities",
+  "CitiesNotConnectedError": "Cities are not connected!",
   "Routes": "Routes",
   "PathShownTitle": "Path is shown",
   "PathShownContent": "Click here to restore view",

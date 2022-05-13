@@ -64,12 +64,12 @@
           <div class="col-auto align-self-end">
             <button class="btn btn-primary" (click)="excludeNotConnectedCities($event)"
                     [hidden]="(costMatrix | costMatrixValid)">
-              Exclude cities
+              {{'Exclude cities' | translate }}
             </button>
           </div>
 
           <div class="col-auto align-self-end">
-            <app-validation-error [message]="'Cities are not connected!'"
+            <app-validation-error [message]="'CitiesNotConnectedError' | translate"
                                   *ngIf="!(costMatrix | costMatrixValid)"></app-validation-error>
           </div>
         </div>
