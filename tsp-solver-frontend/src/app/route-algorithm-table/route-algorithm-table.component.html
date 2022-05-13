@@ -2,11 +2,11 @@
   <thead>
   <tr>
     <th scope="col">#</th>
-    <th scope="col" (click)="sortTable('algorithmType')">Algorithm</th>
-    <th scope="col" (click)="sortTable('parameters')">Parameters</th>
-    <th scope="col" (click)="sortTable('calculationTime')">Calculation time</th>
-    <th scope="col" (click)="sortTable('totalCost')">Total cost</th>
-    <th scope="col">Order</th>
+    <th scope="col" (click)="sortTable('algorithmType')">{{'Algorithm' | translate }}</th>
+    <th scope="col" (click)="sortTable('parameters')">{{'Parameters' | translate }}</th>
+    <th scope="col" (click)="sortTable('calculationTime')">{{'Calculation time' | translate }}</th>
+    <th scope="col" (click)="sortTable('totalCost')">{{'Total cost' | translate }}</th>
+    <th scope="col">{{'Order' | translate }}</th>
   </tr>
   </thead>
   <tbody>
@@ -49,7 +49,9 @@
 
     <td>
       <ng-container *ngIf="routeAlgorithmRow.status === requestStatuses.SUCCESS; else notSuccess">
-        <a href="" (click)="$event.preventDefault();onRouteOrderClick(routeAlgorithmRow.citiesOrder)">Order</a>
+        <a href="" (click)="$event.preventDefault();onRouteOrderClick(routeAlgorithmRow.citiesOrder)">
+          {{'Order' | translate }}
+        </a>
       </ng-container>
       <ng-template #notSuccess>
         <ng-container *ngIf="routeAlgorithmRow.status === requestStatuses.ONGOING; else failure">

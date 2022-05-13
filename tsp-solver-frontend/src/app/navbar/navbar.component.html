@@ -14,6 +14,23 @@
           <a class="nav-link" routerLink="/spp" routerLinkActive="active">SPP</a>
         </li>
       </ul>
+
+      <ul class="navbar-nav ms-auto me-5">
+        <li class="nav-item dropdown">
+          <span class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+            {{'Language' | translate }}
+          </span>
+          <ul class="dropdown-menu" style="min-width: 1rem;">
+            <li *ngFor="let language of languages" [value]="language">
+              <div class="dropdown-item" [ngClass]="{'disabled': language.code === currentLanguage}"
+                   (click)="changeLanguage(language.code)">
+                <span>{{language.name | translate}}</span>
+                <img [src]="language.flagIconUrl" class="ms-2" style="width: 20px">
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
     </div>
   </div>
 </nav>

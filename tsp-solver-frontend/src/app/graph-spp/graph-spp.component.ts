@@ -16,6 +16,7 @@ import {RouteAlgorithmRow} from "../tsp-algorithms/RouteAlgorithmRow";
 import {RequestStatus} from "../tsp-algorithms/RequestStatus";
 import {NotificationsService} from "angular2-notifications";
 import {GraphRequest} from '../model/request/spp/generator/GraphRequest';
+import {TranslateService} from "@ngx-translate/core";
 
 declare var require: any
 // const automove = require('cytoscape-automove');
@@ -83,7 +84,7 @@ export class GraphSppComponent implements OnInit {
   @ViewChild('generateGraphButton') generateGraphButton!: ElementRef<HTMLElement>;
 
   constructor(private fb: FormBuilder, private sppService: SppService,
-              private notificationsService: NotificationsService) {
+              private notificationsService: NotificationsService, private translateService: TranslateService) {
   }
 
   ngOnInit(): void {
@@ -627,10 +628,17 @@ export class GraphSppComponent implements OnInit {
 
   setPathShown() {
     this.isPathShown = true;
-    this.notificationsService.warn('Path is shown',
-      'Click here to restore view', {
-        clickToClose: true
-      }).click?.subscribe((event) => {
+    let title = 'Path is shown';
+    let content = 'Click here to restore view';
+    this.translateService.get('PathShownTitle').subscribe(value => title = value);
+    this.translateService.get('PathShownContent').subscribe(value => content = value);
+
+    const notification = this.notificationsService.warn(title, content, {
+      clickToClose: true
+    });
+    notification.title = "aaa";
+
+    notification.click?.subscribe((event) => {
       this.cy.nodes().map(node => {
         node.style({
           'opacity': 1.0,
