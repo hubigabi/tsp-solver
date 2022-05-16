@@ -41,7 +41,10 @@ export class GraphSppComponent implements OnInit {
   isRoadTypesCollapsed = false;
   newCityName = new FormControl('', [Validators.required, this.noWhitespaceValidator]);
 
-  nodesNumber = new FormControl(100, Validators.required);
+  generateGraphForm = this.fb.group({
+    nodesNumber: [50, [Validators.required, Validators.min(2)]],
+    symmetric: [true],
+  });
 
   roadTypeForm = this.fb.group({
     type: ['', [Validators.required, this.noWhitespaceValidator]],
@@ -97,53 +100,7 @@ export class GraphSppComponent implements OnInit {
     this.cy = cytoscape({
       container: document.getElementById('cy'),
 
-      elements: [
-        {
-          data: {id: 'A'}
-        },
-        {
-          data: {id: 'B'}
-        },
-        {
-          data: {id: 'C'}
-        },
-        {
-          data: {id: 'D'}
-        },
-        {
-          data: {id: 'E'}
-        },
-        {
-          data: {
-            id: 'AB', source: 'A', target: 'B', distance: 20, roadType: this.roadTypes[0],
-            bearingCapacity: 30, color: this.roadTypes[0].color
-          }
-        },
-        {
-          data: {
-            id: 'BC', source: 'B', target: 'C', distance: 20, roadType: this.roadTypes[0],
-            bearingCapacity: 25, color: this.roadTypes[0].color
-          },
-        },
-        {
-          data: {
-            id: 'CD', source: 'C', target: 'D', distance: 20, roadType: this.roadTypes[0],
-            bearingCapacity: 25, color: this.roadTypes[0].color
-          }
-        },
-        {
-          data: {
-            id: 'DE', source: 'D', target: 'E', distance: 20, roadType: this.roadTypes[0],
-            bearingCapacity: 25, color: this.roadTypes[0].color
-          }
-        },
-        {
-          data: {
-            id: 'EA', source: 'E', target: 'A', distance: 20, roadType: this.roadTypes[0],
-            bearingCapacity: 25, color: this.roadTypes[0].color
-          }
-        }
-      ],
+      elements: [],
       style: [
         {
           selector: 'node',
@@ -225,7 +182,7 @@ export class GraphSppComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    setTimeout(() => this.generateGraphButton.nativeElement.click(), 1000);
+    this.generateGraphButton.nativeElement.click();
   }
 
   private loadCytoscapeExtensions() {
@@ -657,7 +614,9 @@ export class GraphSppComponent implements OnInit {
 
   generateGraph(event: any) {
     event.target.disabled = true;
-    this.sppService.generateGraph(new GraphRequest(this.nodesNumber.value))
+    const nodesNumber = this.generateGraphForm.get('nodesNumber')!.value
+    const symmetric = this.generateGraphForm.get('symmetric')!.value
+    this.sppService.generateGraph(new GraphRequest(nodesNumber, symmetric))
       .subscribe({
         next: graphResult => {
           console.log(graphResult);
@@ -715,6 +674,7 @@ export class GraphSppComponent implements OnInit {
           this.costMatrix = [];
           this.routeAlgorithmRows = [];
           this.isPathShown = false;
+          this.findRoutesForm.get('startingCity')!.setValue(this.allNodesId.length > 0 ? this.allNodesId[0] : '');
           this.findRoutesForm.get('roadTypes')!.setValue(this.roadTypes);
           event.target.disabled = false;
         },

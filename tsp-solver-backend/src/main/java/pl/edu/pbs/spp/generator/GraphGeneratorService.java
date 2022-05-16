@@ -15,6 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class GraphGeneratorService {
@@ -48,21 +49,30 @@ public class GraphGeneratorService {
                 .collect(Collectors.toList());
 
         List<RoadType> roadTypes = List.of(
-                new RoadType(1, "Road", 1.0),
                 new RoadType(2, "Highway", 0.7),
-                new RoadType(3, "State highway", 0.8)
+                new RoadType(3, "State highway", 0.8),
+                new RoadType(1, "County highways", 1.0)
         );
 
+        boolean symmetric = request.isSymmetric();
         List<Edge> edges = graph.edgeSet().stream()
-                .map(edge -> {
+                .flatMap(edge -> {
                     String source = graph.getEdgeSource(edge);
                     String target = graph.getEdgeTarget(edge);
-                    String id = source + target + "-" + UUID.randomUUID();
+                    String id1 = source + target + "-" + UUID.randomUUID();
                     RoadType roadType = roadTypes.get(ThreadLocalRandom.current().nextInt(0, roadTypes.size()));
                     double distance = ThreadLocalRandom.current().nextInt(1, 20);
                     double bearingCapacity = ThreadLocalRandom.current().nextInt(10, 50);
                     double cost = distance * roadType.getWeight();
-                    return new Edge(id, source, target, roadType.getId(), distance, bearingCapacity, cost);
+                    Edge edge1 = new Edge(id1, source, target, roadType.getId(), distance, bearingCapacity, cost);
+
+                    if (symmetric) {
+                        String id2 = target + source + "-" + UUID.randomUUID();
+                        Edge edge2 = new Edge(id2, target, source, roadType.getId(), distance, bearingCapacity, cost);
+                        return Stream.of(edge1, edge2);
+                    } else {
+                        return Stream.of(edge1);
+                    }
                 }).collect(Collectors.toList());
 
         return new GraphResult(nodes, roadTypes, edges);

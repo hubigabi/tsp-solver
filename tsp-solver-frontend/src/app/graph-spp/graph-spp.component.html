@@ -4,14 +4,18 @@
 <div class="container pt-3">
   <div class="row gx-4">
     <div class="col-6">
-      <form class="row mb-3">
+      <form [formGroup]="generateGraphForm" class="row mb-3">
         <div class="col-auto align-self-end">
           <label for="nodesNumber" class="form-label">{{'Number of nodes' | translate }}</label>
         </div>
         <div class="col-3">
-          <input type="number" [formControl]="nodesNumber" class="form-control" id="nodesNumber">
+          <input type="number" formControlName="nodesNumber" class="form-control" id="nodesNumber">
         </div>
-        <div class="col-auto">
+        <div class="col-auto form-check align-self-end">
+          <input class="form-check-input" type="checkbox" formControlName="symmetric" id="symmetricGraph">
+          <label class="form-check-label" for="symmetricGraph">{{'Symmetric' | translate }}</label>
+        </div>
+        <div class="col-auto ms-2">
           <button #generateGraphButton type="submit" class="btn btn-primary" (click)="generateGraph($event)">
             {{'Generate graph' | translate }}
           </button>
