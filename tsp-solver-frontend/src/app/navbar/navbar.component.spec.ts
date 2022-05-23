@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { NavbarComponent } from './navbar.component';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {NavbarComponent} from './navbar.component';
+import {TranslateModule} from "@ngx-translate/core";
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -8,9 +8,10 @@ describe('NavbarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NavbarComponent ]
+      declarations: [NavbarComponent],
+      imports: [TranslateModule.forRoot()]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

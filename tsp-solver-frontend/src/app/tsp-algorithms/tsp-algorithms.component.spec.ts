@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { TspAlgorithmsComponent } from './tsp-algorithms.component';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {TspAlgorithmsComponent} from './tsp-algorithms.component';
+import {TranslateModule} from "@ngx-translate/core";
 
 describe('TspAlgorithmsComponent', () => {
   let component: TspAlgorithmsComponent;
@@ -8,9 +8,10 @@ describe('TspAlgorithmsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TspAlgorithmsComponent ]
+      declarations: [TspAlgorithmsComponent],
+      imports: [TranslateModule.forRoot()],
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

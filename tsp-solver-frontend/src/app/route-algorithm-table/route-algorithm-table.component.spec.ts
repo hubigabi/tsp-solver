@@ -1,6 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { RouteAlgorithmTableComponent } from './route-algorithm-table.component';
+import {RouteAlgorithmTableComponent} from './route-algorithm-table.component';
+import {TranslateModule} from "@ngx-translate/core";
 
 describe('RouteAlgorithmTableComponent', () => {
   let component: RouteAlgorithmTableComponent;
@@ -8,9 +9,10 @@ describe('RouteAlgorithmTableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RouteAlgorithmTableComponent ]
+      declarations: [RouteAlgorithmTableComponent],
+      imports: [TranslateModule.forRoot()]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
