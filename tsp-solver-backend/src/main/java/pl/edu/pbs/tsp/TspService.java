@@ -25,18 +25,21 @@ public class TspService {
     }
 
     public Route getSimulatedAnnealing(SimulatedAnnealingRequest request) {
+        int maxIterationsNoImprovement = request.getMaxIterationsNoImprovement() != -1 ? request.getMaxIterationsNoImprovement() : request.getIterations();
         return new SimulatedAnnealing(request.getMaxTemperature(), request.getMinTemperature(),
-                request.getCoolingRate(), request.getEpochsNumber()).getRoute(request.getCostMatrix());
+                request.getCoolingRate(), request.getIterations(), maxIterationsNoImprovement).getRoute(request.getCostMatrix());
     }
 
     public Route getGeneticAlgorithm(GeneticAlgorithmRequest request) {
+        int maxEpochsNoImprovement = request.getMaxEpochsNoImprovement() != -1 ? request.getMaxEpochsNoImprovement() : request.getEpochsNumber();
         return new GeneticAlgorithm(request.getPopulationSize(), request.getElitismSize(),
-                request.getEpochsNumber(), request.getMutationRate(), SelectionType.TOURNAMENT, 10).getRoute(request.getCostMatrix());
+                request.getEpochsNumber(), maxEpochsNoImprovement, request.getMutationRate(), SelectionType.TOURNAMENT, 10).getRoute(request.getCostMatrix());
     }
 
     public Route getAntColonyOptimization(AntColonyRequest request) {
-        return new AntColonyOptimization(request.getAlpha(), request.getBeta(), request.getEvaporationRate(),
-                request.getQ(), request.getAntFactor(), request.getRandomCitySelection(), request.getMaxIterations()).getRoute(request.getCostMatrix());
+        int maxIterationsNoImprovement = request.getMaxIterationsNoImprovement() != -1 ? request.getMaxIterationsNoImprovement() : request.getIterations();
+        return new AntColonyOptimization(request.getAlpha(), request.getBeta(), request.getEvaporationRate(), request.getQ(), request.getAntFactor(),
+                request.getRandomCitySelection(), request.getIterations(), maxIterationsNoImprovement).getRoute(request.getCostMatrix());
     }
 
     public double[][] toTravellingCostMatrix(List<City> cities) {

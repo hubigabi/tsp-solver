@@ -18,7 +18,8 @@ public class AntColonyOptimization extends Algorithm {
     private double Q = 500;
     private double antFactor = 0.8;
     private double randomCitySelection = 0.01;
-    private int maxIterations = 100;
+    private int iterations = 100;
+    private final int maxIterationsNoImprovement;
 
     private final double INIT_TRAIL_PHEROMONE_VALUE = 1.0;
     private int citiesNumber;
@@ -30,16 +31,18 @@ public class AntColonyOptimization extends Algorithm {
 
     private List<Integer> bestCitiesOrder;
     private double bestTotalCost;
+    private int iterationsNoImprovementCounter = 0;
 
-    public AntColonyOptimization(double alpha, double beta, double evaporationRate, double q,
-                                 double antFactor, double randomCitySelection, int maxIterations) {
+    public AntColonyOptimization(double alpha, double beta, double evaporationRate, double q, double antFactor,
+                                 double randomCitySelection, int iterations, int maxIterationsNoImprovement) {
         this.alpha = alpha;
         this.beta = beta;
         this.evaporationRate = evaporationRate;
         this.Q = q;
         this.antFactor = antFactor;
         this.randomCitySelection = randomCitySelection;
-        this.maxIterations = maxIterations;
+        this.iterations = iterations;
+        this.maxIterationsNoImprovement = maxIterationsNoImprovement;
     }
 
     @Override
@@ -55,13 +58,16 @@ public class AntColonyOptimization extends Algorithm {
         }
 
         setupTrails();
-        for (int i = 0; i < maxIterations; i++) {
+        for (int i = 0; i < iterations; i++) {
 //            System.out.println("Iteration: " + i);
             probabilityMatrix = calculateProbabilityForVisitingCity(costMatrix, pheromoneMatrix);
             setupAnts();
             moveAnts();
             updateTrails();
             updateBest();
+            if (iterationsNoImprovementCounter >= maxIterationsNoImprovement) {
+                break;
+            }
         }
 
         Route route = new Route();
@@ -159,8 +165,12 @@ public class AntColonyOptimization extends Algorithm {
                 bestTotalCost = trailLength;
                 bestCitiesOrder = Arrays.stream(ant.citiesOrder.clone()).boxed().collect(Collectors.toList());
                 bestCitiesOrder.add(0);
+                this.iterationsNoImprovementCounter = 0;
 //                System.out.println("Best solution: " + bestTotalCost);
             }
+        }
+        if (this.iterationsNoImprovementCounter != 0) {
+            this.iterationsNoImprovementCounter++;
         }
     }
 

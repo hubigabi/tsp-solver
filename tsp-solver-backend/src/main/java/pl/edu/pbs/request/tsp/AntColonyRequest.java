@@ -12,6 +12,6 @@ public class AntColonyRequest {
     private double q;
     private double antFactor;
     private double randomCitySelection;
-    private int maxIterations;
-
+    private int iterations;
+    private int maxIterationsNoImprovement;
 }

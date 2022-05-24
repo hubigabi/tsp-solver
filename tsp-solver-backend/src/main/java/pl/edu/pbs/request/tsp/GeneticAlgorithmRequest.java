@@ -10,5 +10,6 @@ public class GeneticAlgorithmRequest {
     private int elitismSize;
     private double mutationRate;
     private int epochsNumber;
+    private int maxEpochsNoImprovement;
 
 }

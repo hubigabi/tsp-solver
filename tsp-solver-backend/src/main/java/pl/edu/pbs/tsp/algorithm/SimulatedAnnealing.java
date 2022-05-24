@@ -13,18 +13,22 @@ public class SimulatedAnnealing extends Algorithm {
     private final double maxTemperature;
     private final double minTemperature;
     private final double coolingRate;
-    private final int epochsNumber;
+    private final int iterations;
+    private final int maxIterationsNoImprovement;
 
     private double[][] costMatrix;
     private double minCost = Double.MAX_VALUE;
     private List<Integer> bestRoute = new ArrayList<>();
+    private int iterationsNoImprovementCounter = 0;
 
-    public SimulatedAnnealing(double maxTemperature, double minTemperature, double coolingRate, int epochsNumber) {
+    public SimulatedAnnealing(double maxTemperature, double minTemperature, double coolingRate,
+                              int iterations, int maxIterationsNoImprovement) {
         this.temperature = maxTemperature;
         this.maxTemperature = maxTemperature;
         this.minTemperature = minTemperature;
         this.coolingRate = coolingRate;
-        this.epochsNumber = epochsNumber;
+        this.iterations = iterations;
+        this.maxIterationsNoImprovement = maxIterationsNoImprovement;
     }
 
     @Override
@@ -35,12 +39,15 @@ public class SimulatedAnnealing extends Algorithm {
         minCost = calculateCost(bestRoute, costMatrix);
 
         while (temperature > minTemperature) {
-            for (int i = 0; i < epochsNumber; i++) {
+            for (int i = 0; i < iterations; i++) {
                 List<Integer> route = new ArrayList<>(bestRoute);
                 adjustRoute(route, isMatrixSymmetric);
                 checkRoute(route);
             }
             temperature *= coolingRate;
+            if (iterationsNoImprovementCounter >= maxIterationsNoImprovement) {
+                break;
+            }
         }
 
         Route route = new Route();
@@ -69,6 +76,9 @@ public class SimulatedAnnealing extends Algorithm {
         if (currentCost <= minCost || Math.exp((minCost - currentCost) / temperature) >= ThreadLocalRandom.current().nextDouble()) {
             minCost = currentCost;
             bestRoute = route;
+            this.iterationsNoImprovementCounter = 0;
+        } else {
+            this.iterationsNoImprovementCounter++;
         }
     }
 

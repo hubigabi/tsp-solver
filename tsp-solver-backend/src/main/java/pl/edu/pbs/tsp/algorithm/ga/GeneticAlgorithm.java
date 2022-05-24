@@ -11,26 +11,29 @@ import java.util.stream.Collectors;
 
 public class GeneticAlgorithm extends Algorithm {
 
-    private int populationSize;
+    private final int populationSize;
     private List<List<Integer>> population;
-    private int epochs;
+    private final int epochs;
+    private final int maxEpochsNoImprovement;
 
     /**
      * number of the best individuals from the current generation to carry over to the next
      */
-    private int elitismSize;
-    private double mutationRate;
-    private SelectionType selectionType;
-    private int tournamentSize;
+    private final int elitismSize;
+    private final double mutationRate;
+    private final SelectionType selectionType;
+    private final int tournamentSize;
 
     private double[][] costMatrix;
     private double minCost = Double.MAX_VALUE;
     private List<Integer> bestRoute = new ArrayList<>();
+    private int epochsNoImprovementCounter = 0;
 
-    public GeneticAlgorithm(int populationSize, int elitismSize, int epochs, double mutationRate, SelectionType selectionType, int tournamentSize) {
+    public GeneticAlgorithm(int populationSize, int elitismSize, int epochs, int maxEpochsNoImprovement, double mutationRate, SelectionType selectionType, int tournamentSize) {
         this.populationSize = populationSize;
         this.elitismSize = elitismSize;
         this.epochs = epochs;
+        this.maxEpochsNoImprovement = maxEpochsNoImprovement;
         this.mutationRate = mutationRate;
         this.selectionType = selectionType;
         this.tournamentSize = tournamentSize;
@@ -50,6 +53,9 @@ public class GeneticAlgorithm extends Algorithm {
             List<Individual> elitism = elitism(individuals, elitismSize);
             population = getNextPopulation(individuals, elitism);
             mutate(population);
+            if (epochsNoImprovementCounter >= maxEpochsNoImprovement) {
+                break;
+            }
 //            System.out.println("Epoch: " + i + " minCost: " + minCost);
         }
 
@@ -73,8 +79,12 @@ public class GeneticAlgorithm extends Algorithm {
                     if (individual.getTotalCost() < minCost) {
                         minCost = individual.getTotalCost();
                         bestRoute = individual.getCitiesOrder();
+                        this.epochsNoImprovementCounter = 0;
                     }
                 });
+        if (this.epochsNoImprovementCounter != 0) {
+            this.epochsNoImprovementCounter++;
+        }
     }
 
     private List<Individual> mapToIndividuals(List<List<Integer>> population) {
