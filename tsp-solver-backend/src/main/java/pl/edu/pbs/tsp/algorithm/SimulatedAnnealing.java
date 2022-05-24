@@ -14,21 +14,21 @@ public class SimulatedAnnealing extends Algorithm {
     private final double minTemperature;
     private final double coolingRate;
     private final int iterations;
-    private final int maxIterationsNoImprovement;
+    private final int maxCoolingTemperatureNoImprovement;
 
     private double[][] costMatrix;
     private double minCost = Double.MAX_VALUE;
     private List<Integer> bestRoute = new ArrayList<>();
-    private int iterationsNoImprovementCounter = 0;
+    private int coolingTemperatureNoImprovementCounter = 0;
 
     public SimulatedAnnealing(double maxTemperature, double minTemperature, double coolingRate,
-                              int iterations, int maxIterationsNoImprovement) {
+                              int iterations, int maxCoolingTemperatureNoImprovement) {
         this.temperature = maxTemperature;
         this.maxTemperature = maxTemperature;
         this.minTemperature = minTemperature;
         this.coolingRate = coolingRate;
         this.iterations = iterations;
-        this.maxIterationsNoImprovement = maxIterationsNoImprovement;
+        this.maxCoolingTemperatureNoImprovement = maxCoolingTemperatureNoImprovement;
     }
 
     @Override
@@ -39,14 +39,21 @@ public class SimulatedAnnealing extends Algorithm {
         minCost = calculateCost(bestRoute, costMatrix);
 
         while (temperature > minTemperature) {
+            double minCostBeforeIterationsWithTheSameTemperature = minCost;
             for (int i = 0; i < iterations; i++) {
                 List<Integer> route = new ArrayList<>(bestRoute);
                 adjustRoute(route, isMatrixSymmetric);
                 checkRoute(route);
             }
             temperature *= coolingRate;
-            if (iterationsNoImprovementCounter >= maxIterationsNoImprovement) {
-                break;
+
+            if (minCostBeforeIterationsWithTheSameTemperature > minCost) {
+                this.coolingTemperatureNoImprovementCounter = 0;
+            } else {
+                this.coolingTemperatureNoImprovementCounter++;
+                if (coolingTemperatureNoImprovementCounter > maxCoolingTemperatureNoImprovement) {
+                    break;
+                }
             }
         }
 
@@ -76,9 +83,6 @@ public class SimulatedAnnealing extends Algorithm {
         if (currentCost <= minCost || Math.exp((minCost - currentCost) / temperature) >= ThreadLocalRandom.current().nextDouble()) {
             minCost = currentCost;
             bestRoute = route;
-            this.iterationsNoImprovementCounter = 0;
-        } else {
-            this.iterationsNoImprovementCounter++;
         }
     }
 

@@ -25,9 +25,9 @@ public class TspService {
     }
 
     public Route getSimulatedAnnealing(SimulatedAnnealingRequest request) {
-        int maxIterationsNoImprovement = request.getMaxIterationsNoImprovement() != -1 ? request.getMaxIterationsNoImprovement() : request.getIterations();
+        int maxCoolingTemperatureNoImprovement = request.getMaxCoolingTemperatureNoImprovement() != -1 ? request.getMaxCoolingTemperatureNoImprovement() : Integer.MAX_VALUE;
         return new SimulatedAnnealing(request.getMaxTemperature(), request.getMinTemperature(),
-                request.getCoolingRate(), request.getIterations(), maxIterationsNoImprovement).getRoute(request.getCostMatrix());
+                request.getCoolingRate(), request.getIterations(), maxCoolingTemperatureNoImprovement).getRoute(request.getCostMatrix());
     }
 
     public Route getGeneticAlgorithm(GeneticAlgorithmRequest request) {

@@ -53,7 +53,7 @@ public class GeneticAlgorithm extends Algorithm {
             List<Individual> elitism = elitism(individuals, elitismSize);
             population = getNextPopulation(individuals, elitism);
             mutate(population);
-            if (epochsNoImprovementCounter >= maxEpochsNoImprovement) {
+            if (epochsNoImprovementCounter > maxEpochsNoImprovement) {
                 break;
             }
 //            System.out.println("Epoch: " + i + " minCost: " + minCost);
@@ -80,11 +80,10 @@ public class GeneticAlgorithm extends Algorithm {
                         minCost = individual.getTotalCost();
                         bestRoute = individual.getCitiesOrder();
                         this.epochsNoImprovementCounter = 0;
+                    } else {
+                        this.epochsNoImprovementCounter++;
                     }
                 });
-        if (this.epochsNoImprovementCounter != 0) {
-            this.epochsNoImprovementCounter++;
-        }
     }
 
     private List<Individual> mapToIndividuals(List<List<Integer>> population) {

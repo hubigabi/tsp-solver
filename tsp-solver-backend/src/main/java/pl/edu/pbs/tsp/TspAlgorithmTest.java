@@ -1,6 +1,8 @@
 package pl.edu.pbs.tsp;
 
 import lombok.AllArgsConstructor;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import pl.edu.pbs.tsp.algorithm.NearestNeighbourAlgorithm;
 import pl.edu.pbs.tsp.algorithm.SimulatedAnnealing;
@@ -18,7 +20,7 @@ public class TspAlgorithmTest {
 
     public final TspService tspService;
 
-    //    @EventListener(ApplicationReadyEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
     public void compareAlgorithms() {
         System.out.println("Starting...");
         List<City> cities = TspGenerator.generateCities(100);

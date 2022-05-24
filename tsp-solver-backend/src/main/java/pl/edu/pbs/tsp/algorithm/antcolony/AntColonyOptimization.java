@@ -65,7 +65,7 @@ public class AntColonyOptimization extends Algorithm {
             moveAnts();
             updateTrails();
             updateBest();
-            if (iterationsNoImprovementCounter >= maxIterationsNoImprovement) {
+            if (iterationsNoImprovementCounter > maxIterationsNoImprovement) {
                 break;
             }
         }
@@ -158,6 +158,7 @@ public class AntColonyOptimization extends Algorithm {
     }
 
     private void updateBest() {
+        boolean improvement = false;
         for (Ant ant : ants) {
             double trailLength = ant.getTrailLength(costMatrix);
 
@@ -165,11 +166,13 @@ public class AntColonyOptimization extends Algorithm {
                 bestTotalCost = trailLength;
                 bestCitiesOrder = Arrays.stream(ant.citiesOrder.clone()).boxed().collect(Collectors.toList());
                 bestCitiesOrder.add(0);
-                this.iterationsNoImprovementCounter = 0;
+                improvement = true;
 //                System.out.println("Best solution: " + bestTotalCost);
             }
         }
-        if (this.iterationsNoImprovementCounter != 0) {
+        if (improvement) {
+            this.iterationsNoImprovementCounter = 0;
+        } else {
             this.iterationsNoImprovementCounter++;
         }
     }

@@ -10,6 +10,6 @@ public class SimulatedAnnealingRequest {
     private double minTemperature;
     private double coolingRate;
     private int iterations;
-    private int maxIterationsNoImprovement;
+    private int maxCoolingTemperatureNoImprovement;
 
 }
