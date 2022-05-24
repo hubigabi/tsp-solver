@@ -66,7 +66,8 @@ export class AlgorithmFormComponent implements OnInit {
     const routeAlgorithmRow: RouteAlgorithmRow = {
       id: 0,
       algorithmType: '',
-      parameters: '',
+      parametersTranslation: '',
+      parameters: {},
       calculationTime: 0,
       totalCost: 0,
       citiesOrder: [],
@@ -92,10 +93,13 @@ export class AlgorithmFormComponent implements OnInit {
         const epochs = this.simulatedAnnealingForm.get('epochs')!.value;
 
         routeAlgorithmRow.algorithmType = 'Simulated annealing';
-        routeAlgorithmRow.parameters = `Max temperature = ${maxTemperature}, `
-          + `Min  temperature = ${minTemperature}, `
-          + `Cooling rate = ${coolingRate}, `
-          + `Epochs = ${epochs}`;
+        routeAlgorithmRow.parametersTranslation = 'SimulatedAnnealingParameters';
+        routeAlgorithmRow.parameters = {
+          maxTemperature: maxTemperature,
+          minTemperature: minTemperature,
+          coolingRate: coolingRate,
+          epochs: epochs
+        };
 
         const simulatedAnnealingRequest = new SimulatedAnnealingRequest(this.costMatrix,
           maxTemperature, minTemperature, coolingRate, epochs);
@@ -109,10 +113,13 @@ export class AlgorithmFormComponent implements OnInit {
         const epochs = this.geneticAlgorithmForm.get('epochs')!.value;
 
         routeAlgorithmRow.algorithmType = 'Genetic algorithm';
-        routeAlgorithmRow.parameters = `Population size = ${populationSize}, `
-          + `Elitism  size = ${elitismSize}, `
-          + `Mutation rate = ${mutationRate}, `
-          + `Epochs = ${epochs}`;
+        routeAlgorithmRow.parametersTranslation = 'GeneticAlgorithmParameters';
+        routeAlgorithmRow.parameters = {
+          populationSize: populationSize,
+          elitismSize: elitismSize,
+          mutationRate: mutationRate,
+          epochs: epochs
+        };
 
         const geneticAlgorithmRequest = new GeneticAlgorithmRequest(this.costMatrix,
           populationSize, elitismSize, mutationRate, epochs);
@@ -129,13 +136,16 @@ export class AlgorithmFormComponent implements OnInit {
         const iterations = this.antColonyOptimizationForm.get('iterations')!.value;
 
         routeAlgorithmRow.algorithmType = 'Ant colony optimization';
-        routeAlgorithmRow.parameters = `α = ${alpha}, `
-          + `β = ${beta}, `
-          + `Evaporation = ${evaporationRate}, `
-          + `Q = ${q}, `
-          + `Ant factor = ${antFactor}, `
-          + `Random selection = ${randomCitySelection}, `
-          + `Iterations = ${iterations}`;
+        routeAlgorithmRow.parametersTranslation = 'AntColonyOptimizationParameters';
+        routeAlgorithmRow.parameters = {
+          alpha: alpha,
+          beta: beta,
+          evaporationRate: evaporationRate,
+          q: q,
+          antFactor: antFactor,
+          randomCitySelection: randomCitySelection,
+          iterations: iterations
+        };
 
         const antColonyRequest = new AntColonyRequest(this.costMatrix,
           alpha, beta, evaporationRate, q, antFactor, randomCitySelection, iterations);

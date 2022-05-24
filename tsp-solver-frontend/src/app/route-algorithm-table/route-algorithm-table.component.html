@@ -13,7 +13,7 @@
   <tr *ngFor="let routeAlgorithmRow of routeAlgorithmRows; index as i">
     <th scope="row">{{ i + 1 }}</th>
     <td>{{ routeAlgorithmRow.algorithmType | translate}}</td>
-    <td>{{ routeAlgorithmRow.parameters }}</td>
+    <td>{{ routeAlgorithmRow.parametersTranslation | translate:routeAlgorithmRow.parameters }}</td>
 
     <td>
       <ng-container *ngIf="routeAlgorithmRow.status === requestStatuses.SUCCESS; else notSuccess">

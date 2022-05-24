@@ -3,7 +3,8 @@ import {RequestStatus} from "./RequestStatus";
 export interface RouteAlgorithmRow {
   id: number;
   algorithmType: string;
-  parameters: string;
+  parametersTranslation: string;
+  parameters: any;
   calculationTime: number;
   totalCost: number;
   citiesOrder: number[];
