@@ -12,7 +12,7 @@ export class NavbarComponent implements OnInit {
     new Language('en', 'English', 'https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg'),
     new Language('pl', 'Polish', 'https://upload.wikimedia.org/wikipedia/en/1/12/Flag_of_Poland.svg')
   ];
-  currentLanguage = 'en';
+  currentLanguage = (window.navigator.language == 'pl') ? 'pl' : 'en';
 
   constructor(public translateService: TranslateService) {
     translateService.addLangs(this.languages.map(value => value.code));
