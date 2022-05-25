@@ -16,8 +16,8 @@
 </div>
 
 <div class="form-check pt-3">
-  <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="2" name="algorithmRadio"
-         id="simulatedAnnealingRadio">
+  <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="2"
+         (change)="onChosenAlgorithmChange(iterationsSA.value)" name="algorithmRadio" id="simulatedAnnealingRadio">
   <label class="form-check-label algorithm-label" for="simulatedAnnealingRadio">
     {{'Simulated annealing' | translate }}
   </label>
@@ -44,8 +44,9 @@
       </div>
 
       <div class="col">
-        <label for="epochs-sa" class="form-label">{{'Epochs' | translate }}</label>
-        <input type="number" min="0" step="50" formControlName="epochs" class="form-control" id="epochs-sa">
+        <label for="iterations-sa" class="form-label">{{'Iterations' | translate }}</label>
+        <input #iterationsSA type="number" min="0" step="50" formControlName="iterations" class="form-control"
+               id="iterations-sa">
       </div>
     </div>
 
@@ -55,8 +56,8 @@
 </div>
 
 <div class="form-check pt-3">
-  <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="3" name="algorithmRadio"
-         id="geneticAlgorithmRadio">
+  <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="3"
+         (change)="onChosenAlgorithmChange(epochsGA.value)" name="algorithmRadio" id="geneticAlgorithmRadio">
   <label class="form-check-label algorithm-label" for="geneticAlgorithmRadio">
     {{'Genetic algorithm' | translate }}
   </label>
@@ -84,7 +85,7 @@
 
       <div class="col">
         <label for="epochs-ga" class="form-label">{{'Epochs' | translate }}</label>
-        <input type="number" min="0" step="100" formControlName="epochs" class="form-control" id="epochs-ga">
+        <input #epochsGA type="number" min="0" step="100" formControlName="epochs" class="form-control" id="epochs-ga">
       </div>
     </div>
 
@@ -94,8 +95,8 @@
 </div>
 
 <div class="form-check pt-3">
-  <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="4" name="algorithmRadio"
-         id="antColonyOptimizationRadio">
+  <input class="form-check-input" type="radio" [(ngModel)]="chosenAlgorithm" value="4"
+         (change)="onChosenAlgorithmChange(iterationsACO.value)" name="algorithmRadio" id="antColonyOptimizationRadio">
   <label class="form-check-label algorithm-label" for="antColonyOptimizationRadio">
     {{'Ant colony optimization' | translate }}
   </label>
@@ -131,21 +132,19 @@
     <div class="form-group row px-3 pt-2">
       <div class="col">
         <label for="antFactor" class="form-label">{{'Ant factor' | translate }}</label>
-        <input type="number" step="0.1" min="0" formControlName="antFactor" class="form-control"
-               id="antFactor">
+        <input type="number" step="0.1" min="0" formControlName="antFactor" class="form-control" id="antFactor">
       </div>
 
       <div class="col">
         <label for="randomCitySelection" class="form-label">{{'Random city' | translate }}</label>
         <input type="number" step="0.01" min="0" max="1" formControlName="randomCitySelection"
-               class="form-control"
-               id="randomCitySelection">
+               class="form-control" id="randomCitySelection">
       </div>
 
       <div class="col">
         <label for="iterations" class="form-label">{{'Iterations' | translate }}</label>
-        <input type="number" min="0" step="10" formControlName="iterations" class="form-control"
-               id="iterations">
+        <input #iterationsACO type="number" min="0" step="10" formControlName="iterations"
+               class="form-control" id="iterations">
       </div>
     </div>
 
@@ -154,9 +153,38 @@
   </form>
 </div>
 
+<div class="row pt-4" [hidden]="!(chosenAlgorithm == '2' || chosenAlgorithm == '3'|| chosenAlgorithm == '4')">
+  <form [formGroup]="maxIterationsNoImprovementForm">
+    <div class="row">
+      <div class="col-auto">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="isMaxIterationsNoImprovement"
+                 formControlName="isMaxIterationsNoImprovement"
+                 (change)="onMaxIterationsNoImprovementSelectionChange($event)">
+          <label class="form-check-label"
+                 for="isMaxIterationsNoImprovement">{{'isMaxIterationsNoImprovement' | translate }}</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-2" [hidden]="!isMaxIterationsNoImprovementSelected">
+      <div class="col-auto align-self-end">
+        <label for="maxIterationsNoImprovement" class="form-label">{{'maxIterationsNoImprovement' | translate }}</label>
+      </div>
+      <div class="col-auto">
+        <input type="number" min="0" step="10" formControlName="maxIterationsNoImprovement" class="form-control"
+               id="maxIterationsNoImprovement">
+      </div>
+      <app-validation-error [message]="'WrongParameters' | translate"
+                            [hidden]="maxIterationsNoImprovementForm.valid"></app-validation-error>
+    </div>
+  </form>
+</div>
+
 <button type="submit" class="btn btn-primary mt-3" (click)="runAlgorithm()"
-        [disabled]="(chosenAlgorithm == '2' && !simulatedAnnealingForm.valid)
-              || (chosenAlgorithm == '3' && !geneticAlgorithmForm.valid)
-              || (chosenAlgorithm == '4' && !antColonyOptimizationForm.valid)">
+        [disabled]="(chosenAlgorithm == '2' && simulatedAnnealingForm.invalid)
+              || (chosenAlgorithm == '3' && geneticAlgorithmForm.invalid)
+              || (chosenAlgorithm == '4' && antColonyOptimizationForm.invalid)
+              || (isMaxIterationsNoImprovementSelected && maxIterationsNoImprovementForm.invalid)">
   {{'Run algorithm' | translate }}
 </button>

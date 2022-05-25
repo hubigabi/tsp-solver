@@ -6,10 +6,11 @@ export class AntColonyRequest {
   q: number;
   antFactor: number;
   randomCitySelection: number;
-  maxIterations: number;
+  iterations: number;
+  maxIterationsNoImprovement: number;
 
-  constructor(costMatrix: number[][], alpha: number, beta: number, evaporationRate: number,
-              q: number, antFactor: number, randomCitySelection: number, maxIterations: number) {
+  constructor(costMatrix: number[][], alpha: number, beta: number, evaporationRate: number, q: number, antFactor: number,
+              randomCitySelection: number, iterations: number, maxIterationsNoImprovement: number) {
     this.costMatrix = costMatrix;
     this.alpha = alpha;
     this.beta = beta;
@@ -17,7 +18,8 @@ export class AntColonyRequest {
     this.q = q;
     this.antFactor = antFactor;
     this.randomCitySelection = randomCitySelection;
-    this.maxIterations = maxIterations;
+    this.iterations = iterations;
+    this.maxIterationsNoImprovement = maxIterationsNoImprovement;
   }
 
 }

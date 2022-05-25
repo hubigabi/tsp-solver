@@ -3,15 +3,17 @@ export class SimulatedAnnealingRequest {
   maxTemperature: number;
   minTemperature: number;
   coolingRate: number;
-  epochsNumber: number
+  iterations: number
+  maxCoolingTemperatureNoImprovement: number
 
   constructor(costMatrix: number[][], maxTemperature: number, minTemperature: number,
-              coolingRate: number, epochsNumber: number) {
+              coolingRate: number, iterations: number, maxCoolingTemperatureNoImprovement: number) {
     this.costMatrix = costMatrix;
     this.maxTemperature = maxTemperature;
     this.minTemperature = minTemperature;
     this.coolingRate = coolingRate;
-    this.epochsNumber = epochsNumber;
+    this.iterations = iterations;
+    this.maxCoolingTemperatureNoImprovement = maxCoolingTemperatureNoImprovement;
   }
 
 }

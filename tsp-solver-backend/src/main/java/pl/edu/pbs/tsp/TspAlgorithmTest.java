@@ -20,7 +20,7 @@ public class TspAlgorithmTest {
 
     public final TspService tspService;
 
-    @EventListener(ApplicationReadyEvent.class)
+//    @EventListener(ApplicationReadyEvent.class)
     public void compareAlgorithms() {
         System.out.println("Starting...");
         List<City> cities = TspGenerator.generateCities(100);

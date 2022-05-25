@@ -25,7 +25,7 @@ export class AlgorithmFormComponent implements OnInit {
     maxTemperature: [100.0, [Validators.required, Validators.min(1)]],
     minTemperature: [0.1, [Validators.required, Validators.min(0)]],
     coolingRate: [0.99, [Validators.required, Validators.min(0.0001), Validators.max(0.9999)]],
-    epochs: [1000, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
+    iterations: [1000, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
   });
 
   geneticAlgorithmForm = this.fb.group({
@@ -44,6 +44,13 @@ export class AlgorithmFormComponent implements OnInit {
     randomCitySelection: [0.01, [Validators.required, Validators.min(0.0), Validators.max(1)]],
     iterations: [50, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
   });
+
+  maxIterationsNoImprovementForm = this.fb.group({
+    isMaxIterationsNoImprovement: [false, []],
+    maxIterationsNoImprovement: [100, [Validators.min(1), Validators.pattern("^[0-9]*$")]],
+  });
+
+  isMaxIterationsNoImprovementSelected = false;
 
   constructor(private fb: FormBuilder, private tspAlgorithmService: TspAlgorithmService) {
   }
@@ -90,7 +97,8 @@ export class AlgorithmFormComponent implements OnInit {
         const maxTemperature = this.simulatedAnnealingForm.get('maxTemperature')!.value;
         const minTemperature = this.simulatedAnnealingForm.get('minTemperature')!.value;
         const coolingRate = this.simulatedAnnealingForm.get('coolingRate')!.value;
-        const epochs = this.simulatedAnnealingForm.get('epochs')!.value;
+        const iterations = this.simulatedAnnealingForm.get('iterations')!.value;
+        const maxIterationsNoImprovement = this.getMaxIterationsNoImprovement();
 
         routeAlgorithmRow.algorithmType = 'Simulated annealing';
         routeAlgorithmRow.parametersTranslation = 'SimulatedAnnealingParameters';
@@ -98,11 +106,11 @@ export class AlgorithmFormComponent implements OnInit {
           maxTemperature: maxTemperature,
           minTemperature: minTemperature,
           coolingRate: coolingRate,
-          epochs: epochs
+          iterations: iterations
         };
 
         const simulatedAnnealingRequest = new SimulatedAnnealingRequest(this.costMatrix,
-          maxTemperature, minTemperature, coolingRate, epochs);
+          maxTemperature, minTemperature, coolingRate, iterations, maxIterationsNoImprovement);
         routeAlgorithm = this.tspAlgorithmService.getSimulatedAnnealing(simulatedAnnealingRequest);
         break;
       }
@@ -111,6 +119,7 @@ export class AlgorithmFormComponent implements OnInit {
         const elitismSize = this.geneticAlgorithmForm.get('elitismSize')!.value;
         const mutationRate = this.geneticAlgorithmForm.get('mutationRate')!.value;
         const epochs = this.geneticAlgorithmForm.get('epochs')!.value;
+        const maxEpochsNoImprovement = this.getMaxIterationsNoImprovement();
 
         routeAlgorithmRow.algorithmType = 'Genetic algorithm';
         routeAlgorithmRow.parametersTranslation = 'GeneticAlgorithmParameters';
@@ -122,7 +131,7 @@ export class AlgorithmFormComponent implements OnInit {
         };
 
         const geneticAlgorithmRequest = new GeneticAlgorithmRequest(this.costMatrix,
-          populationSize, elitismSize, mutationRate, epochs);
+          populationSize, elitismSize, mutationRate, epochs, maxEpochsNoImprovement);
         routeAlgorithm = this.tspAlgorithmService.getGeneticAlgorithm(geneticAlgorithmRequest);
         break;
       }
@@ -134,6 +143,7 @@ export class AlgorithmFormComponent implements OnInit {
         const antFactor = this.antColonyOptimizationForm.get('antFactor')!.value;
         const randomCitySelection = this.antColonyOptimizationForm.get('randomCitySelection')!.value;
         const iterations = this.antColonyOptimizationForm.get('iterations')!.value;
+        const maxIterationsNoImprovement = this.getMaxIterationsNoImprovement();
 
         routeAlgorithmRow.algorithmType = 'Ant colony optimization';
         routeAlgorithmRow.parametersTranslation = 'AntColonyOptimizationParameters';
@@ -147,8 +157,8 @@ export class AlgorithmFormComponent implements OnInit {
           iterations: iterations
         };
 
-        const antColonyRequest = new AntColonyRequest(this.costMatrix,
-          alpha, beta, evaporationRate, q, antFactor, randomCitySelection, iterations);
+        const antColonyRequest = new AntColonyRequest(this.costMatrix, alpha, beta, evaporationRate,
+          q, antFactor, randomCitySelection, iterations, maxIterationsNoImprovement);
         routeAlgorithm = this.tspAlgorithmService.getAntColonyOptimization(antColonyRequest);
         break;
       }
@@ -157,6 +167,32 @@ export class AlgorithmFormComponent implements OnInit {
       }
     }
     this.runAlgorithmEmitter.emit(new AlgorithmRun(routeAlgorithmRow, routeAlgorithm))
+  }
+
+  getMaxIterationsNoImprovement(): number {
+    const isMaxIterationsNoImprovement = this.maxIterationsNoImprovementForm.get('isMaxIterationsNoImprovement')!.value;
+    const maxIterationsNoImprovement = this.maxIterationsNoImprovementForm.get('maxIterationsNoImprovement')!.value;
+    if (isMaxIterationsNoImprovement) {
+      return maxIterationsNoImprovement;
+    } else {
+      return -1;
+    }
+  }
+
+  onMaxIterationsNoImprovementSelectionChange(event: any) {
+    this.isMaxIterationsNoImprovementSelected = event.currentTarget.checked;
+    if (this.isMaxIterationsNoImprovementSelected) {
+      this.maxIterationsNoImprovementForm.get('maxIterationsNoImprovement')!.addValidators([Validators.required]);
+    } else {
+      this.maxIterationsNoImprovementForm.get('maxIterationsNoImprovement')!.removeValidators([Validators.required]);
+    }
+  }
+
+  onChosenAlgorithmChange(iterations: string) {
+    const percentFromIterations = 10;
+    let maxIterationsNoImprovement = (percentFromIterations / 100) * +iterations;
+    maxIterationsNoImprovement = Math.ceil(maxIterationsNoImprovement / 10) * 10;
+    this.maxIterationsNoImprovementForm.get('maxIterationsNoImprovement')!.setValue(maxIterationsNoImprovement);
   }
 
 }
