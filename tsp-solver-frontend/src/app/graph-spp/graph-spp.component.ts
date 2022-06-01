@@ -43,7 +43,7 @@ export class GraphSppComponent implements OnInit {
 
   generateGraphForm = this.fb.group({
     nodesNumber: [50, [Validators.required, Validators.min(2)]],
-    symmetric: [true],
+    symmetric: [false],
   });
 
   roadTypeForm = this.fb.group({
@@ -93,7 +93,7 @@ export class GraphSppComponent implements OnInit {
   ngOnInit(): void {
     this.loadCytoscapeExtensions();
 
-    this.roadTypes = RoadType.getDefault();
+    this.roadTypes = [];
     this.clearRoadTypeForm();
     this.clearEdgeForm();
 
@@ -273,6 +273,7 @@ export class GraphSppComponent implements OnInit {
 
     this.cy.edges(`[roadType.id = ${selectedRoadType?.id}]`)
       .map(edge => {
+        edge.data().color = color;
         edge.style({'line-color': color});
         return edge;
       });
@@ -370,6 +371,7 @@ export class GraphSppComponent implements OnInit {
       bearingCapacity: capacity,
       color: color
     });
+    edgeCy.style({'line-color': color});
 
     this.selectedEdgeId = '';
     this.clearEdgeForm();
@@ -377,9 +379,9 @@ export class GraphSppComponent implements OnInit {
   }
 
   clearEdgeForm() {
-    this.edgeForm.get('distance')!.setValue(10.0);
-    this.edgeForm.get('capacity')!.setValue(10.0);
-    this.edgeForm.get('roadType')!.setValue(this.roadTypes.length > 0 ? this.roadTypes[0] : '');
+    this.edgeForm.get('distance')!.setValue('');
+    this.edgeForm.get('capacity')!.setValue('');
+    this.edgeForm.get('roadType')!.setValue('');
   }
 
   generateId(): string {
