@@ -4,8 +4,9 @@ import {TspAlgorithmsComponent} from "./tsp-algorithms/tsp-algorithms.component"
 import {GraphSppComponent} from "./graph-spp/graph-spp.component";
 
 const routes: Routes = [
-  {path: '', component: TspAlgorithmsComponent},
-  {path: 'spp', component: GraphSppComponent},
+  {path: '', component: GraphSppComponent},
+  {path: 'cities', component: TspAlgorithmsComponent},
+  {path: '**', redirectTo: ''}
 ];
 
 @NgModule({

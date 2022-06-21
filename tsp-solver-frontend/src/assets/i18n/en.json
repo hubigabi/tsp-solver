@@ -1,4 +1,6 @@
 {
+  "Road network": "Road network",
+  "Cities": "Cities",
   "Language": "Language",
   "English": "English",
   "Polish": "Polish",
@@ -44,6 +46,7 @@
   "Color": "Color",
   "Actions": "Actions",
   "Add": "Add",
+  "Edit": "Edit",
   "Source": "Source",
   "Target": "Target",
   "Distance": "Distance",

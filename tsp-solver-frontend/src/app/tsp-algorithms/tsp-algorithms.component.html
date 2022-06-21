@@ -1,8 +1,8 @@
 <app-navbar></app-navbar>
 
 <div class="container pt-3">
-  <div class="row gx-5">
-    <div class="col">
+  <div class="row gx-4">
+    <div class="col-6">
       <form class="row">
         <div class="col-auto align-self-end">
           <label for="citiesNumber" class="form-label">{{'Number of cities' | translate }}</label>
@@ -19,7 +19,7 @@
       <canvas id="canvas"></canvas>
     </div>
 
-    <div class="col pt-5">
+    <div class="col-6 pt-5">
       <app-algorithm-form [costMatrix]="costMatrix" (runAlgorithmEmitter)="onRunAlgorithm($event)"></app-algorithm-form>
     </div>
   </div>

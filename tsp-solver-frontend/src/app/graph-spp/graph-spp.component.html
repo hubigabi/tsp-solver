@@ -182,7 +182,7 @@
         <div class="row pt-2">
           <div class="col-auto" *ngIf="selectedRoadTypeId!= -1">
             <button type="submit" class="btn btn-primary px-4" (click)="editRoadType()"
-                    [disabled]="!roadTypeForm.valid || isPathShown">Edit
+                    [disabled]="!roadTypeForm.valid || isPathShown">{{'Edit' | translate }}
             </button>
           </div>
           <div class="col-auto">
@@ -267,7 +267,7 @@
         <div class="row pt-2">
           <div class="col-auto" *ngIf="selectedEdgeId!= ''">
             <button type="submit" class="btn btn-primary px-4" (click)="editEdge()"
-                    [disabled]="!edgeForm.valid || isPathShown">Edit
+                    [disabled]="!edgeForm.valid || isPathShown">{{'Edit' | translate }}
             </button>
           </div>
           <div class="col-auto">

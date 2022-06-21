@@ -1,4 +1,6 @@
 {
+  "Road network": "Sieć dróg",
+  "Cities": "Miasta",
   "Language": "Język",
   "English": "Angielski",
   "Polish": "Polski",
@@ -45,6 +47,7 @@
   "Color": "Kolor",
   "Actions": "Akcje",
   "Add": "Dodaj",
+  "Edit": "Edytuj",
   "Source": "Początek",
   "Target": "Koniec",
   "Distance": "Dystans",
