@@ -1,5 +1,5 @@
 # TSP Solver
-TSP Solver is a web application for solving travelling salesman problem.
+TSP Solver is a web application for solving travelling salesman problem.  
 The main goal of this project is to compare the following algorithms:
 - nearest neighbour
 - 2-opt
