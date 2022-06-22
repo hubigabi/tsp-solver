@@ -13,7 +13,7 @@ The main goal of this project is to compare the following algorithms:
 - Cytoscape.js
 
 ## Demo
-The application is available here: https://tsp-solver1.herokuapp.com 
+The application is available here: https://tsp-solver1.herokuapp.com  
 It's used the free deployment option on [Heroku](https://www.heroku.com), so if the application hasn't been used for a longer time, rebuilding will be necessary after a new request was sent. This process takes about **20** seconds.
 
 ![Road network](https://i.imgur.com/Bhpf10d.png)
