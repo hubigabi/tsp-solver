@@ -17,7 +17,7 @@
 
     <td>
       <ng-container *ngIf="routeAlgorithmRow.status === requestStatuses.SUCCESS; else notSuccess">
-        {{ routeAlgorithmRow.calculationTime * 1000 | date:'mm:ss'}}
+        {{ routeAlgorithmRow.calculationTime * 1000 | date:'s.SSS'}}
       </ng-container>
       <ng-template #notSuccess>
         <ng-container *ngIf="routeAlgorithmRow.status === requestStatuses.ONGOING; else failure">

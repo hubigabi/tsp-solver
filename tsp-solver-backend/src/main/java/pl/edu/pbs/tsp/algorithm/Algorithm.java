@@ -17,7 +17,7 @@ public abstract class Algorithm {
         Instant start = Instant.now();
         Route route = solve(costMatrix);
         Instant finish = Instant.now();
-        long timeElapsed = Duration.between(start, finish).toSeconds();
+        double timeElapsed = Duration.between(start, finish).toMillis() / 1000.0;
         route.setCalculationTime(timeElapsed);
         return route;
     }

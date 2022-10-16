@@ -32,7 +32,7 @@
   "Run algorithm": "Uruchom algorytm",
   "Algorithm": "Algorytm",
   "Parameters": "Parametry",
-  "Calculation time": "Czas obliczeń",
+  "Calculation time": "Czas obliczeń [s]",
   "Total cost": "Całkowity koszt",
   "Order": "Kolejność",
   "Number of nodes": "Liczba węzłów",

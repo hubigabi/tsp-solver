@@ -32,7 +32,7 @@
   "Run algorithm": "Run algorithm",
   "Algorithm": "Algorithm",
   "Parameters": "Parameters",
-  "Calculation time": "Calculation time",
+  "Calculation time": "Calculation time [s]",
   "Total cost": "Total cost",
   "Order": "Order",
   "Number of nodes": "Number of nodes",
