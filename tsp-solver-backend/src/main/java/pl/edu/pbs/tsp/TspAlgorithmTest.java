@@ -8,6 +8,7 @@ import pl.edu.pbs.tsp.algorithm.NearestNeighbourAlgorithm;
 import pl.edu.pbs.tsp.algorithm.SimulatedAnnealing;
 import pl.edu.pbs.tsp.algorithm.TwoOpt;
 import pl.edu.pbs.tsp.algorithm.antcolony.AntColonyOptimization;
+import pl.edu.pbs.tsp.algorithm.ga.CrossoverType;
 import pl.edu.pbs.tsp.algorithm.ga.GeneticAlgorithm;
 import pl.edu.pbs.tsp.algorithm.ga.SelectionType;
 
@@ -20,7 +21,7 @@ public class TspAlgorithmTest {
 
     public final TspService tspService;
 
-//    @EventListener(ApplicationReadyEvent.class)
+    //    @EventListener(ApplicationReadyEvent.class)
     public void compareAlgorithms() {
         System.out.println("Starting...");
         List<City> cities = TspGenerator.generateCities(100);
@@ -68,7 +69,7 @@ public class TspAlgorithmTest {
         System.out.println("Genetic algorithm:");
         List<Route> geneticAlgorithmRoutes = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            Route route = new GeneticAlgorithm(100, 20, 10000, 1000, 0.01, SelectionType.TOURNAMENT, 10).getRoute(travellingCostMatrix);
+            Route route = new GeneticAlgorithm(100, 20, 10000, 1000, 0.01, SelectionType.TOURNAMENT, 10, CrossoverType.PMX).getRoute(travellingCostMatrix);
             geneticAlgorithmRoutes.add(route);
             System.out.println(route);
             System.out.println("2-opt improvement " + new TwoOpt(route.getCitiesOrder()).getRoute(travellingCostMatrix));

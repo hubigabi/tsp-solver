@@ -20,6 +20,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {TitleCasePipe} from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
       }
     })
   ],
-  providers: [],
+  providers: [TitleCasePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule {

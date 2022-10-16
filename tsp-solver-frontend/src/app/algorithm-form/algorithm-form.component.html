@@ -89,6 +89,23 @@
       </div>
     </div>
 
+    <div class="form-group row px-3 pt-2">
+      <div class="col-auto">
+        <label for="selectionType" class="form-label">{{'SelectionType' | translate }}</label>
+        <select id="selectionType" class="form-select" formControlName="selectionType">
+          <option *ngFor="let selectionType of selectionTypes"
+                  [ngValue]="selectionType">{{selectionType | titlecase | translate}}</option>
+        </select>
+      </div>
+
+      <div class="col-auto">
+        <label for="crossoverType" class="form-label">{{'CrossoverType' | translate }}</label>
+        <select id="crossoverType" class="form-select" formControlName="crossoverType">
+          <option *ngFor="let crossoverType of crossoverTypes" [ngValue]="crossoverType">{{crossoverType}}</option>
+        </select>
+      </div>
+    </div>
+
     <app-validation-error [message]="'WrongParameters' | translate"
                           [hidden]="geneticAlgorithmForm.valid"></app-validation-error>
   </form>

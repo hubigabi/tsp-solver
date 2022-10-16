@@ -32,8 +32,8 @@ public class TspService {
 
     public Route getGeneticAlgorithm(GeneticAlgorithmRequest request) {
         int maxEpochsNoImprovement = request.getMaxEpochsNoImprovement() != -1 ? request.getMaxEpochsNoImprovement() : request.getEpochsNumber();
-        return new GeneticAlgorithm(request.getPopulationSize(), request.getElitismSize(),
-                request.getEpochsNumber(), maxEpochsNoImprovement, request.getMutationRate(), SelectionType.TOURNAMENT, 10).getRoute(request.getCostMatrix());
+        return new GeneticAlgorithm(request.getPopulationSize(), request.getElitismSize(), request.getEpochsNumber(), maxEpochsNoImprovement,
+                request.getMutationRate(), request.getSelectionType(), 10, request.getCrossoverType()).getRoute(request.getCostMatrix());
     }
 
     public Route getAntColonyOptimization(AntColonyRequest request) {

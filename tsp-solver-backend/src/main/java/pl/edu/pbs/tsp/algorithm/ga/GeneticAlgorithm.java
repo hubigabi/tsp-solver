@@ -23,13 +23,14 @@ public class GeneticAlgorithm extends Algorithm {
     private final double mutationRate;
     private final SelectionType selectionType;
     private final int tournamentSize;
-
+    private final CrossoverType crossoverType;
     private double[][] costMatrix;
     private double minCost = Double.MAX_VALUE;
     private List<Integer> bestRoute = new ArrayList<>();
     private int epochsNoImprovementCounter = 0;
 
-    public GeneticAlgorithm(int populationSize, int elitismSize, int epochs, int maxEpochsNoImprovement, double mutationRate, SelectionType selectionType, int tournamentSize) {
+    public GeneticAlgorithm(int populationSize, int elitismSize, int epochs, int maxEpochsNoImprovement, double mutationRate,
+                            SelectionType selectionType, int tournamentSize, CrossoverType crossoverType) {
         this.populationSize = populationSize;
         this.elitismSize = elitismSize;
         this.epochs = epochs;
@@ -37,6 +38,7 @@ public class GeneticAlgorithm extends Algorithm {
         this.mutationRate = mutationRate;
         this.selectionType = selectionType;
         this.tournamentSize = tournamentSize;
+        this.crossoverType = crossoverType;
         this.population = new ArrayList<>(populationSize);
     }
 
@@ -143,17 +145,17 @@ public class GeneticAlgorithm extends Algorithm {
     }
 
     private List<Integer> crossover(List<Integer> parent1, List<Integer> parent2) {
-        int index = ThreadLocalRandom.current().nextInt(1, parent1.size() - 1);
-        List<Integer> child1 = pmxCrossover(parent1, parent2, index);
-        List<Integer> child2 = pmxCrossover(parent2, parent1, index);
-        return calculateCost(child1, costMatrix) < calculateCost(child2, costMatrix) ? child1 : child2;
-//        return orderedCrossover(parent1, parent2);
-    }
-
-    private List<Integer> orderedCrossover(List<Integer> parent1, List<Integer> parent2) {
         int index1 = ThreadLocalRandom.current().nextInt(1, parent1.size() - 1);
         int index2 = ThreadLocalRandom.current().nextInt(1, parent1.size() - 1);
 
+        boolean pmxCrossover = CrossoverType.PMX.equals(this.crossoverType);
+        List<Integer> child1 = pmxCrossover ? pmxCrossover(parent1, parent2, index1) : orderedCrossover(parent1, parent2, index1, index2);
+        List<Integer> child2 = pmxCrossover ? pmxCrossover(parent2, parent1, index1) : orderedCrossover(parent2, parent1, index1, index2);
+
+        return calculateCost(child1, costMatrix) < calculateCost(child2, costMatrix) ? child1 : child2;
+    }
+
+    private List<Integer> orderedCrossover(List<Integer> parent1, List<Integer> parent2, int index1, int index2) {
         int min = Math.min(index1, index2);
         int max = Math.max(index1, index2) + 1;
 

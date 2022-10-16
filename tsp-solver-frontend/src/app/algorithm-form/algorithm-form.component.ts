@@ -1,4 +1,4 @@
-import {Component, OnInit, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {RouteAlgorithmRow} from "../tsp-algorithms/RouteAlgorithmRow";
 import {RequestStatus} from "../tsp-algorithms/RequestStatus";
 import {Observable} from "rxjs";
@@ -9,6 +9,10 @@ import {AntColonyRequest} from "../model/request/tsp/AntColonyRequest";
 import {AbstractControl, FormBuilder, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
 import {TspAlgorithmService} from "../service/tsp-algorithm.service";
 import {AlgorithmRun} from "./AlgorithmRun";
+import {CrossoverType} from "../model/request/tsp/ga/CrossoverType";
+import {SelectionType} from "../model/request/tsp/ga/SelectionType";
+import {TranslateService} from "@ngx-translate/core";
+import {TitleCasePipe} from '@angular/common';
 
 @Component({
   selector: 'app-algorithm-form',
@@ -20,6 +24,13 @@ export class AlgorithmFormComponent implements OnInit {
   @Input() costMatrix: number[][] = [];
   @Output() runAlgorithmEmitter = new EventEmitter<AlgorithmRun>();
   chosenAlgorithm = "0";
+
+  selectionTypes = Object.keys(SelectionType).filter((item) => {
+    return isNaN(Number(item));
+  });
+  crossoverTypes = Object.keys(CrossoverType).filter((item) => {
+    return isNaN(Number(item));
+  });
 
   simulatedAnnealingForm = this.fb.group({
     maxTemperature: [100.0, [Validators.required, Validators.min(1)]],
@@ -33,6 +44,8 @@ export class AlgorithmFormComponent implements OnInit {
     elitismSize: [20, [Validators.required, Validators.min(0), Validators.pattern("^[0-9]*$")]],
     mutationRate: [0.01, [Validators.required, Validators.min(0.0), Validators.max(1)]],
     epochs: [3000, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
+    selectionType: ['', Validators.required],
+    crossoverType: ['', Validators.required],
   });
 
   antColonyOptimizationForm = this.fb.group({
@@ -52,12 +65,16 @@ export class AlgorithmFormComponent implements OnInit {
 
   isMaxIterationsNoImprovementSelected = false;
 
-  constructor(private fb: FormBuilder, private tspAlgorithmService: TspAlgorithmService) {
+  constructor(private fb: FormBuilder, private tspAlgorithmService: TspAlgorithmService,
+              private translateService: TranslateService, private titleCasePipe: TitleCasePipe) {
   }
 
   ngOnInit(): void {
     this.simulatedAnnealingForm.setValidators(this.greaterThan('maxTemperature', 'minTemperature'));
     this.geneticAlgorithmForm.setValidators(this.greaterThan('populationSize', 'elitismSize'));
+
+    this.geneticAlgorithmForm.get('selectionType')!.setValue(this.selectionTypes.length > 0 ? this.selectionTypes[0] : '');
+    this.geneticAlgorithmForm.get('crossoverType')!.setValue(this.crossoverTypes.length > 0 ? this.crossoverTypes[0] : '');
   }
 
   greaterThan(field1Name: string, field2Name: string): ValidatorFn {
@@ -119,6 +136,8 @@ export class AlgorithmFormComponent implements OnInit {
         const elitismSize = this.geneticAlgorithmForm.get('elitismSize')!.value;
         const mutationRate = this.geneticAlgorithmForm.get('mutationRate')!.value;
         const epochs = this.geneticAlgorithmForm.get('epochs')!.value;
+        const selectionType = SelectionType[this.geneticAlgorithmForm.get('selectionType')!.value as keyof typeof SelectionType];
+        const crossoverType = CrossoverType[this.geneticAlgorithmForm.get('crossoverType')!.value as keyof typeof CrossoverType];
         const maxEpochsNoImprovement = this.getMaxIterationsNoImprovement();
 
         routeAlgorithmRow.algorithmType = 'Genetic algorithm';
@@ -127,11 +146,19 @@ export class AlgorithmFormComponent implements OnInit {
           populationSize: populationSize,
           elitismSize: elitismSize,
           mutationRate: mutationRate,
-          epochs: epochs
+          epochs: epochs,
+          selectionType: SelectionType[selectionType],
+          crossoverType: CrossoverType[crossoverType],
         };
 
-        const geneticAlgorithmRequest = new GeneticAlgorithmRequest(this.costMatrix,
-          populationSize, elitismSize, mutationRate, epochs, maxEpochsNoImprovement);
+        const selectionTypeTranslationKey = this.titleCasePipe.transform(SelectionType[selectionType]);
+        this.translateService.onLangChange.subscribe(() => {
+          this.translateSelectionType(routeAlgorithmRow, selectionTypeTranslationKey);
+        });
+        this.translateSelectionType(routeAlgorithmRow, selectionTypeTranslationKey);
+
+        const geneticAlgorithmRequest = new GeneticAlgorithmRequest(this.costMatrix, populationSize,
+          elitismSize, mutationRate, epochs, maxEpochsNoImprovement, selectionType, crossoverType);
         routeAlgorithm = this.tspAlgorithmService.getGeneticAlgorithm(geneticAlgorithmRequest);
         break;
       }
@@ -193,6 +220,12 @@ export class AlgorithmFormComponent implements OnInit {
     let maxIterationsNoImprovement = (percentFromIterations / 100) * +iterations;
     maxIterationsNoImprovement = Math.ceil(maxIterationsNoImprovement / 10) * 10;
     this.maxIterationsNoImprovementForm.get('maxIterationsNoImprovement')!.setValue(maxIterationsNoImprovement);
+  }
+
+
+  translateSelectionType(routeAlgorithmRow: RouteAlgorithmRow, key: string) {
+    this.translateService.get(key)
+      .subscribe(value => routeAlgorithmRow.parameters.selectionType = value);
   }
 
 }
