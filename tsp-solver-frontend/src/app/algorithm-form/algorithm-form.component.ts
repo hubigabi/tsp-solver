@@ -52,7 +52,7 @@ export class AlgorithmFormComponent implements OnInit {
     alpha: [1, [Validators.required, Validators.min(0)]],
     beta: [5, [Validators.required, Validators.min(0)]],
     evaporationRate: [0.5, [Validators.required, Validators.min(0.0), Validators.max(1)]],
-    q: [500, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
+    q: [100, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
     antFactor: [0.8, [Validators.required, Validators.min(0.1)]],
     randomCitySelection: [0.01, [Validators.required, Validators.min(0.0), Validators.max(1)]],
     iterations: [50, [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$")]],
