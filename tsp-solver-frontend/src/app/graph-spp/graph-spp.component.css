@@ -3,3 +3,7 @@
   aspect-ratio: 1 / 1;
   border: 2px solid black;
 }
+
+.file-input {
+  display: none;
+}

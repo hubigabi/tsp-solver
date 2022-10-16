@@ -7,7 +7,7 @@
         <div class="col-auto align-self-end">
           <label for="nodesNumber" class="form-label">{{'Number of nodes' | translate }}</label>
         </div>
-        <div class="col-3">
+        <div class="col-2">
           <input type="number" formControlName="nodesNumber" class="form-control" id="nodesNumber">
         </div>
         <div class="col-auto form-check align-self-end">
@@ -17,6 +17,13 @@
         <div class="col-auto ms-2">
           <button #generateGraphButton type="submit" class="btn btn-primary" (click)="generateGraph($event)">
             {{'Generate graph' | translate }}
+          </button>
+        </div>
+
+        <input type="file" class="file-input" (change)="loadGraph($event)" #graphUpload>
+        <div class="col-auto mx-3">
+          <button class="btn btn-primary" (click)="graphUpload.click()">
+            {{'Load graph' | translate }}
           </button>
         </div>
       </form>

@@ -17,6 +17,7 @@ import {RequestStatus} from "../tsp-algorithms/RequestStatus";
 import {NotificationsService} from "angular2-notifications";
 import {GraphRequest} from '../model/request/spp/generator/GraphRequest';
 import {TranslateService} from "@ngx-translate/core";
+import {GraphResult} from "../model/request/spp/generator/GraphResult";
 
 declare var require: any
 // const automove = require('cytoscape-automove');
@@ -29,6 +30,8 @@ const coseBilkent = require('cytoscape-cose-bilkent');
   styleUrls: ['./graph-spp.component.css']
 })
 export class GraphSppComponent implements OnInit {
+
+  @ViewChild('graphUpload') graphUpload!: ElementRef;
 
   cy!: cytoscape.Core;
   nodeColor = '#888';
@@ -621,69 +624,42 @@ export class GraphSppComponent implements OnInit {
     this.sppService.generateGraph(new GraphRequest(nodesNumber, symmetric))
       .subscribe({
         next: graphResult => {
-          console.log(graphResult);
-
-          this.roadTypes = graphResult.roadTypes
-            .map(value => new RoadType(value.id, value.type, value.weight, this.getRandomColor()));
-          this.allNodesId = graphResult.nodes.map(value => value.id);
-
-          this.cy.remove('edge');
-          this.cy.remove('node');
-
-          let nodes: ElementDefinition[] = graphResult.nodes.map(node => {
-            return {
-              group: 'nodes',
-              data: {id: node.id}
-            };
-          });
-          this.cy.add(nodes);
-
-          let edges: ElementDefinition[] = graphResult.edges.map(edge => {
-            let roadType = this.roadTypes.find(value => value.id === edge.roadTypeId);
-            return {
-              group: 'edges',
-              data: {
-                id: edge.id,
-                source: edge.source,
-                target: edge.target,
-                distance: edge.distance,
-                roadType: roadType,
-                bearingCapacity: edge.bearingCapacity,
-                color: roadType?.color
-              }
-            };
-          });
-          this.cy.add(edges);
-
-          const layout = (this.cy as any).layout({
-            name: 'cose-bilkent'
-          });
-          const nodesNumber = nodes.length;
-          if (nodesNumber <= 150) {
-            layout.quality = 'proof';
-          } else if (nodesNumber > 150 && nodesNumber <= 300) {
-            layout.quality = 'default';
-          } else {
-            layout.quality = 'draft';
-          }
-          layout.run();
-
-          this.selectedRoadTypeId = -1;
-          this.selectedNodeId = '';
-          this.selectedNodeEdges = [];
-          this.selectedEdgeId = '';
-          this.routesMatrix = [];
-          this.costMatrix = [];
-          this.routeAlgorithmRows = [];
-          this.isPathShown = false;
-          this.findRoutesForm.get('startingCity')!.setValue(this.allNodesId.length > 0 ? this.allNodesId[0] : '');
-          this.findRoutesForm.get('roadTypes')!.setValue(this.roadTypes);
+          this.handleGraph(graphResult);
           event.target.disabled = false;
         },
         error: value => {
           console.log(value);
           event.target.disabled = false;
         }
+      });
+  }
+
+  loadGraph(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      file.text()
+        .then(value => {
+          const graphResult: GraphResult = JSON.parse(value);
+          this.handleGraph(graphResult);
+        })
+        .catch(err => this.onLoadingGraphError());
+    } else {
+      this.onLoadingGraphError();
+    }
+    this.graphUpload.nativeElement.value = '';
+  }
+
+  onLoadingGraphError() {
+    let content = 'Error during loading graph from file';
+    this.translateService.get('LoadingGraphError').subscribe(value => content = value);
+
+    const notification = this.notificationsService.error(
+      undefined, content,
+      {
+        timeOut: 3000,
+        showProgressBar: true,
+        pauseOnHover: true,
+        clickToClose: true
       });
   }
 
@@ -744,6 +720,66 @@ export class GraphSppComponent implements OnInit {
 
     this.costMatrix = this.getCostMatrix(this.routesMatrix);
     event.target.disabled = false;
+  }
+
+  handleGraph(graphResult: GraphResult) {
+    console.log(graphResult);
+
+    this.roadTypes = graphResult.roadTypes
+      .map(value => new RoadType(value.id, value.type, value.weight, this.getRandomColor()));
+    this.allNodesId = graphResult.nodes.map(value => value.id);
+
+    this.cy.remove('edge');
+    this.cy.remove('node');
+
+    let nodes: ElementDefinition[] = graphResult.nodes.map(node => {
+      return {
+        group: 'nodes',
+        data: {id: node.id}
+      };
+    });
+    this.cy.add(nodes);
+
+    let edges: ElementDefinition[] = graphResult.edges.map(edge => {
+      let roadType = this.roadTypes.find(value => value.id === edge.roadTypeId);
+      return {
+        group: 'edges',
+        data: {
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          distance: edge.distance,
+          roadType: roadType,
+          bearingCapacity: edge.bearingCapacity,
+          color: roadType?.color
+        }
+      };
+    });
+    this.cy.add(edges);
+
+    const layout = (this.cy as any).layout({
+      name: 'cose-bilkent'
+    });
+    const nodesNumber = nodes.length;
+    if (nodesNumber <= 150) {
+      layout.quality = 'proof';
+    } else if (nodesNumber > 150 && nodesNumber <= 300) {
+      layout.quality = 'default';
+    } else {
+      layout.quality = 'draft';
+    }
+    layout.run();
+
+    this.selectedRoadTypeId = -1;
+    this.selectedNodeId = '';
+    this.selectedNodeEdges = [];
+    this.selectedEdgeId = '';
+    this.routesMatrix = [];
+    this.costMatrix = [];
+    this.routeAlgorithmRows = [];
+    this.isPathShown = false;
+    this.findRoutesForm.get('startingCity')!.setValue(this.allNodesId.length > 0 ? this.allNodesId[0] : '');
+    this.findRoutesForm.get('roadTypes')!.setValue(this.roadTypes);
   }
 
 }
