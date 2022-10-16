@@ -12,21 +12,20 @@ import java.util.stream.IntStream;
 
 public class AntColonyOptimization extends Algorithm {
 
-    private double alpha = 1;
-    private double beta = 5;
-    private double evaporationRate = 0.5;
-    private double Q = 500;
-    private double antFactor = 0.8;
-    private double randomCitySelection = 0.01;
-    private int iterations = 100;
+    private final double alpha;
+    private final double beta;
+    private final double evaporationRate;
+    private final double Q;
+    private final double antFactor;
+    private final double randomCitySelection;
+    private final int iterations;
     private final int maxIterationsNoImprovement;
-
+    private final List<Ant> ants = new ArrayList<>();
     private final double INIT_TRAIL_PHEROMONE_VALUE = 1.0;
     private int citiesNumber;
     private double[][] costMatrix;
     private double[][] pheromoneMatrix;
     private double[][] probabilityMatrix;
-    private List<Ant> ants = new ArrayList<>();
     private int currentCityIndex;
 
     private List<Integer> bestCitiesOrder;
@@ -146,7 +145,7 @@ public class AntColonyOptimization extends Algorithm {
     private void updateTrails() {
         for (int i = 0; i < citiesNumber; i++) {
             for (int j = 0; j < citiesNumber; j++) {
-                pheromoneMatrix[i][j] *= evaporationRate;
+                pheromoneMatrix[i][j] *= 1.0 - evaporationRate;
             }
         }
         for (Ant a : ants) {

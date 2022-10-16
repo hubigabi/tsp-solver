@@ -42,7 +42,7 @@ export class GraphSppComponent implements OnInit {
   newCityName = new FormControl('', [Validators.required, this.noWhitespaceValidator]);
 
   generateGraphForm = this.fb.group({
-    nodesNumber: [50, [Validators.required, Validators.min(2)]],
+    nodesNumber: [30, [Validators.required, Validators.min(2)]],
     symmetric: [false],
   });
 
