@@ -18,6 +18,7 @@ import {NotificationsService} from "angular2-notifications";
 import {GraphRequest} from '../model/request/spp/generator/GraphRequest';
 import {TranslateService} from "@ngx-translate/core";
 import {GraphResult} from "../model/request/spp/generator/GraphResult";
+import {HttpClient} from "@angular/common/http";
 
 declare var require: any
 // const automove = require('cytoscape-automove');
@@ -45,7 +46,7 @@ export class GraphSppComponent implements OnInit {
   newCityName = new FormControl('', [Validators.required, this.noWhitespaceValidator]);
 
   generateGraphForm = this.fb.group({
-    nodesNumber: [50, [Validators.required, Validators.min(2)]],
+    nodesNumber: [30, [Validators.required, Validators.min(2)]],
     symmetric: [false],
   });
 
@@ -89,8 +90,8 @@ export class GraphSppComponent implements OnInit {
 
   @ViewChild('generateGraphButton') generateGraphButton!: ElementRef<HTMLElement>;
 
-  constructor(private fb: FormBuilder, private sppService: SppService,
-              private notificationsService: NotificationsService, private translateService: TranslateService) {
+  constructor(private fb: FormBuilder, private sppService: SppService, private notificationsService: NotificationsService,
+              private translateService: TranslateService, private httpClient: HttpClient) {
   }
 
   ngOnInit(): void {
@@ -182,10 +183,7 @@ export class GraphSppComponent implements OnInit {
     this.allNodesId = this.cy.nodes().map(e => e.id());
     this.findRoutesForm.get('startingCity')!.setValue(this.allNodesId.length > 0 ? this.allNodesId[0] : '');
     this.findRoutesForm.get('roadTypes')!.setValue(this.roadTypes);
-  }
-
-  ngAfterViewInit() {
-    this.generateGraphButton.nativeElement.click();
+    this.loadExampleGraph();
   }
 
   private loadCytoscapeExtensions() {
@@ -782,4 +780,11 @@ export class GraphSppComponent implements OnInit {
     this.findRoutesForm.get('roadTypes')!.setValue(this.roadTypes);
   }
 
+  loadExampleGraph(): void {
+    this.httpClient.get('assets/graph.json', {responseType: 'text'})
+      .subscribe(text => {
+        const graphResult: GraphResult = JSON.parse(text);
+        this.handleGraph(graphResult);
+      });
+  }
 }
