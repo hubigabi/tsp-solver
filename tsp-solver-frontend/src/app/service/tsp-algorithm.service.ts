@@ -6,6 +6,7 @@ import {environment} from "../../environments/environment";
 import {SimulatedAnnealingRequest} from "../model/request/tsp/SimulatedAnnealingRequest";
 import {GeneticAlgorithmRequest} from "../model/request/tsp/GeneticAlgorithmRequest";
 import {AntColonyRequest} from "../model/request/tsp/AntColonyRequest";
+import {City} from "../model/City";
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class TspAlgorithmService {
   private readonly SIMULATED_ANNEALING_URL = environment.backendUrl + '/api/tsp/simulated-annealing';
   private readonly GENETIC_ALGORITHM_URL = environment.backendUrl + '/api/tsp/genetic-algorithm';
   private readonly ANT_COLONY_URL = environment.backendUrl + '/api/tsp/ant-colony';
+  private readonly ATT48_PROBLEM_URL = environment.backendUrl + '/api/tsp/att48';
 
   constructor(private httpClient: HttpClient) {
   }
@@ -39,6 +41,10 @@ export class TspAlgorithmService {
 
   public getAntColonyOptimization(request: AntColonyRequest): Observable<RouteAlgorithm> {
     return this.httpClient.post<RouteAlgorithm>(this.ANT_COLONY_URL, request);
+  }
+
+  public getAtt48Problem(): Observable<City[]> {
+    return this.httpClient.get<City[]>(this.ATT48_PROBLEM_URL);
   }
 
 }

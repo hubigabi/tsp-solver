@@ -9,7 +9,7 @@ import pl.edu.pbs.tsp.algorithm.SimulatedAnnealing;
 import pl.edu.pbs.tsp.algorithm.TwoOpt;
 import pl.edu.pbs.tsp.algorithm.antcolony.AntColonyOptimization;
 import pl.edu.pbs.tsp.algorithm.ga.GeneticAlgorithm;
-import pl.edu.pbs.tsp.algorithm.ga.SelectionType;
+import pl.edu.pbs.tsp.problem.TspProblem;
 
 import java.util.List;
 
@@ -40,6 +40,10 @@ public class TspService {
         int maxIterationsNoImprovement = request.getMaxIterationsNoImprovement() != -1 ? request.getMaxIterationsNoImprovement() : request.getIterations();
         return new AntColonyOptimization(request.getAlpha(), request.getBeta(), request.getEvaporationRate(), request.getQ(), request.getAntFactor(),
                 request.getRandomCitySelection(), request.getIterations(), maxIterationsNoImprovement).getRoute(request.getCostMatrix());
+    }
+
+    public List<City> getAtt48Problem() {
+        return TspProblem.att48Problem;
     }
 
     public double[][] toTravellingCostMatrix(List<City> cities) {

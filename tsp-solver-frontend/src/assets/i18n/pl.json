@@ -7,6 +7,7 @@
   "Polish": "Polski",
   "Generate": "Wygeneruj",
   "Number of cities": "Liczba miast",
+  "LoadATT48Problem": "Wczytaj ATT48",
   "Choose algorithm": "Wybierz algorytm",
   "Nearest neighbour": "Algorytm najbliższego sąsiada",
   "2-opt": "Algorytm 2-optymalny",

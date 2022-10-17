@@ -9,10 +9,10 @@ export class City {
     this.y = y;
   }
 
-  static generateRandomCities(n: number, cityMaxX: number, cityMaxY: number): City[] {
+  static generateRandomCities(n: number, cityMaxXY: number): City[] {
     const cities: City[] = [];
     for (let i = 0; i < n; i++) {
-      let city = new City(i, Math.random() * cityMaxX, Math.random() * cityMaxY);
+      let city = new City(i, Math.random() * cityMaxXY, Math.random() * cityMaxXY);
       cities.push(city);
     }
     return cities;

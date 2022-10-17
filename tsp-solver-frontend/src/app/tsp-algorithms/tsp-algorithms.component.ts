@@ -5,6 +5,7 @@ import {City} from "../model/City";
 import {RouteAlgorithmRow} from "./RouteAlgorithmRow";
 import {RequestStatus} from "./RequestStatus";
 import {AlgorithmRun} from "../algorithm-form/AlgorithmRun";
+import {TspAlgorithmService} from "../service/tsp-algorithm.service";
 
 @Component({
   selector: 'app-tsp-algorithms',
@@ -13,8 +14,8 @@ import {AlgorithmRun} from "../algorithm-form/AlgorithmRun";
 })
 export class TspAlgorithmsComponent implements OnInit {
 
-  readonly cityMaxX = 100;
-  readonly cityMaxY = 100;
+  readonly defaultCityMaxXY = 100;
+  currentCityMaxXY = this.defaultCityMaxXY;
 
   citiesNumber = new FormControl(100, Validators.required);
   cities: City[] = []
@@ -23,21 +24,22 @@ export class TspAlgorithmsComponent implements OnInit {
   idCounter = 0;
   routeAlgorithmRows: RouteAlgorithmRow[] = [];
 
-  constructor() {
+  constructor(private tspService: TspAlgorithmService) {
   }
 
   ngOnInit(): void {
     paper.setup('canvas');
-    this.cities = City.generateRandomCities(100, this.cityMaxX, this.cityMaxY);
+    this.cities = City.generateRandomCities(100, this.defaultCityMaxXY);
     this.costMatrix = City.toCostMatrix(this.cities);
-    this.drawCities(this.cities)
+    this.drawCities(this.cities, this.defaultCityMaxXY);
   }
 
   generateCities() {
+    this.currentCityMaxXY = this.defaultCityMaxXY;
     this.routeAlgorithmRows = [];
-    this.cities = City.generateRandomCities(this.citiesNumber.value, this.cityMaxX, this.cityMaxY);
+    this.cities = City.generateRandomCities(this.citiesNumber.value, this.defaultCityMaxXY);
     this.costMatrix = City.toCostMatrix(this.cities);
-    this.drawCities(this.cities)
+    this.drawCities(this.cities, this.defaultCityMaxXY);
   }
 
   drawCity(city: City, widthRate: number, heightRate: number) {
@@ -66,9 +68,9 @@ export class TspAlgorithmsComponent implements OnInit {
     }
   }
 
-  drawCities(cities: City[]) {
-    const widthRate = paper.view.size.width / this.cityMaxX;
-    const heightRate = paper.view.size.height / this.cityMaxY;
+  drawCities(cities: City[], cityMaxXY: number) {
+    const widthRate = paper.view.size.width / cityMaxXY;
+    const heightRate = paper.view.size.height / cityMaxXY;
 
     paper.project.clear();
     for (let city of cities) {
@@ -77,9 +79,9 @@ export class TspAlgorithmsComponent implements OnInit {
     this.highlightStartingCity(widthRate, heightRate);
   }
 
-  drawCitiesOrder(citiesOrder: number[]) {
-    const widthRate = paper.view.size.width / this.cityMaxX;
-    const heightRate = paper.view.size.height / this.cityMaxY;
+  drawCitiesOrder(citiesOrder: number[], cityMaxXY: number) {
+    const widthRate = paper.view.size.width / cityMaxXY;
+    const heightRate = paper.view.size.height / cityMaxXY;
     paper.project.clear();
 
     for (let i = 0; i < citiesOrder.length - 1; i++) {
@@ -129,7 +131,27 @@ export class TspAlgorithmsComponent implements OnInit {
   }
 
   onRouteOrderClick(citiesOrder: number[]) {
-    this.drawCitiesOrder(citiesOrder);
+    this.drawCitiesOrder(citiesOrder, this.currentCityMaxXY);
+  }
+
+  loadAtt48Problem() {
+    this.routeAlgorithmRows = [];
+    this.tspService.getAtt48Problem().subscribe(cities => {
+      cities = this.invertYCoordination(cities);
+      this.cities = cities;
+      this.costMatrix = City.toCostMatrix(this.cities);
+
+      this.currentCityMaxXY = Math.max(...this.cities.map(city => Math.max(city.x, city.y)));
+      this.drawCities(this.cities, this.currentCityMaxXY);
+    })
+  }
+
+  invertYCoordination(cities: City[]): City[] {
+    const cityMaxY = Math.max(...cities.map(city => city.y));
+    return cities.map(city => {
+      city.y = cityMaxY - city.y;
+      return city;
+    })
   }
 
 }
