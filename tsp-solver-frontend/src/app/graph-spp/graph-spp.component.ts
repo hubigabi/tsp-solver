@@ -788,4 +788,28 @@ export class GraphSppComponent implements OnInit {
         this.handleGraph(graphResult);
       });
   }
+
+  exportGraph() {
+    const edges: EdgeRequest[] = [];
+    this.cy.edges().forEach(edge => {
+      edges.push(new EdgeRequest(edge.data().id, edge.data().source, edge.data().target, edge.data().distance, edge.data().roadType.id, edge.data().bearingCapacity));
+    })
+
+    const graphResult = new GraphResult(
+      this.allNodesId.map(id => new NodeRequest(id)),
+      this.roadTypes.map(roadType => new RoadTypeRequest(roadType.id, roadType.type, roadType.weight)),
+      edges
+    );
+
+    const graphJson = JSON.stringify(graphResult);
+    const url = "data:text/json;charset=UTF-8," + encodeURIComponent(graphJson);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = 'graph.json';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
 }

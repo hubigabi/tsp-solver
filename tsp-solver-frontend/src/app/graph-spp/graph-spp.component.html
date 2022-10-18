@@ -21,9 +21,12 @@
         </div>
 
         <input type="file" class="file-input" (change)="loadGraph($event)" #graphUpload>
-        <div class="col-auto m-auto">
-          <button class="btn btn-primary" (click)="graphUpload.click()">
+        <div class="col-auto m-auto btn-group">
+          <button class="btn btn-success" (click)="graphUpload.click()">
             {{'Load graph' | translate }}
+          </button>
+          <button class="btn btn-success" (click)="exportGraph()">
+            {{'Export graph' | translate }}
           </button>
         </div>
       </form>
