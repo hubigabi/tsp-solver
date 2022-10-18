@@ -48,10 +48,11 @@ public class GraphGeneratorService {
                 .map(Node::new)
                 .collect(Collectors.toList());
 
+        boolean langPl = "pl".equals(request.getLang());
         List<RoadType> roadTypes = List.of(
-                new RoadType(2, "Highway", 0.7),
-                new RoadType(3, "State highway", 0.8),
-                new RoadType(1, "County highways", 1.0)
+                new RoadType(2, langPl ? "Autostrady" : "Highway", 0.7),
+                new RoadType(3, langPl ? "Drogi ekspresowe" : "State highway", 0.8),
+                new RoadType(1, langPl ? "Drogi krajowe" : "County highways", 1.0)
         );
 
         boolean symmetric = request.isSymmetric();

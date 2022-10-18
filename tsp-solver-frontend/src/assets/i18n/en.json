@@ -48,6 +48,7 @@
   "LoadingGraphError": "Error during loading graph from file",
   "City name": "Node name",
   "Add city": "Add node",
+  "Delete city": "Delete node",
   "Road types": "Road types",
   "Type": "Type",
   "Weight": "Weight",

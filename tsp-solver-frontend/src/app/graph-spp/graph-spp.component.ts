@@ -619,7 +619,7 @@ export class GraphSppComponent implements OnInit {
     event.target.disabled = true;
     const nodesNumber = this.generateGraphForm.get('nodesNumber')!.value
     const symmetric = this.generateGraphForm.get('symmetric')!.value
-    this.sppService.generateGraph(new GraphRequest(nodesNumber, symmetric))
+    this.sppService.generateGraph(new GraphRequest(nodesNumber, symmetric, this.translateService.currentLang))
       .subscribe({
         next: graphResult => {
           this.handleGraph(graphResult);
@@ -781,9 +781,10 @@ export class GraphSppComponent implements OnInit {
   }
 
   loadExampleGraph(): void {
-    this.httpClient.get('assets/graph.json', {responseType: 'text'})
-      .subscribe(text => {
-        const graphResult: GraphResult = JSON.parse(text);
+    const graphFileName = (this.translateService.currentLang === 'pl') ? 'graph-pl.json' : 'graph.json';
+
+    this.httpClient.get<GraphResult>('assets/' + graphFileName)
+      .subscribe(graphResult => {
         this.handleGraph(graphResult);
       });
   }

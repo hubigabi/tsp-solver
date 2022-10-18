@@ -7,4 +7,5 @@ public class GraphRequest {
 
     private int nodesNumber;
     private boolean symmetric;
+    private String lang;
 }
