@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef, Renderer2} from '@angular/core';
 import * as cytoscape from 'cytoscape';
 import {EdgeSingular, ElementDefinition} from 'cytoscape';
 import {FormBuilder, FormControl, Validators} from "@angular/forms";
@@ -32,6 +32,7 @@ const coseBilkent = require('cytoscape-cose-bilkent');
 })
 export class GraphSppComponent implements OnInit {
 
+  @ViewChild('graph') graph!: ElementRef;
   @ViewChild('graphUpload') graphUpload!: ElementRef;
 
   cy!: cytoscape.Core;
@@ -91,7 +92,7 @@ export class GraphSppComponent implements OnInit {
   @ViewChild('generateGraphButton') generateGraphButton!: ElementRef<HTMLElement>;
 
   constructor(private fb: FormBuilder, private sppService: SppService, private notificationsService: NotificationsService,
-              private translateService: TranslateService, private httpClient: HttpClient) {
+              private translateService: TranslateService, private httpClient: HttpClient, private renderer: Renderer2) {
   }
 
   ngOnInit(): void {
@@ -184,6 +185,21 @@ export class GraphSppComponent implements OnInit {
     this.findRoutesForm.get('startingCity')!.setValue(this.allNodesId.length > 0 ? this.allNodesId[0] : '');
     this.findRoutesForm.get('roadTypes')!.setValue(this.roadTypes);
     this.loadExampleGraph();
+  }
+
+  ngAfterViewInit(): void {
+    const canvases = Array.from(document.getElementsByTagName('canvas'));
+    canvases.forEach((el: HTMLCanvasElement) => {
+      el.getContext('2d', {willReadFrequently: true});
+    })
+
+    const width = this.graph.nativeElement.offsetWidth;
+    const height = this.graph.nativeElement.offsetHeight;
+
+    if (width !== height) {
+      this.renderer.setStyle(this.graph.nativeElement, 'width', `${height}px`);
+      this.renderer.setStyle(this.graph.nativeElement, 'aspect-ratio', '1/1');
+    }
   }
 
   private loadCytoscapeExtensions() {
