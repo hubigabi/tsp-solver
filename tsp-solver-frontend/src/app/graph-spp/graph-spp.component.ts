@@ -201,6 +201,8 @@ export class GraphSppComponent implements OnInit {
       this.renderer.setStyle(this.graph.nativeElement, 'aspect-ratio', '1/1');
       console.log('Width not equal');
     } else {
+      this.renderer.setStyle(this.graph.nativeElement, 'width', `${height}px`);
+      this.renderer.setStyle(this.graph.nativeElement, 'aspect-ratio', '1/1');
       console.log('Width is equal');
     }
   }
