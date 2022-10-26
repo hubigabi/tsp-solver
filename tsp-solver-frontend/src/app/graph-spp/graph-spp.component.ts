@@ -19,6 +19,7 @@ import {GraphRequest} from '../model/request/spp/generator/GraphRequest';
 import {TranslateService} from "@ngx-translate/core";
 import {GraphResult} from "../model/request/spp/generator/GraphResult";
 import {HttpClient} from "@angular/common/http";
+import {debounceTime, fromEvent, Observable, Subscription} from "rxjs";
 
 declare var require: any
 // const automove = require('cytoscape-automove');
@@ -34,6 +35,9 @@ export class GraphSppComponent implements OnInit {
 
   @ViewChild('graph') graph!: ElementRef;
   @ViewChild('graphUpload') graphUpload!: ElementRef;
+
+  resizeObservable$!: Observable<Event>
+  resizeSubscription$!: Subscription
 
   cy!: cytoscape.Core;
   nodeColor = '#888';
@@ -193,16 +197,25 @@ export class GraphSppComponent implements OnInit {
       el.getContext('2d', {willReadFrequently: true});
     })
 
+    this.setGraphHeightEqualWidth();
+    this.resizeObservable$ = fromEvent(window, 'resize')
+    this.resizeSubscription$ = this.resizeObservable$
+      .pipe(debounceTime(100))
+      .subscribe(event => {
+        this.setGraphHeightEqualWidth();
+      })
+  }
+
+  private setGraphHeightEqualWidth() {
     const width = this.graph.nativeElement.offsetWidth;
     const height = this.graph.nativeElement.offsetHeight;
 
+    this.renderer.setStyle(this.graph.nativeElement, 'height', `${width}px`);
+    this.renderer.setStyle(this.graph.nativeElement, 'aspect-ratio', '1/1');
+    this.cy.fit();
     if (width !== height) {
-      this.renderer.setStyle(this.graph.nativeElement, 'height', `${width}px`);
-      this.renderer.setStyle(this.graph.nativeElement, 'aspect-ratio', '1/1');
       console.log('Width not equal');
     } else {
-      this.renderer.setStyle(this.graph.nativeElement, 'height', `${width}px`);
-      this.renderer.setStyle(this.graph.nativeElement, 'aspect-ratio', '1/1');
       console.log('Width is equal');
     }
   }
@@ -640,6 +653,7 @@ export class GraphSppComponent implements OnInit {
     event.target.disabled = true;
     const nodesNumber = this.generateGraphForm.get('nodesNumber')!.value
     const symmetric = this.generateGraphForm.get('symmetric')!.value
+    console.log(this.translateService.currentLang);
     this.sppService.generateGraph(new GraphRequest(nodesNumber, symmetric, this.translateService.currentLang))
       .subscribe({
         next: graphResult => {
@@ -831,6 +845,10 @@ export class GraphSppComponent implements OnInit {
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
+  }
+
+  ngOnDestroy() {
+    this.resizeSubscription$.unsubscribe()
   }
 
 }

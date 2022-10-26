@@ -22,6 +22,7 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.currentLanguage = this.translateService.currentLang != null ?
       this.translateService.currentLang : this.translateService.defaultLang;
+    this.translateService.use(this.currentLanguage);
   }
 
   changeLanguage(language: string) {
